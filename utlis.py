@@ -80,7 +80,10 @@ class Guitar():
 
         midi_notes = []
         for string, fret in chord_fingering.items():
-            midi_note = self.fboard[string][fret]
+            if fret != -1:
+                midi_note = self.fboard[string][fret]
+            else:
+                midi_note=-1
             midi_notes.append(midi_note)
 
         return midi_notes

@@ -3,18 +3,19 @@ import random
 from utlis import Guitar
 
 # Define constants
-MUTATION_RATE = 0.1
-POPULATION_SIZE = 200
+MUTATION_RATE = 0.2
+POPULATION_SIZE = 300
 GENERATIONS = 300
-TOURNAMENT_SIZE = 200
+TOURNAMENT_SIZE = 300
 SEQUENCE_LENGTH = 4  # 序列中的和弦数量
 NUM_STRINGS = 6  # 吉他弦数
-MAX_FRET = 20 # 最大品格数
+MAX_FRET = 16 # 最大品格数
 
 class GuitarGeneticAlgorithm:
     def __init__(self, target_melody, guitar):
         self.target_melody = target_melody  # 目标MIDI音高序列
         self.guitar = guitar  # Guitar类实例
+        #self.target_chord=target_chord
         
     def get_melody_pitch(self, chord_fingering):
         """从和弦指法中提取最高音的MIDI pitch"""
@@ -46,6 +47,25 @@ class GuitarGeneticAlgorithm:
     #     average_error = total_error / valid_notes
     #     return -average_error
 
+    def cal_PC(self, sequence):
+        PC1 = -sum(sum(1 for fret in chord if fret > 0) for chord in sequence)  # string press in the same time
+        PC2 = -sum((max(chord) - max(min(chord), 0)) for chord in sequence)  # width of the press
+        PC3 = sum(sum(fret for fret in chord if fret > 0) / sum(1 for fret in chord if fret > 0) for chord in sequence) / len(sequence)  # average fret press
+        PC4 = 0 # not really hand movement, just press diff, this should be in the hand part
+        for i in range(1, len(sequence)):
+            prev_chord = sequence[i - 1]
+            curr_chord = sequence[i]
+            hand_movement = sum(abs(curr_fret - prev_fret) for curr_fret, prev_fret in zip(curr_chord, prev_chord) if curr_fret > 0 and prev_fret > 0)
+            PC4 += hand_movement
+        PC4 *= -1 
+        return PC1 + PC2 + PC3 + PC4
+    
+    def cal_NWC(self, sequence):
+        pass
+
+    def cal_NCC(self, sequence):
+        pass
+
     def fitness(self, sequence):
         """改进的适应度函数"""
         total_error = 0
@@ -60,8 +80,9 @@ class GuitarGeneticAlgorithm:
                 continue
                 
             # 找到最接近目标音高的音符
+            # position 预测，结合guitar类
             target_pitch = self.target_melody[i]
-            closest_pitch_error = min(abs(note - target_pitch) for note in midi_notes)
+            closest_pitch_error = min(abs(note - target_pitch) for note in midi_notes)*10
             
             # 计算误差并加权
             pitch_error = closest_pitch_error
@@ -75,9 +96,15 @@ class GuitarGeneticAlgorithm:
         # 实现方法再换一下
         #complexity_penalty = sum(sum(1 for fret in chord if fret > 0) for chord in sequence)
 
-            
+        NWC= -(total_error) / len(sequence)
+        PC1=-sum(sum(1 for fret in chord if fret > 0) for chord in sequence) #同下，特化横按
+        PC2=-sum((max(chord) - max(min(chord),0)) for chord in sequence) #可以尝试针对性大幅度增加对超过某个范围的按法的惩罚
+        #NCC
+        #PC3:高把位惩罚
+        #PC4：movement
+        PC=PC1+PC2/5
         # 计算最终适应度（负值，越接近0越好）
-        fitness_score = -(total_error) / len(sequence)
+        fitness_score = (NWC*50+PC)/100
         return fitness_score
 
     def initialize_population(self):
@@ -168,6 +195,8 @@ def main():
     
     # 目标旋律（MIDI音高序列）
     target_melody = [60, 62, 64, 60, 60, 62, 64, 60]  # 示例旋律
+    target_melody=[[60,'-',62,'-',64,'-',60,'-'],[64,'-',65,'-',67,'-','-','-']]
+    target_chord=['C','G']
     
     # 创建并运行遗传算法
     ga = GuitarGeneticAlgorithm(target_melody, guitar)
@@ -176,8 +205,10 @@ def main():
     
     print("\nFinal best sequence:")
     print(best_sequence)
-    print("Melody pitches:", [ga.get_melody_pitch(chord) for chord in best_sequence])
+    melody_pitch=[ga.get_melody_pitch(chord) for chord in best_sequence]
+    print("Melody pitches:", melody_pitch)
     print("Target Melody:", target_melody)
+    print("ACC:", sum(1 for x, y in zip(melody_pitch, target_melody) if x == y) / len(target_melody))
 
 if __name__ == "__main__":
     main()
