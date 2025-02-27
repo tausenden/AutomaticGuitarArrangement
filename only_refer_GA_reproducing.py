@@ -1,13 +1,13 @@
 import numpy as np
 import random
 from utlis import Guitar
-
+from utlis import pitch2name
 # 定义常量
 MUTATION_RATE = 0.3
 POPULATION_SIZE = 1000
-GENERATIONS = 1000
+GENERATIONS = 800
 TOURNAMENT_SIZE = 1000
-RESERVED= POPULATION_SIZE//10
+RESERVED= POPULATION_SIZE//5
 NUM_STRINGS = 6  # 吉他弦数
 MAX_FRET = 8    # 最大品格数
 
@@ -82,22 +82,25 @@ class GuitarGeneticAlgorithm:
             
             # comment because -1 doesn't mean no note is played
 
-            closest_pitch_error = min(abs(note - target_pitch) for note in midi_notes)
+            # closest_pitch_error = min(abs(note - target_pitch) for note in midi_notes)
             
-            # 计算误差并加权
-            pitch_error = closest_pitch_error
-            if max(midi_notes) != target_pitch:  # 如果最高音不是目标音高
-                pitch_error += 10  # 额外惩罚
+            # # 计算误差并加权
+            # pitch_error = closest_pitch_error
+            # if max(midi_notes) != target_pitch:  # 如果最高音不是目标音高
+            #     pitch_error += 10  # 额外惩罚
+
+            pitch_error=abs(max(midi_notes)-target_pitch)
                 
             total_error += pitch_error
             valid_notes += 1
-            return -(total_error)/len(sequence)
-        
+        return -(total_error)/len(sequence)
+    
     def cal_NCC(self, play_seq, chord_name): # how many notes are not in chord
         tot_err=0
         if not chord_name:
             return 0
         chord_dict=self.guitar.chords[chord_name][0]
+        
         chord_six=[]
         for i in range(6):
             chord_six.append(chord_dict[i+1])
@@ -106,15 +109,33 @@ class GuitarGeneticAlgorithm:
                 tot_err+=abs(note[i]-chord_six[i])
         return -(tot_err)/len(play_seq)
 
+    def new_cal_NCC(self, play_seq, chord_name): # how many notes not in the triad of chord
+        
+        tot_err=0
+        target_chord_note=self.guitar.chords4NCC[chord_name]
+        if not chord_name:
+            return 0
+        for i in range(len(play_seq)):
+            chord_dict = {i+1: fret for i, fret in enumerate(play_seq[i])}
+            midi_notes = self.guitar.get_chord_midi(chord_dict)
+            for note in midi_notes:
+                note%=12
+                if note!=-1 and note not in target_chord_note:
+                    tot_err+=1
+                    
+        return -(tot_err)/len(play_seq)
+        
+        
 
     def fitness(self, sequence, target_melody,target_chord):
         w_PC=1.0
-        w_NWC=1.0
-        w_NCC=1.0
+        w_NWC=5.0
+        w_NCC=1.0 
 
         PC=self.cal_PC(sequence)
         NWC=self.cal_NWC(sequence,target_melody)
-        NCC=self.cal_NCC(sequence,target_chord)
+        # NCC=self.cal_NCC(sequence,target_chord)
+        NCC=self.new_cal_NCC(sequence,target_chord)
         #print("PC,NWC,NCC",PC,NWC,NCC)
         fitness_value=PC*w_PC+NWC*w_NWC+NCC*w_NCC
         return fitness_value
@@ -169,9 +190,11 @@ class GuitarGeneticAlgorithm:
             best_sequence = population[fitnesses.index(best_fit)]
 
             if generation % max(1,(GENERATIONS//10)) == 0:
+
                 melody_pitch = [self.get_melody_pitch(chord) for chord in best_sequence]
                 print(f"Generation {generation}: Best Fitness = {best_fit}")
-                print("Best sequence melody:", melody_pitch)
+                print("Best sequence melody:", pitch2name(melody_pitch))
+                print("Best finger position:", best_sequence)
 
             candidates = self.tournament_selection(population, fitnesses)
             new_population = []
@@ -225,8 +248,8 @@ def main():
     print("\nFinal best sequence:")
     print(best_sequence)
     melody_pitch = [ga_single.get_melody_pitch(chord) for chord in best_sequence]
-    print("Melody pitches:", melody_pitch)
-    print("Target Melody:", target_melody)
+    print("Melody pitches:", pitch2name(melody_pitch))
+    print("Target Melody:", pitch2name(target_melody))
 
     # 示例2：list of list 输入
     target_melody_s = [
@@ -236,15 +259,15 @@ def main():
     ]
     target_chords=['C','G','C']
 
-    print("\n===== 多旋律情况 =====")
-    ga_multiple = GuitarGeneticAlgorithm(target_melody_s,target_chords, guitar)
-    best_sequences = ga_multiple.run()
-    for idx, seq in enumerate(best_sequences):
-        print(f"\nFinal best sequence for melody {idx}:")
-        print(seq)
-        melody_pitch = [ga_multiple.get_melody_pitch(chord) for chord in seq]
-        print("Melody pitches:", melody_pitch)
-        print("Target Melody:", target_melody_s[idx])
+    # print("\n===== 多旋律情况 =====")
+    # ga_multiple = GuitarGeneticAlgorithm(target_melody_s,target_chords, guitar)
+    # best_sequences = ga_multiple.run()
+    # for idx, seq in enumerate(best_sequences):
+    #     print(f"\nFinal best sequence for melody {idx}:")
+    #     print(seq)
+    #     melody_pitch = [ga_multiple.get_melody_pitch(chord) for chord in seq]
+    #     print("Melody pitches:", melody_pitch)
+    #     print("Target Melody:", target_melody_s[idx])
 
 if __name__ == "__main__":
     main()

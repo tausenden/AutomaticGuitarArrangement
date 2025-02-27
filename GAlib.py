@@ -1,15 +1,16 @@
 import numpy as np
 import random
 from utlis import Guitar
+from utlis import pitch2name
 
-# 定义常量
 MUTATION_RATE = 0.3
 POPULATION_SIZE = 1000
-GENERATIONS = 200
+GENERATIONS = 800
 TOURNAMENT_SIZE = 1000
-RESERVED= POPULATION_SIZE//10
+RESERVED= POPULATION_SIZE//5
 NUM_STRINGS = 6  # 吉他弦数
 MAX_FRET = 8    # 最大品格数
+NUM_FINGERS = 4  # 不包括大拇指
 
 class GuitarGeneticAlgorithm:
     def __init__(self, target_melody, target_chords=None ,guitar=None):
@@ -87,18 +88,20 @@ class GuitarGeneticAlgorithm:
             # # 计算误差并加权
             # pitch_error = closest_pitch_error
             # if max(midi_notes) != target_pitch:  # 如果最高音不是目标音高
-            #     pitch_error += 100  # 额外惩罚
+            #     pitch_error += 10  # 额外惩罚
+
             pitch_error=abs(max(midi_notes)-target_pitch)
-            
+                
             total_error += pitch_error
             valid_notes += 1
         return -(total_error)/len(sequence)
-        
+    
     def cal_NCC(self, play_seq, chord_name): # how many notes are not in chord
         tot_err=0
         if not chord_name:
             return 0
         chord_dict=self.guitar.chords[chord_name][0]
+        
         chord_six=[]
         for i in range(6):
             chord_six.append(chord_dict[i+1])
@@ -106,39 +109,34 @@ class GuitarGeneticAlgorithm:
             for i in range(6):
                 tot_err+=abs(note[i]-chord_six[i])
         return -(tot_err)/len(play_seq)
-    
-    def cal_FC(self, finger_positions): #finger comfort
 
-        if not finger_positions:
+    def new_cal_NCC(self, play_seq, chord_name): # how many notes not in the triad of chord
+        
+        tot_err=0
+        target_chord_note=self.guitar.chords4NCC[chord_name]
+        if not chord_name:
             return 0
-            
-        # 过滤掉未使用的手指(-1)
-        active_positions = [pos for pos in finger_positions if pos != -1]
-        if not active_positions:
-            return 0
-            
-        finger_span = max(active_positions) - min(active_positions) # 手指跨度
+        for i in range(len(play_seq)):
+            chord_dict = {i+1: fret for i, fret in enumerate(play_seq[i])}
+            midi_notes = self.guitar.get_chord_midi(chord_dict)
+            for note in midi_notes:
+                note%=12
+                if note!=-1 and note not in target_chord_note:
+                    tot_err+=1
+                    
+        return -(tot_err)/len(play_seq)
         
-        # 计算相邻手指之间的距离
-        adjacent_distances = []
-        sorted_positions = sorted(active_positions)
-        for i in range(len(sorted_positions)-1):
-            adjacent_distances.append(sorted_positions[i+1] - sorted_positions[i])
         
-        # 相邻手指距离惩罚（距离过大或过小都不舒服）
-        distance_penalty = sum(-abs(d-2) for d in adjacent_distances) if adjacent_distances else 0
-        
-        return -(finger_span + distance_penalty)
-
 
     def fitness(self, sequence, target_melody,target_chord):
         w_PC=1.0
-        w_NWC=1.0
-        w_NCC=1.0
+        w_NWC=5.0
+        w_NCC=1.0 
 
         PC=self.cal_PC(sequence)
         NWC=self.cal_NWC(sequence,target_melody)
-        NCC=self.cal_NCC(sequence,target_chord)
+        # NCC=self.cal_NCC(sequence,target_chord)
+        NCC=self.new_cal_NCC(sequence,target_chord)
         #print("PC,NWC,NCC",PC,NWC,NCC)
         fitness_value=PC*w_PC+NWC*w_NWC+NCC*w_NCC
         return fitness_value
@@ -193,9 +191,11 @@ class GuitarGeneticAlgorithm:
             best_sequence = population[fitnesses.index(best_fit)]
 
             if generation % max(1,(GENERATIONS//10)) == 0:
+
                 melody_pitch = [self.get_melody_pitch(chord) for chord in best_sequence]
                 print(f"Generation {generation}: Best Fitness = {best_fit}")
-                print("Best sequence melody:", melody_pitch)
+                print("Best sequence melody:", pitch2name(melody_pitch))
+                print("Best finger position:", best_sequence)
 
             candidates = self.tournament_selection(population, fitnesses)
             new_population = []
@@ -234,41 +234,176 @@ class GuitarGeneticAlgorithm:
             return results[0]
         else:
             return results
+        
 
-# 使用示例
-def main():
-    # 创建 Guitar 实例
-    guitar = Guitar()
+class HandGuitarGA(GuitarGeneticAlgorithm):
+    def __init__(self, target_melody, target_chords=None, guitar=None):
+        super().__init__(target_melody, target_chords, guitar)
 
-    # 示例1：单个旋律输入
-    target_melody = [60, 62, 64, 60, 60, 62, 64, 60]
-    target_chord='C'
-    print("===== 单旋律情况 =====")
-    ga_single = GuitarGeneticAlgorithm(target_melody,target_chord, guitar)
-    best_sequence = ga_single.run()
-    print("\nFinal best sequence:")
-    print(best_sequence)
-    melody_pitch = [ga_single.get_melody_pitch(chord) for chord in best_sequence]
-    print("Melody pitches:", melody_pitch)
-    print("Target Melody:", target_melody)
+    def get_melody_pitch(self, chord_data):
+        """从增强的和弦数据中提取最高音的MIDI pitch"""
+        fingering, _ = chord_data  # 解包和弦数据，忽略手指信息
+        return super().get_melody_pitch(fingering)
 
-    # 示例2：list of list 输入
-    target_melody_s = [
-        [60, 0, 62, 0, 64, 0, 60, 0],
-        [64, 0, 65, 0, 67, 0, 0, 0],
-        [64, 0, 55, 0, 60, 0, -1, -1]
-    ]
-    target_chords=['C','G','C']
+    def cal_finger_comfort(self, finger_positions):
+        """计算手指位置的舒适度"""
+        if not finger_positions:
+            return 0
 
-    print("\n===== 多旋律情况 =====")
-    ga_multiple = GuitarGeneticAlgorithm(target_melody_s,target_chords, guitar)
-    best_sequences = ga_multiple.run()
-    for idx, seq in enumerate(best_sequences):
-        print(f"\nFinal best sequence for melody {idx}:")
-        print(seq)
-        melody_pitch = [ga_multiple.get_melody_pitch(chord) for chord in seq]
-        print("Melody pitches:", melody_pitch)
-        print("Target Melody:", target_melody_s[idx])
+        active_positions = [pos for pos in finger_positions if pos != -1]
+        if not active_positions:
+            return 0
 
-if __name__ == "__main__":
-    main()
+        finger_span = max(active_positions) - min(active_positions)
+        adjacent_distances = []
+        sorted_positions = sorted(active_positions)
+        for i in range(len(sorted_positions) - 1):
+            adjacent_distances.append(sorted_positions[i + 1] - sorted_positions[i])
+
+        span_penalty = -finger_span * 0.5
+        distance_penalty = sum(-abs(d - 2) for d in adjacent_distances) if adjacent_distances else 0
+
+        return span_penalty + distance_penalty
+
+    def cal_finger_movement(self, prev_fingers, curr_fingers):
+        """计算两个连续和弦之间的手指移动量"""
+        total_movement = 0
+        for prev_pos, curr_pos in zip(prev_fingers, curr_fingers):
+            if prev_pos != -1 and curr_pos != -1:
+                total_movement += abs(curr_pos - prev_pos)
+        return -total_movement
+
+    def cal_PC(self, sequence):
+        """计算物理舒适度（Physical Comfort）"""
+        fingerings, finger_assignments = zip(*sequence)
+
+        PC1 = -sum(sum(1 for fret in chord if fret > 0) for chord in fingerings)
+        PC2 = -sum((max(chord) - max(min(chord), 0)) for chord in fingerings)
+
+        total_avg_fret = 0
+        for chord in fingerings:
+            fretted_notes = [fret for fret in chord if fret > 0]
+            avg_fret = sum(fretted_notes) / max(1, len(fretted_notes)) if fretted_notes else 0
+            total_avg_fret += avg_fret
+
+        PC3 = total_avg_fret
+
+        PC4 = 0
+        for i in range(1, len(fingerings)):
+            prev_chord = fingerings[i - 1]
+            curr_chord = fingerings[i]
+            hand_movement = sum(abs(curr_fret - prev_fret)
+                                for curr_fret, prev_fret in zip(curr_chord, prev_chord)
+                                if curr_fret > 0 and prev_fret > 0)
+            PC4 += hand_movement
+        PC4 *= -1
+
+        PC5 = sum(self.cal_finger_comfort(fingers) for fingers in finger_assignments)
+
+        PC6 = 0
+        for i in range(1, len(finger_assignments)):
+            PC6 += self.cal_finger_movement(finger_assignments[i - 1], finger_assignments[i])
+
+        return (PC1 + PC2 + PC3 + PC4 + PC5 + PC6) / len(sequence)
+    
+    def cal_NWC(self, sequence, target_melody):
+        fingerings, _ = zip(*sequence)
+        return super().cal_NWC(fingerings, target_melody)
+
+    def new_cal_NCC(self, play_seq, chord_name):
+        fingerings, _ = zip(*play_seq)
+        return super().new_cal_NCC(fingerings, chord_name)
+
+    def initialize_population(self, target_melody):
+        """初始化种群，现在每个和弦包含按弦位置和手指分配"""
+        population = []
+        for _ in range(POPULATION_SIZE):
+            sequence = []
+            for _ in range(len(target_melody)):
+                fingering = [random.randint(-1, MAX_FRET) for _ in range(NUM_STRINGS)]
+                finger_assignment = [-1] * NUM_STRINGS
+                pressed_strings = [i for i, fret in enumerate(fingering) if fret > 0]
+
+                if pressed_strings:
+                    available_fingers = list(range(1, NUM_FINGERS + 1))
+                    random.shuffle(available_fingers)
+                    for i, string_idx in enumerate(pressed_strings):
+                        if i < len(available_fingers):
+                            finger_assignment[string_idx] = available_fingers[i]
+
+                sequence.append((fingering, finger_assignment))
+            population.append(sequence)
+        return population
+
+    def mutate(self, sequence):
+        """变异操作，同时处理按弦位置和手指分配"""
+        mutated_sequence = []
+        for fingering, finger_assignment in sequence:
+            mutated_fingering = [
+                random.randint(-1, MAX_FRET) if random.random() < MUTATION_RATE else fret
+                for fret in fingering
+            ]
+
+            mutated_fingers = [-1] * NUM_STRINGS
+            pressed_strings = [i for i, fret in enumerate(mutated_fingering) if fret > 0]
+
+            if pressed_strings:
+                available_fingers = list(range(1, NUM_FINGERS + 1))
+                random.shuffle(available_fingers)
+                for i, string_idx in enumerate(pressed_strings):
+                    if i < len(available_fingers):
+                        mutated_fingers[string_idx] = available_fingers[i]
+
+            mutated_sequence.append((mutated_fingering, mutated_fingers))
+
+        return mutated_sequence
+
+    def fitness(self, sequence, target_melody, target_chord):
+        """计算适应度"""
+        w_PC = 0.0
+        w_NWC = 0.0
+        w_NCC = 1.0
+
+        PC = self.cal_PC(sequence)
+        NWC = self.cal_NWC(sequence, target_melody)
+        NCC = self.new_cal_NCC(sequence, target_chord)
+
+        return PC * w_PC + NWC * w_NWC + NCC * w_NCC
+
+    def run_single(self, target_melody, target_chord):
+        """运行单个目标旋律的遗传算法"""
+        population = self.initialize_population(target_melody)
+
+        for generation in range(GENERATIONS):
+            fitnesses = [self.fitness(ind, target_melody, target_chord) for ind in population]
+            best_fit = max(fitnesses)
+            best_sequence = population[fitnesses.index(best_fit)]
+
+            if generation % max(1, (GENERATIONS // 10)) == 0:
+                melody_pitch = [self.get_melody_pitch(chord_data) for chord_data in best_sequence]
+                print(f"Generation {generation}: Best Fitness = {best_fit}")
+                print("Best sequence melody:", pitch2name(melody_pitch))
+                print("Best sequence fingerings:", best_sequence)
+
+            if generation == GENERATIONS - 1:
+                result = self.new_cal_NCC(best_sequence, target_chord)
+                print('notes not in chord', result * len(best_sequence))
+
+            candidates = self.tournament_selection(population, fitnesses)
+            new_population = []
+            candidate_idx = 0
+
+            for _ in range(POPULATION_SIZE - RESERVED):
+                candidate_idx %= (len(candidates) - 1)
+                parent1 = candidates[candidate_idx]
+                parent2 = candidates[candidate_idx + 1]
+                child = self.crossover(parent1, parent2)
+                child = self.mutate(child)
+                new_population.append(child)
+                candidate_idx += 1
+
+            population = new_population + candidates[:RESERVED]
+
+        final_fitnesses = [self.fitness(ind, target_melody, target_chord) for ind in population]
+        best_sequence = population[np.argmax(final_fitnesses)]
+        return best_sequence
