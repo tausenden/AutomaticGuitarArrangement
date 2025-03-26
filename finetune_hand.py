@@ -20,12 +20,12 @@ def main():
         guitar=guitar,
         mutation_rate=0.3,
         population_size=1000,
-        generations=800,
+        generations=400,
         reserved_ratio=0.1,
-        max_fret=8,
+        max_fret=15,
         w_PC=1.0,
-        w_NWC=5.0,
-        w_NCC=5.0
+        w_NWC=10.0,
+        w_NCC=1.0
     )
     best_sequence = ga.run()
     print("\nFinal best sequence:")
