@@ -1,3 +1,4 @@
+from remi_z import MultiTrack
 class Guitar():
     def __init__(self,tuning=[40, 45, 50, 55, 59, 64], fretnum=24):
         self.tuning= tuning
@@ -117,18 +118,15 @@ class Guitar():
 
         return midi_notes
 
-class Hand():
-    def __init__(self):
-        self.f1=None
-        self.f2=None
-        self.f3=None
-        self.f4=None
-
 def pitch2name(seq):
     res=[]
     for i in seq:
         lev=i//12-1
         name=i%12
+        if i==-1:
+            res.append('#')
+            continue
+
         if name==0:
             name='C'
         elif name==1:
@@ -193,6 +191,87 @@ def name2pitch(nameseq):
         res.append(name+12*(lev+1))
     return res
 
+def visualize_guitar_tab_withpos(sequence, position_map=None):
+    """
+    Visualizes guitar tablature and finger positions from a sequence of fret positions,
+    including position numbers above the tablature.
+    
+    Args:
+        sequence: List of tuples, each containing either one or two lists 
+                 (fret positions and optionally finger assignments)
+        position_map: Optional dictionary mapping sequence indices to MIDI positions.
+                     If provided, these values will be shown instead of sequence indices.
+    """
+    # Initialize strings for fret positions
+    strings = ['E|', 'B|', 'G|', 'D|', 'A|', 'E|']
+    position_row = '  '  # Start with padding to align with string names
+    finger_strings = ['E|', 'B|', 'G|', 'D|', 'A|', 'E|']
+    
+    # Process each position in the sequence
+    for i, entry in enumerate(sequence):
+        # Check if the entry is a tuple with finger positions
+        if isinstance(entry, tuple):
+            frets, fingers = entry
+        else:
+            frets = entry
+            fingers = None
+        
+        # Add bar line every 48 positions
+        if i > 0 and i % 48 == 0:
+            for j in range(6):
+                strings[j] += '|'
+                if fingers is not None:
+                    finger_strings[j] += '|'
+            position_row += ' '
+        
+        # Check if any string is played at this position
+        has_note = any(fret != -1 for fret in frets)
+        
+        # Determine position number to display
+        display_pos = position_map[i] if position_map and i in position_map else i
+        
+        # Add position number exactly above the tab notation
+        if has_note:
+            position_row += str(display_pos).rjust(2) + '-'
+        else:
+            position_row += '---'
+        
+        # Process each string
+        for string_idx in range(6):
+            # Handle fret positions
+            fret = frets[string_idx]
+            if fret == -1:
+                strings[string_idx] += '--'
+            else:
+                strings[string_idx] += str(fret).rjust(2)
+            
+            # Handle finger positions if available
+            if fingers is not None:
+                finger = fingers[string_idx]
+                if finger == -1:
+                    finger_strings[string_idx] += '--'
+                else:
+                    finger_strings[string_idx] += str(finger).rjust(2)
+            
+            # Add separator
+            strings[string_idx] += '-'
+            if fingers is not None:
+                finger_strings[string_idx] += '-'
+    
+    # Print results
+    print("Position numbers:")
+    print(position_row)
+    
+    if fingers is not None:
+        print("\nFinger positions:")
+        for line in finger_strings:
+            print(line)
+        print()
+    
+    print("\nFret positions:")
+    for line in strings:
+        print(line)
+
 def visualize_guitar_tab(sequence):
     """
     Visualizes guitar tablature and finger positions from a sequence of (fret, finger) tuples or just fret positions.
@@ -254,3 +333,49 @@ def visualize_guitar_tab(sequence):
     print("Fret positions:")
     for line in strings:
         print(line)
+
+def midi_process(midi_file_path):
+    """
+    Process a MIDI file using remi_z for use with Guitar GA.
+    This follows the preprocessing logic of GAusing_remiz.py.
+    
+    Args:
+        midi_file_path: Path to the MIDI file
+        
+    Returns:
+        tuple containing:
+        - target_melody_list: List of lists of MIDI pitches for each bar
+        - target_chord_list: List of chord names (just the root name) for each bar
+    """
+    
+    # Load MIDI file using remi_z
+    mt = MultiTrack.from_midi(midi_file_path)
+    
+    target_melody_list = []
+    target_chord_list = []
+    
+    # Process each bar
+    for bar in mt.bars:
+        # Extract melody using remi_z's high note method
+        mel_notes = bar.get_melody('hi_note')
+        
+        # Convert to GA format (list of MIDI pitch values)
+        melody = []
+        for note in mel_notes:
+            if note is None:
+                melody.append(-1)  # Represent silence as -1
+            else:
+                melody.append(note.pitch)
+        
+        target_melody_list.append(melody)
+        
+        # Extract chord using remi_z's method
+        chords = bar.get_chord()
+        if chords and chords[0]:
+            # Take the first chord of each bar - extract just the root name
+            target_chord_list.append(chords[0][0])
+        else:
+            # Default to C if no chord detected
+            target_chord_list.append('C')
+    
+    return target_melody_list, target_chord_list
