@@ -1,7 +1,7 @@
 import numpy as np
 import random
 from utlis import Guitar
-from utlis import pitch2name
+from utlis import pitch2name,visualize_guitar_tab
 
 class GuitarGeneticAlgorithm:
     def __init__(self, target_melody, target_chords=None, guitar=None, 
@@ -47,18 +47,34 @@ class GuitarGeneticAlgorithm:
         midi_notes = self.guitar.get_chord_midi(fingering_dict)
         return max(midi_notes) if midi_notes else None
     
-    def cal_PC(self, sequence):
+    def cal_PC(self, sequence,verbose=0):
 
-        PC1 = -sum(sum(1 for fret in chord if fret > 0) for chord in sequence)  # string press in the same time
+        PC1 = 0
+        for chord in sequence:
+            # Count notes actually being played (fret > 0, not open strings)
+            notes_played = 0
+            for fret in chord:
+                if fret > 0:  # Only count actual fret presses
+                    notes_played += 1
+            
+            # Base penalty for each note played
+            chord_penalty = -notes_played
+            
+            # Additional penalty for playing more than 3 notes
+            if notes_played > 3:
+                chord_penalty -= (notes_played+3) **2
+            
+            PC1 += chord_penalty    
+
         PC2 = -sum((max(chord) - max(min(chord), 0)) for chord in sequence)  # width of the press
 
-        PC3 = 0
+        PC3 = 0 #avg press position
         for chord in sequence:
             fretted_notes = [fret for fret in chord if fret > 0]
             avg_fret = sum(fretted_notes) / max(1, len(fretted_notes)) if fretted_notes else 0
-            PC3 += avg_fret
+            PC3 -= avg_fret
 
-        PC4 = 0
+        PC4 = 0 # fret changes
         for i in range(1, len(sequence)):
             prev_chord = sequence[i - 1]
             curr_chord = sequence[i]
@@ -66,6 +82,11 @@ class GuitarGeneticAlgorithm:
                                 for curr_fret, prev_fret in zip(curr_chord, prev_chord) 
                                 if curr_fret > 0 and prev_fret > 0)
             PC4 -= hand_movement
+        if verbose:
+            print("string press in the same time",PC1)
+            print("width of the press",PC2)
+            print("avg press position",PC3)
+            print("fret changes",PC4)
         return (PC1 + PC2 + PC3 + PC4)/len(sequence)
     
     def cal_NWC(self, sequence, target_melody):
@@ -73,6 +94,9 @@ class GuitarGeneticAlgorithm:
         valid_notes = 0
 
         for i in range(min(len(sequence), len(target_melody))):
+            if target_melody[i] == -1:
+                continue
+
             chord_dict = {i+1: fret for i, fret in enumerate(sequence[i])}
             midi_notes = self.guitar.get_chord_midi(chord_dict)
             
@@ -103,33 +127,29 @@ class GuitarGeneticAlgorithm:
             total_error += pitch_error
             valid_notes += 1
         return -(total_error)/len(sequence)
-    
-    def cal_NCC(self, play_seq, chord_name): # how many notes are not in chord
-        tot_err=0
-        if not chord_name:
-            return 0
-        chord_dict=self.guitar.chords[chord_name][0]
-        
-        chord_six=[]
-        for i in range(6):
-            chord_six.append(chord_dict[i+1])
-        for note in play_seq:
-            for i in range(6):
-                tot_err+=abs(note[i]-chord_six[i])
-        return -(tot_err)/len(play_seq)
 
-    def new_cal_NCC(self, play_seq, target_melody, chord_name): # how many notes not in the triad of chord
+    def cal_NCC(self, play_seq, target_melody, chord_name, verbose=0): # how many notes not in the triad of chord
         tot_err=0
         if not chord_name:
             return 0
-            
+    
         target_chord_note=self.guitar.chords4NCC[chord_name]
-        
+
+        if verbose:
+            print("chord_name",chord_name)
+            print("target_chord_note",target_chord_note)
+
         for i in range(len(play_seq)):
             chord_dict = {i+1: fret for i, fret in enumerate(play_seq[i])}
             midi_notes = self.guitar.get_chord_midi(chord_dict)
-            for note in midi_notes:
 
+            if verbose:
+                print("chord_dict",chord_dict)
+                print("midi_notes",midi_notes)
+
+            for note in midi_notes:
+                if note == -1:
+                    continue
                 if note != -1 and note == target_melody[i]:
                     continue
                 
@@ -142,7 +162,7 @@ class GuitarGeneticAlgorithm:
     def fitness(self, sequence, target_melody, target_chord):
         PC = self.cal_PC(sequence)
         NWC = self.cal_NWC(sequence, target_melody)
-        NCC = self.new_cal_NCC(sequence, target_melody, target_chord)
+        NCC = self.cal_NCC(sequence, target_melody, target_chord)
         #print("PC,NWC,NCC",PC,NWC,NCC)
         fitness_value = PC * self.w_PC + NWC * self.w_NWC + NCC * self.w_NCC
         return fitness_value
@@ -152,7 +172,7 @@ class GuitarGeneticAlgorithm:
         population = []
         
         values = [-1] + list(range(self.max_fret + 1))
-        raw_probabilities = [0.8] + [0.2 * (self.max_fret - i + 1) for i in range(self.max_fret + 1)]
+        raw_probabilities = [0.9] + [0.1 * (self.max_fret - i + 1) for i in range(self.max_fret + 1)]
         probabilities = np.array(raw_probabilities) / sum(raw_probabilities)
         
         for _ in range(self.population_size):
@@ -339,10 +359,10 @@ class HandGuitarGA(GuitarGeneticAlgorithm):
                 penalty -= finger2 - finger1 + fret1 - fret2  # 惩罚手指交叉
         return penalty
 
-    def cal_PC(self, sequence):
+    def cal_PC(self, sequence,verbose=0):
 
         fingerings, finger_assignments = zip(*sequence)
-        PC1_4=super().cal_PC(fingerings)
+        PC1_4=super().cal_PC(fingerings,verbose)
 
         PC5 = sum(self.cal_finger_comfort(fingerings[i], finger_assignments[i]) for i in range(len(fingerings)))
 
@@ -355,15 +375,21 @@ class HandGuitarGA(GuitarGeneticAlgorithm):
         for i in range(len(finger_assignments)):
             PC7+=self.cal_finger_order(fingerings[i],finger_assignments[i])
 
+        if verbose:
+            print("finger_comfort",PC5)
+            print("finger_movement",PC6)
+            print("finge_order",PC7)
+
         return PC1_4 + (PC5 + PC6 + PC7) / len(sequence)
+    
     
     def cal_NWC(self, sequence, target_melody):
         fingerings, _ = zip(*sequence)
         return super().cal_NWC(fingerings, target_melody)
 
-    def new_cal_NCC(self, play_seq, target_melody,chord_name):
+    def cal_NCC(self, play_seq, target_melody,chord_name,verbose=0):
         fingerings, _ = zip(*play_seq)
-        return super().new_cal_NCC(fingerings, target_melody, chord_name)
+        return super().cal_NCC(fingerings, target_melody, chord_name,verbose)
 
     def initialize_population(self, target_melody):
         """初始化种群，现在每个和弦包含按弦位置和手指分配"""
@@ -440,14 +466,20 @@ class HandGuitarGA(GuitarGeneticAlgorithm):
                     valid_frets.append(-1)
 
                     # Add frets that produce melody notes or chord tones
-                    for f in range(1, self.max_fret + 1):
-                        fret_pitch = self.guitar.fboard[string_idx + 1][f]
-                        if fret_pitch in [target_melody[idx], target_melody[idx] + 12, target_melody[idx] - 12] or (fret_pitch % 12) in chord_notes:
-                            valid_frets.append(f)
+                    if target_melody[idx] == -1:
+                        for f in range(1, self.max_fret + 1):
+                            fret_pitch = self.guitar.fboard[string_idx + 1][f]
+                            if (fret_pitch % 12) in chord_notes:
+                                valid_frets.append(f)
+                    else:
+                        for f in range(1, self.max_fret + 1):
+                            fret_pitch = self.guitar.fboard[string_idx + 1][f]
+                            if fret_pitch in [target_melody[idx], target_melody[idx] + 12, target_melody[idx] - 12] or (fret_pitch % 12) in chord_notes:
+                                valid_frets.append(f)
                     
                     # If no valid frets found that match melody/chord, use other frets
-                    if len(valid_frets) <= 1:  # Only -1 is in the list
-                        valid_frets.extend(range(1, self.max_fret + 1))
+                    if len(valid_frets) == 0:  # Only -1 is in the list
+                        valid_frets.extend(range(-1, self.max_fret + 1))
                     
                     # Choose a fret randomly from the valid options
                     mutated_fingering.append(random.choice(valid_frets))
@@ -474,7 +506,7 @@ class HandGuitarGA(GuitarGeneticAlgorithm):
         """计算适应度"""
         PC = self.cal_PC(sequence)
         NWC = self.cal_NWC(sequence, target_melody)
-        NCC = self.new_cal_NCC(sequence, target_melody, target_chord)
+        NCC = self.cal_NCC(sequence, target_melody, target_chord)
 
         return PC * self.w_PC + NWC * self.w_NWC + NCC * self.w_NCC
 
@@ -492,11 +524,14 @@ class HandGuitarGA(GuitarGeneticAlgorithm):
                 print(f"Generation {generation}: Best Fitness = {best_fit}")
                 print("Best sequence melody:", pitch2name(melody_pitch))
                 #print("Best sequence fingerings:", best_sequence)
-                print("NCC now",self.new_cal_NCC(best_sequence,target_melody,target_chord)*len(best_sequence))
+                print("NCC now",self.cal_NCC(best_sequence,target_melody,target_chord)*len(best_sequence))
                 print("NWC now",self.cal_NWC(best_sequence,target_melody)*len(best_sequence))
+                fret, finger = zip(*best_sequence)
+                print(fret)
+                visualize_guitar_tab(fret)
 
             if generation == self.generations - 1:
-                result = self.new_cal_NCC(best_sequence, target_melody,target_chord)
+                result = self.cal_NCC(best_sequence, target_melody,target_chord)
                 print('notes not in chord', result * len(best_sequence))
 
             candidates = self.tournament_selection(population, fitnesses)
