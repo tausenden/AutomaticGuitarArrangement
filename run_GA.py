@@ -4,7 +4,7 @@ import random
 from utlis import Guitar
 from utlis import pitch2name
 from utlis import visualize_guitar_tab
-from GAlibcopy import HandGuitarGA
+from GA_workonRP_lib import HandGuitarGA
 midi_file_path = "testremiz\misc\caihong-4bar.midi"
 guitar = Guitar()
 t_melody,t_chord= midi_process(midi_file_path)
