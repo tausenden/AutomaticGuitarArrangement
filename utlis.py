@@ -324,11 +324,11 @@ def visualize_guitar_tab(sequence):
                 finger_strings[j] += '-'
     
     # Print results
-    if fingers is not None:
-        print("Finger positions:")
-        for line in finger_strings:
-            print(line)
-        print()
+    # if fingers is not None:
+    #     print("Finger positions:")
+    #     for line in finger_strings:
+    #         print(line)
+    #     print()
     
     print("Fret positions:")
     for line in strings:
