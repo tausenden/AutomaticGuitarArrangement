@@ -379,3 +379,30 @@ def midi_process(midi_file_path):
             target_chord_list.append('C')
     
     return target_melody_list, target_chord_list
+def get_all_notes_from_midi(midi_file_path):
+    """
+    Extract all notes from a MIDI file as a list of lists with pitch values.
+    """
+    # Load MIDI file using remi_z
+    mt = MultiTrack.from_midi(midi_file_path)
+    
+    # Collect all positions across all bars
+    all_positions = []
+    
+    for bar in mt.bars:
+        # Group notes by position within this bar
+        position_notes = {}
+        all_notes = bar.get_all_notes(include_drum=False)
+        
+        for note in all_notes:
+            pos = note.onset
+            if pos not in position_notes:
+                position_notes[pos] = []
+            position_notes[pos].append(note.pitch)
+        
+        # Add this bar's positions to the overall list
+        sorted_positions = sorted(position_notes.keys())
+        for pos in sorted_positions:
+            all_positions.append(position_notes[pos])
+    
+    return all_positions

@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from utlis import Guitar
+from utils import Guitar
 
 # 定义常量
 MUTATION_RATE = 0.3

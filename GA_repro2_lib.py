@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from utlis import Guitar, pitch2name, visualize_guitar_tab
+from utils import Guitar, pitch2name, visualize_guitar_tab
 from remi_z import MultiTrack
 
 class GAreproducing:
