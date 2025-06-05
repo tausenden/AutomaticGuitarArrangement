@@ -1,22 +1,24 @@
 import numpy as np
 import json
-from typing import List, Tuple, Dict
-
-class ImprovedHMMrepro:
+class HMMrepro:
     """
     Guitar HMM following the paper exactly without improvements
     """
     
-    def __init__(self, forms_file='guitar_forms.json'):
+    def __init__(self, single_forms_file='guitar_forms_single.json', multi_forms_file='guitar_forms_multi.json'):
         # Guitar configuration
         self.num_strings = 6
         self.num_frets = 19
         self.open_strings = [40, 45, 50, 55, 59, 64]
         self.string_names = ['E', 'A', 'D', 'G', 'B', 'E']
         
-        # Load forms
-        self.forms = self._load_forms(forms_file)
-        print(f"Loaded {len(self.forms)} forms from {forms_file}")
+        # Load forms from both files
+        single_forms = self._load_forms(single_forms_file)
+        multi_forms = self._load_forms(multi_forms_file)
+        self.forms = single_forms + multi_forms
+        print(f"Loaded {len(single_forms)} single forms from {single_forms_file}")
+        print(f"Loaded {len(multi_forms)} multi forms from {multi_forms_file}")
+        print(f"Total {len(self.forms)} forms")
         
         # Precompute form groups by pitch for efficiency
         self._group_forms_by_pitch()
@@ -54,7 +56,6 @@ class ImprovedHMMrepro:
         dt = max(time_interval, 0.1)  # Avoid division by zero
         
         # Laplace distribution term: (1/2d_t)exp(-|I_i - I_j|/d_t)
-        # I MOLDIFIED THE MOVEMENT WEIGHT TO MATCH THE PAPER
         laplace_factor = (1.0 / (2.0 * dt)) * np.exp(-movement*2 / dt)
         
         # Difficulty factors from paper
@@ -71,8 +72,8 @@ class ImprovedHMMrepro:
         """
         Output probability - deterministic for single notes as in paper
         """
-        if isinstance(target_pitch, list):
-            target_pitch = target_pitch[0] if target_pitch else -1
+        # Input is always a list, take first element
+        target_pitch = target_pitch[0] if target_pitch else -1
         
         return 1.0 if target_pitch in form['pitches'] else 0.0
     
@@ -89,8 +90,8 @@ class ImprovedHMMrepro:
         # Find valid forms for each pitch
         valid_forms = []
         for pitch in pitch_sequence:
-            if isinstance(pitch, list):
-                pitch = pitch[0] if pitch else -1
+            # Input is always a list, take first element
+            pitch = pitch[0] if pitch else -1
             
             if pitch in self.forms_by_pitch:
                 valid_forms.append(self.forms_by_pitch[pitch])
@@ -174,14 +175,12 @@ class ImprovedHMMrepro:
             for string_idx in range(6):
                 display_string = 5 - string_idx
                 
-                # Handle both dict and int keys
-                if isinstance(form['fret_config'], dict):
-                    if display_string in form['fret_config']:
-                        fret = form['fret_config'][display_string]
-                    elif str(display_string) in form['fret_config']:
-                        fret = form['fret_config'][str(display_string)]
-                    else:
-                        fret = -1
+                # Handle fret_config - try both int and string keys
+                fret_config = form['fret_config']
+                if display_string in fret_config:
+                    fret = fret_config[display_string]
+                elif str(display_string) in fret_config:
+                    fret = fret_config[str(display_string)]
                 else:
                     fret = -1
                 
@@ -195,24 +194,63 @@ class ImprovedHMMrepro:
         for tab_line in tab_strings:
             print(tab_line)
 
+def get_all_notes_from_midi(midi_file_path):
+    """
+    Extract all notes from a MIDI file as a list of lists with pitch values.
+    """
+    from remi_z import MultiTrack
+    
+    # Load MIDI file using remi_z
+    mt = MultiTrack.from_midi(midi_file_path)
+    
+    # Collect all positions across all bars
+    all_positions = []
+    
+    for bar in mt.bars:
+        # Group notes by position within this bar
+        position_notes = {}
+        all_notes = bar.get_all_notes(include_drum=False)
+        
+        for note in all_notes:
+            pos = note.onset
+            if pos not in position_notes:
+                position_notes[pos] = []
+            position_notes[pos].append(note.pitch)
+            position_notes[pos] = list(set(position_notes[pos]))
+        
+        sorted_positions = sorted(position_notes.keys())
+        for pos in sorted_positions:
+            all_positions.append(position_notes[pos])
+    
+    return all_positions
 
 # Test the exact paper reproduction
 if __name__ == "__main__":
     print("Testing Guitar HMM - Exact Paper Reproduction")
     print("=" * 60)
     
-    hmm = ImprovedHMMrepro()
+    hmm = HMMrepro()
     
-    # Test 1: C major scale C4-C5
+    # Test 1: List format input
     print("\nTEST 1: C4-C5 (C major scale)")
-    melody = [60, 62, 64, 65, 67, 69, 71, 72]  # C D E F G A B C
+    melody = [[60], [62], [64], [65], [67], [69], [71], [72]]  # C D E F G A B C
     path = hmm.viterbi(melody)
     if path:
         hmm.visualize_tablature(path)
     
     # Test 2: Extended scale C4-D5
     print("\n\nTEST 2: C4-D5 (Extended C major scale)")
-    melody = [60, 62, 64, 65, 67, 69, 71, 72, 74]  # C D E F G A B C D
+    melody = [[60], [62], [64], [65], [67], [69], [71], [72], [74]]  # C D E F G A B C D
     path = hmm.viterbi(melody)
     if path:
         hmm.visualize_tablature(path)
+    
+    print("\n\nTEST 3: Caihong 4 bars MIDI file ")
+    midi_path= './caihong-4bar.midi'
+    melody = get_all_notes_from_midi(midi_path)
+    print(f"Extracted melody: {melody}")
+    path = hmm.viterbi(melody)
+    #print(f"Path found: {path}")
+    if path:
+        hmm.visualize_tablature(path)
+

@@ -14,8 +14,10 @@
     "index_pos": 0,
     "width": 0,
     "fingers": 0,
-    "string": 0,
-    "fret": 0
+    "finger_used": [],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -32,9 +34,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 0,
-    "fret": 1
+    "finger_used": [
+      1
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -51,9 +56,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 0,
-    "fret": 2
+    "finger_used": [
+      1
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -70,9 +78,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 0,
-    "fret": 2
+    "finger_used": [
+      2
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -89,9 +100,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 0,
-    "fret": 3
+    "finger_used": [
+      1
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -108,9 +122,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 0,
-    "fret": 3
+    "finger_used": [
+      2
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -127,9 +144,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 0,
-    "fret": 3
+    "finger_used": [
+      3
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -146,9 +166,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 0,
-    "fret": 4
+    "finger_used": [
+      1
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -165,9 +188,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 0,
-    "fret": 4
+    "finger_used": [
+      2
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -184,9 +210,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 0,
-    "fret": 4
+    "finger_used": [
+      3
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -203,9 +232,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 0,
-    "fret": 4
+    "finger_used": [
+      4
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -222,9 +254,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 0,
-    "fret": 5
+    "finger_used": [
+      1
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -241,9 +276,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 0,
-    "fret": 5
+    "finger_used": [
+      2
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -260,9 +298,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 0,
-    "fret": 5
+    "finger_used": [
+      3
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -279,9 +320,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 0,
-    "fret": 5
+    "finger_used": [
+      4
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -298,9 +342,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 0,
-    "fret": 6
+    "finger_used": [
+      1
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -317,9 +364,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 0,
-    "fret": 6
+    "finger_used": [
+      2
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -336,9 +386,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 0,
-    "fret": 6
+    "finger_used": [
+      3
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -355,9 +408,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 0,
-    "fret": 6
+    "finger_used": [
+      4
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -374,9 +430,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 0,
-    "fret": 7
+    "finger_used": [
+      1
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -393,9 +452,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 0,
-    "fret": 7
+    "finger_used": [
+      2
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -412,9 +474,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 0,
-    "fret": 7
+    "finger_used": [
+      3
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -431,9 +496,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 0,
-    "fret": 7
+    "finger_used": [
+      4
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -450,9 +518,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 0,
-    "fret": 8
+    "finger_used": [
+      1
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -469,9 +540,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 0,
-    "fret": 8
+    "finger_used": [
+      2
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -488,9 +562,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 0,
-    "fret": 8
+    "finger_used": [
+      3
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -507,9 +584,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 0,
-    "fret": 8
+    "finger_used": [
+      4
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -526,9 +606,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 0,
-    "fret": 9
+    "finger_used": [
+      1
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -545,9 +628,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 0,
-    "fret": 9
+    "finger_used": [
+      2
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -564,9 +650,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 0,
-    "fret": 9
+    "finger_used": [
+      3
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -583,9 +672,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 0,
-    "fret": 9
+    "finger_used": [
+      4
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -602,9 +694,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 0,
-    "fret": 10
+    "finger_used": [
+      1
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -621,9 +716,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 0,
-    "fret": 10
+    "finger_used": [
+      2
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -640,9 +738,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 0,
-    "fret": 10
+    "finger_used": [
+      3
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -659,9 +760,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 0,
-    "fret": 10
+    "finger_used": [
+      4
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -678,9 +782,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 0,
-    "fret": 11
+    "finger_used": [
+      1
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -697,9 +804,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 0,
-    "fret": 11
+    "finger_used": [
+      2
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -716,9 +826,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 0,
-    "fret": 11
+    "finger_used": [
+      3
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -735,9 +848,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 0,
-    "fret": 11
+    "finger_used": [
+      4
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -754,9 +870,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 0,
-    "fret": 12
+    "finger_used": [
+      1
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -773,9 +892,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 0,
-    "fret": 12
+    "finger_used": [
+      2
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -792,9 +914,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 0,
-    "fret": 12
+    "finger_used": [
+      3
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -811,9 +936,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 0,
-    "fret": 12
+    "finger_used": [
+      4
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -830,9 +958,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 0,
-    "fret": 13
+    "finger_used": [
+      1
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -849,9 +980,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 0,
-    "fret": 13
+    "finger_used": [
+      2
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -868,9 +1002,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 0,
-    "fret": 13
+    "finger_used": [
+      3
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -887,9 +1024,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 0,
-    "fret": 13
+    "finger_used": [
+      4
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -906,9 +1046,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 0,
-    "fret": 14
+    "finger_used": [
+      1
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -925,9 +1068,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 0,
-    "fret": 14
+    "finger_used": [
+      2
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -944,9 +1090,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 0,
-    "fret": 14
+    "finger_used": [
+      3
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -963,9 +1112,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 0,
-    "fret": 14
+    "finger_used": [
+      4
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -982,9 +1134,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 0,
-    "fret": 15
+    "finger_used": [
+      1
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -1001,9 +1156,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 0,
-    "fret": 15
+    "finger_used": [
+      2
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -1020,9 +1178,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 0,
-    "fret": 15
+    "finger_used": [
+      3
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -1039,9 +1200,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 0,
-    "fret": 15
+    "finger_used": [
+      4
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -1058,9 +1222,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 0,
-    "fret": 16
+    "finger_used": [
+      1
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -1077,9 +1244,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 0,
-    "fret": 16
+    "finger_used": [
+      2
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -1096,9 +1266,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 0,
-    "fret": 16
+    "finger_used": [
+      3
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -1115,9 +1288,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 0,
-    "fret": 16
+    "finger_used": [
+      4
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -1134,9 +1310,12 @@
     "index_pos": 17,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 0,
-    "fret": 17
+    "finger_used": [
+      1
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -1153,9 +1332,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 0,
-    "fret": 17
+    "finger_used": [
+      2
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -1172,9 +1354,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 0,
-    "fret": 17
+    "finger_used": [
+      3
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -1191,9 +1376,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 0,
-    "fret": 17
+    "finger_used": [
+      4
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -1210,9 +1398,12 @@
     "index_pos": 18,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 0,
-    "fret": 18
+    "finger_used": [
+      1
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -1229,9 +1420,12 @@
     "index_pos": 17,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 0,
-    "fret": 18
+    "finger_used": [
+      2
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -1248,9 +1442,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 0,
-    "fret": 18
+    "finger_used": [
+      3
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -1267,9 +1464,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 0,
-    "fret": 18
+    "finger_used": [
+      4
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -1286,9 +1486,12 @@
     "index_pos": 19,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 0,
-    "fret": 19
+    "finger_used": [
+      1
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -1305,9 +1508,12 @@
     "index_pos": 18,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 0,
-    "fret": 19
+    "finger_used": [
+      2
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -1324,9 +1530,12 @@
     "index_pos": 17,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 0,
-    "fret": 19
+    "finger_used": [
+      3
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -1343,9 +1552,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 0,
-    "fret": 19
+    "finger_used": [
+      4
+    ],
+    "string": [
+      0
+    ]
   },
   {
     "pitches": [
@@ -1362,8 +1574,10 @@
     "index_pos": 0,
     "width": 0,
     "fingers": 0,
-    "string": 1,
-    "fret": 0
+    "finger_used": [],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1380,9 +1594,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 1,
-    "fret": 1
+    "finger_used": [
+      1
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1399,9 +1616,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 1,
-    "fret": 2
+    "finger_used": [
+      1
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1418,9 +1638,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 1,
-    "fret": 2
+    "finger_used": [
+      2
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1437,9 +1660,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 1,
-    "fret": 3
+    "finger_used": [
+      1
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1456,9 +1682,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 1,
-    "fret": 3
+    "finger_used": [
+      2
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1475,9 +1704,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 1,
-    "fret": 3
+    "finger_used": [
+      3
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1494,9 +1726,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 1,
-    "fret": 4
+    "finger_used": [
+      1
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1513,9 +1748,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 1,
-    "fret": 4
+    "finger_used": [
+      2
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1532,9 +1770,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 1,
-    "fret": 4
+    "finger_used": [
+      3
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1551,9 +1792,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 1,
-    "fret": 4
+    "finger_used": [
+      4
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1570,9 +1814,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 1,
-    "fret": 5
+    "finger_used": [
+      1
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1589,9 +1836,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 1,
-    "fret": 5
+    "finger_used": [
+      2
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1608,9 +1858,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 1,
-    "fret": 5
+    "finger_used": [
+      3
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1627,9 +1880,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 1,
-    "fret": 5
+    "finger_used": [
+      4
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1646,9 +1902,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 1,
-    "fret": 6
+    "finger_used": [
+      1
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1665,9 +1924,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 1,
-    "fret": 6
+    "finger_used": [
+      2
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1684,9 +1946,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 1,
-    "fret": 6
+    "finger_used": [
+      3
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1703,9 +1968,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 1,
-    "fret": 6
+    "finger_used": [
+      4
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1722,9 +1990,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 1,
-    "fret": 7
+    "finger_used": [
+      1
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1741,9 +2012,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 1,
-    "fret": 7
+    "finger_used": [
+      2
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1760,9 +2034,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 1,
-    "fret": 7
+    "finger_used": [
+      3
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1779,9 +2056,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 1,
-    "fret": 7
+    "finger_used": [
+      4
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1798,9 +2078,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 1,
-    "fret": 8
+    "finger_used": [
+      1
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1817,9 +2100,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 1,
-    "fret": 8
+    "finger_used": [
+      2
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1836,9 +2122,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 1,
-    "fret": 8
+    "finger_used": [
+      3
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1855,9 +2144,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 1,
-    "fret": 8
+    "finger_used": [
+      4
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1874,9 +2166,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 1,
-    "fret": 9
+    "finger_used": [
+      1
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1893,9 +2188,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 1,
-    "fret": 9
+    "finger_used": [
+      2
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1912,9 +2210,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 1,
-    "fret": 9
+    "finger_used": [
+      3
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1931,9 +2232,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 1,
-    "fret": 9
+    "finger_used": [
+      4
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1950,9 +2254,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 1,
-    "fret": 10
+    "finger_used": [
+      1
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1969,9 +2276,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 1,
-    "fret": 10
+    "finger_used": [
+      2
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -1988,9 +2298,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 1,
-    "fret": 10
+    "finger_used": [
+      3
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2007,9 +2320,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 1,
-    "fret": 10
+    "finger_used": [
+      4
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2026,9 +2342,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 1,
-    "fret": 11
+    "finger_used": [
+      1
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2045,9 +2364,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 1,
-    "fret": 11
+    "finger_used": [
+      2
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2064,9 +2386,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 1,
-    "fret": 11
+    "finger_used": [
+      3
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2083,9 +2408,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 1,
-    "fret": 11
+    "finger_used": [
+      4
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2102,9 +2430,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 1,
-    "fret": 12
+    "finger_used": [
+      1
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2121,9 +2452,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 1,
-    "fret": 12
+    "finger_used": [
+      2
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2140,9 +2474,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 1,
-    "fret": 12
+    "finger_used": [
+      3
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2159,9 +2496,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 1,
-    "fret": 12
+    "finger_used": [
+      4
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2178,9 +2518,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 1,
-    "fret": 13
+    "finger_used": [
+      1
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2197,9 +2540,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 1,
-    "fret": 13
+    "finger_used": [
+      2
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2216,9 +2562,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 1,
-    "fret": 13
+    "finger_used": [
+      3
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2235,9 +2584,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 1,
-    "fret": 13
+    "finger_used": [
+      4
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2254,9 +2606,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 1,
-    "fret": 14
+    "finger_used": [
+      1
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2273,9 +2628,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 1,
-    "fret": 14
+    "finger_used": [
+      2
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2292,9 +2650,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 1,
-    "fret": 14
+    "finger_used": [
+      3
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2311,9 +2672,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 1,
-    "fret": 14
+    "finger_used": [
+      4
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2330,9 +2694,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 1,
-    "fret": 15
+    "finger_used": [
+      1
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2349,9 +2716,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 1,
-    "fret": 15
+    "finger_used": [
+      2
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2368,9 +2738,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 1,
-    "fret": 15
+    "finger_used": [
+      3
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2387,9 +2760,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 1,
-    "fret": 15
+    "finger_used": [
+      4
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2406,9 +2782,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 1,
-    "fret": 16
+    "finger_used": [
+      1
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2425,9 +2804,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 1,
-    "fret": 16
+    "finger_used": [
+      2
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2444,9 +2826,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 1,
-    "fret": 16
+    "finger_used": [
+      3
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2463,9 +2848,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 1,
-    "fret": 16
+    "finger_used": [
+      4
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2482,9 +2870,12 @@
     "index_pos": 17,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 1,
-    "fret": 17
+    "finger_used": [
+      1
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2501,9 +2892,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 1,
-    "fret": 17
+    "finger_used": [
+      2
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2520,9 +2914,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 1,
-    "fret": 17
+    "finger_used": [
+      3
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2539,9 +2936,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 1,
-    "fret": 17
+    "finger_used": [
+      4
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2558,9 +2958,12 @@
     "index_pos": 18,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 1,
-    "fret": 18
+    "finger_used": [
+      1
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2577,9 +2980,12 @@
     "index_pos": 17,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 1,
-    "fret": 18
+    "finger_used": [
+      2
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2596,9 +3002,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 1,
-    "fret": 18
+    "finger_used": [
+      3
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2615,9 +3024,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 1,
-    "fret": 18
+    "finger_used": [
+      4
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2634,9 +3046,12 @@
     "index_pos": 19,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 1,
-    "fret": 19
+    "finger_used": [
+      1
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2653,9 +3068,12 @@
     "index_pos": 18,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 1,
-    "fret": 19
+    "finger_used": [
+      2
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2672,9 +3090,12 @@
     "index_pos": 17,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 1,
-    "fret": 19
+    "finger_used": [
+      3
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2691,9 +3112,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 1,
-    "fret": 19
+    "finger_used": [
+      4
+    ],
+    "string": [
+      1
+    ]
   },
   {
     "pitches": [
@@ -2710,8 +3134,10 @@
     "index_pos": 0,
     "width": 0,
     "fingers": 0,
-    "string": 2,
-    "fret": 0
+    "finger_used": [],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -2728,9 +3154,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 2,
-    "fret": 1
+    "finger_used": [
+      1
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -2747,9 +3176,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 2,
-    "fret": 2
+    "finger_used": [
+      1
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -2766,9 +3198,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 2,
-    "fret": 2
+    "finger_used": [
+      2
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -2785,9 +3220,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 2,
-    "fret": 3
+    "finger_used": [
+      1
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -2804,9 +3242,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 2,
-    "fret": 3
+    "finger_used": [
+      2
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -2823,9 +3264,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 2,
-    "fret": 3
+    "finger_used": [
+      3
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -2842,9 +3286,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 2,
-    "fret": 4
+    "finger_used": [
+      1
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -2861,9 +3308,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 2,
-    "fret": 4
+    "finger_used": [
+      2
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -2880,9 +3330,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 2,
-    "fret": 4
+    "finger_used": [
+      3
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -2899,9 +3352,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 2,
-    "fret": 4
+    "finger_used": [
+      4
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -2918,9 +3374,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 2,
-    "fret": 5
+    "finger_used": [
+      1
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -2937,9 +3396,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 2,
-    "fret": 5
+    "finger_used": [
+      2
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -2956,9 +3418,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 2,
-    "fret": 5
+    "finger_used": [
+      3
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -2975,9 +3440,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 2,
-    "fret": 5
+    "finger_used": [
+      4
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -2994,9 +3462,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 2,
-    "fret": 6
+    "finger_used": [
+      1
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3013,9 +3484,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 2,
-    "fret": 6
+    "finger_used": [
+      2
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3032,9 +3506,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 2,
-    "fret": 6
+    "finger_used": [
+      3
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3051,9 +3528,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 2,
-    "fret": 6
+    "finger_used": [
+      4
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3070,9 +3550,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 2,
-    "fret": 7
+    "finger_used": [
+      1
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3089,9 +3572,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 2,
-    "fret": 7
+    "finger_used": [
+      2
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3108,9 +3594,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 2,
-    "fret": 7
+    "finger_used": [
+      3
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3127,9 +3616,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 2,
-    "fret": 7
+    "finger_used": [
+      4
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3146,9 +3638,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 2,
-    "fret": 8
+    "finger_used": [
+      1
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3165,9 +3660,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 2,
-    "fret": 8
+    "finger_used": [
+      2
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3184,9 +3682,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 2,
-    "fret": 8
+    "finger_used": [
+      3
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3203,9 +3704,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 2,
-    "fret": 8
+    "finger_used": [
+      4
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3222,9 +3726,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 2,
-    "fret": 9
+    "finger_used": [
+      1
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3241,9 +3748,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 2,
-    "fret": 9
+    "finger_used": [
+      2
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3260,9 +3770,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 2,
-    "fret": 9
+    "finger_used": [
+      3
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3279,9 +3792,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 2,
-    "fret": 9
+    "finger_used": [
+      4
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3298,9 +3814,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 2,
-    "fret": 10
+    "finger_used": [
+      1
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3317,9 +3836,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 2,
-    "fret": 10
+    "finger_used": [
+      2
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3336,9 +3858,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 2,
-    "fret": 10
+    "finger_used": [
+      3
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3355,9 +3880,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 2,
-    "fret": 10
+    "finger_used": [
+      4
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3374,9 +3902,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 2,
-    "fret": 11
+    "finger_used": [
+      1
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3393,9 +3924,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 2,
-    "fret": 11
+    "finger_used": [
+      2
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3412,9 +3946,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 2,
-    "fret": 11
+    "finger_used": [
+      3
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3431,9 +3968,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 2,
-    "fret": 11
+    "finger_used": [
+      4
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3450,9 +3990,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 2,
-    "fret": 12
+    "finger_used": [
+      1
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3469,9 +4012,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 2,
-    "fret": 12
+    "finger_used": [
+      2
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3488,9 +4034,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 2,
-    "fret": 12
+    "finger_used": [
+      3
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3507,9 +4056,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 2,
-    "fret": 12
+    "finger_used": [
+      4
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3526,9 +4078,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 2,
-    "fret": 13
+    "finger_used": [
+      1
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3545,9 +4100,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 2,
-    "fret": 13
+    "finger_used": [
+      2
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3564,9 +4122,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 2,
-    "fret": 13
+    "finger_used": [
+      3
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3583,9 +4144,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 2,
-    "fret": 13
+    "finger_used": [
+      4
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3602,9 +4166,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 2,
-    "fret": 14
+    "finger_used": [
+      1
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3621,9 +4188,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 2,
-    "fret": 14
+    "finger_used": [
+      2
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3640,9 +4210,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 2,
-    "fret": 14
+    "finger_used": [
+      3
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3659,9 +4232,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 2,
-    "fret": 14
+    "finger_used": [
+      4
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3678,9 +4254,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 2,
-    "fret": 15
+    "finger_used": [
+      1
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3697,9 +4276,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 2,
-    "fret": 15
+    "finger_used": [
+      2
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3716,9 +4298,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 2,
-    "fret": 15
+    "finger_used": [
+      3
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3735,9 +4320,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 2,
-    "fret": 15
+    "finger_used": [
+      4
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3754,9 +4342,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 2,
-    "fret": 16
+    "finger_used": [
+      1
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3773,9 +4364,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 2,
-    "fret": 16
+    "finger_used": [
+      2
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3792,9 +4386,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 2,
-    "fret": 16
+    "finger_used": [
+      3
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3811,9 +4408,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 2,
-    "fret": 16
+    "finger_used": [
+      4
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3830,9 +4430,12 @@
     "index_pos": 17,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 2,
-    "fret": 17
+    "finger_used": [
+      1
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3849,9 +4452,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 2,
-    "fret": 17
+    "finger_used": [
+      2
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3868,9 +4474,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 2,
-    "fret": 17
+    "finger_used": [
+      3
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3887,9 +4496,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 2,
-    "fret": 17
+    "finger_used": [
+      4
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3906,9 +4518,12 @@
     "index_pos": 18,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 2,
-    "fret": 18
+    "finger_used": [
+      1
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3925,9 +4540,12 @@
     "index_pos": 17,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 2,
-    "fret": 18
+    "finger_used": [
+      2
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3944,9 +4562,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 2,
-    "fret": 18
+    "finger_used": [
+      3
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3963,9 +4584,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 2,
-    "fret": 18
+    "finger_used": [
+      4
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -3982,9 +4606,12 @@
     "index_pos": 19,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 2,
-    "fret": 19
+    "finger_used": [
+      1
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -4001,9 +4628,12 @@
     "index_pos": 18,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 2,
-    "fret": 19
+    "finger_used": [
+      2
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -4020,9 +4650,12 @@
     "index_pos": 17,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 2,
-    "fret": 19
+    "finger_used": [
+      3
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -4039,9 +4672,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 2,
-    "fret": 19
+    "finger_used": [
+      4
+    ],
+    "string": [
+      2
+    ]
   },
   {
     "pitches": [
@@ -4058,8 +4694,10 @@
     "index_pos": 0,
     "width": 0,
     "fingers": 0,
-    "string": 3,
-    "fret": 0
+    "finger_used": [],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4076,9 +4714,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 3,
-    "fret": 1
+    "finger_used": [
+      1
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4095,9 +4736,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 3,
-    "fret": 2
+    "finger_used": [
+      1
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4114,9 +4758,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 3,
-    "fret": 2
+    "finger_used": [
+      2
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4133,9 +4780,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 3,
-    "fret": 3
+    "finger_used": [
+      1
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4152,9 +4802,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 3,
-    "fret": 3
+    "finger_used": [
+      2
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4171,9 +4824,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 3,
-    "fret": 3
+    "finger_used": [
+      3
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4190,9 +4846,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 3,
-    "fret": 4
+    "finger_used": [
+      1
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4209,9 +4868,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 3,
-    "fret": 4
+    "finger_used": [
+      2
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4228,9 +4890,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 3,
-    "fret": 4
+    "finger_used": [
+      3
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4247,9 +4912,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 3,
-    "fret": 4
+    "finger_used": [
+      4
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4266,9 +4934,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 3,
-    "fret": 5
+    "finger_used": [
+      1
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4285,9 +4956,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 3,
-    "fret": 5
+    "finger_used": [
+      2
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4304,9 +4978,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 3,
-    "fret": 5
+    "finger_used": [
+      3
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4323,9 +5000,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 3,
-    "fret": 5
+    "finger_used": [
+      4
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4342,9 +5022,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 3,
-    "fret": 6
+    "finger_used": [
+      1
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4361,9 +5044,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 3,
-    "fret": 6
+    "finger_used": [
+      2
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4380,9 +5066,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 3,
-    "fret": 6
+    "finger_used": [
+      3
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4399,9 +5088,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 3,
-    "fret": 6
+    "finger_used": [
+      4
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4418,9 +5110,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 3,
-    "fret": 7
+    "finger_used": [
+      1
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4437,9 +5132,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 3,
-    "fret": 7
+    "finger_used": [
+      2
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4456,9 +5154,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 3,
-    "fret": 7
+    "finger_used": [
+      3
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4475,9 +5176,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 3,
-    "fret": 7
+    "finger_used": [
+      4
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4494,9 +5198,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 3,
-    "fret": 8
+    "finger_used": [
+      1
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4513,9 +5220,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 3,
-    "fret": 8
+    "finger_used": [
+      2
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4532,9 +5242,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 3,
-    "fret": 8
+    "finger_used": [
+      3
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4551,9 +5264,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 3,
-    "fret": 8
+    "finger_used": [
+      4
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4570,9 +5286,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 3,
-    "fret": 9
+    "finger_used": [
+      1
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4589,9 +5308,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 3,
-    "fret": 9
+    "finger_used": [
+      2
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4608,9 +5330,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 3,
-    "fret": 9
+    "finger_used": [
+      3
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4627,9 +5352,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 3,
-    "fret": 9
+    "finger_used": [
+      4
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4646,9 +5374,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 3,
-    "fret": 10
+    "finger_used": [
+      1
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4665,9 +5396,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 3,
-    "fret": 10
+    "finger_used": [
+      2
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4684,9 +5418,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 3,
-    "fret": 10
+    "finger_used": [
+      3
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4703,9 +5440,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 3,
-    "fret": 10
+    "finger_used": [
+      4
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4722,9 +5462,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 3,
-    "fret": 11
+    "finger_used": [
+      1
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4741,9 +5484,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 3,
-    "fret": 11
+    "finger_used": [
+      2
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4760,9 +5506,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 3,
-    "fret": 11
+    "finger_used": [
+      3
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4779,9 +5528,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 3,
-    "fret": 11
+    "finger_used": [
+      4
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4798,9 +5550,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 3,
-    "fret": 12
+    "finger_used": [
+      1
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4817,9 +5572,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 3,
-    "fret": 12
+    "finger_used": [
+      2
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4836,9 +5594,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 3,
-    "fret": 12
+    "finger_used": [
+      3
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4855,9 +5616,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 3,
-    "fret": 12
+    "finger_used": [
+      4
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4874,9 +5638,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 3,
-    "fret": 13
+    "finger_used": [
+      1
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4893,9 +5660,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 3,
-    "fret": 13
+    "finger_used": [
+      2
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4912,9 +5682,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 3,
-    "fret": 13
+    "finger_used": [
+      3
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4931,9 +5704,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 3,
-    "fret": 13
+    "finger_used": [
+      4
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4950,9 +5726,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 3,
-    "fret": 14
+    "finger_used": [
+      1
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4969,9 +5748,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 3,
-    "fret": 14
+    "finger_used": [
+      2
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -4988,9 +5770,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 3,
-    "fret": 14
+    "finger_used": [
+      3
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -5007,9 +5792,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 3,
-    "fret": 14
+    "finger_used": [
+      4
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -5026,9 +5814,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 3,
-    "fret": 15
+    "finger_used": [
+      1
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -5045,9 +5836,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 3,
-    "fret": 15
+    "finger_used": [
+      2
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -5064,9 +5858,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 3,
-    "fret": 15
+    "finger_used": [
+      3
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -5083,9 +5880,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 3,
-    "fret": 15
+    "finger_used": [
+      4
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -5102,9 +5902,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 3,
-    "fret": 16
+    "finger_used": [
+      1
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -5121,9 +5924,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 3,
-    "fret": 16
+    "finger_used": [
+      2
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -5140,9 +5946,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 3,
-    "fret": 16
+    "finger_used": [
+      3
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -5159,9 +5968,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 3,
-    "fret": 16
+    "finger_used": [
+      4
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -5178,9 +5990,12 @@
     "index_pos": 17,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 3,
-    "fret": 17
+    "finger_used": [
+      1
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -5197,9 +6012,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 3,
-    "fret": 17
+    "finger_used": [
+      2
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -5216,9 +6034,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 3,
-    "fret": 17
+    "finger_used": [
+      3
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -5235,9 +6056,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 3,
-    "fret": 17
+    "finger_used": [
+      4
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -5254,9 +6078,12 @@
     "index_pos": 18,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 3,
-    "fret": 18
+    "finger_used": [
+      1
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -5273,9 +6100,12 @@
     "index_pos": 17,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 3,
-    "fret": 18
+    "finger_used": [
+      2
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -5292,9 +6122,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 3,
-    "fret": 18
+    "finger_used": [
+      3
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -5311,9 +6144,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 3,
-    "fret": 18
+    "finger_used": [
+      4
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -5330,9 +6166,12 @@
     "index_pos": 19,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 3,
-    "fret": 19
+    "finger_used": [
+      1
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -5349,9 +6188,12 @@
     "index_pos": 18,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 3,
-    "fret": 19
+    "finger_used": [
+      2
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -5368,9 +6210,12 @@
     "index_pos": 17,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 3,
-    "fret": 19
+    "finger_used": [
+      3
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -5387,9 +6232,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 3,
-    "fret": 19
+    "finger_used": [
+      4
+    ],
+    "string": [
+      3
+    ]
   },
   {
     "pitches": [
@@ -5406,8 +6254,10 @@
     "index_pos": 0,
     "width": 0,
     "fingers": 0,
-    "string": 4,
-    "fret": 0
+    "finger_used": [],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5424,9 +6274,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 4,
-    "fret": 1
+    "finger_used": [
+      1
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5443,9 +6296,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 4,
-    "fret": 2
+    "finger_used": [
+      1
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5462,9 +6318,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 4,
-    "fret": 2
+    "finger_used": [
+      2
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5481,9 +6340,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 4,
-    "fret": 3
+    "finger_used": [
+      1
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5500,9 +6362,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 4,
-    "fret": 3
+    "finger_used": [
+      2
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5519,9 +6384,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 4,
-    "fret": 3
+    "finger_used": [
+      3
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5538,9 +6406,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 4,
-    "fret": 4
+    "finger_used": [
+      1
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5557,9 +6428,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 4,
-    "fret": 4
+    "finger_used": [
+      2
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5576,9 +6450,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 4,
-    "fret": 4
+    "finger_used": [
+      3
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5595,9 +6472,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 4,
-    "fret": 4
+    "finger_used": [
+      4
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5614,9 +6494,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 4,
-    "fret": 5
+    "finger_used": [
+      1
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5633,9 +6516,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 4,
-    "fret": 5
+    "finger_used": [
+      2
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5652,9 +6538,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 4,
-    "fret": 5
+    "finger_used": [
+      3
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5671,9 +6560,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 4,
-    "fret": 5
+    "finger_used": [
+      4
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5690,9 +6582,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 4,
-    "fret": 6
+    "finger_used": [
+      1
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5709,9 +6604,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 4,
-    "fret": 6
+    "finger_used": [
+      2
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5728,9 +6626,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 4,
-    "fret": 6
+    "finger_used": [
+      3
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5747,9 +6648,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 4,
-    "fret": 6
+    "finger_used": [
+      4
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5766,9 +6670,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 4,
-    "fret": 7
+    "finger_used": [
+      1
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5785,9 +6692,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 4,
-    "fret": 7
+    "finger_used": [
+      2
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5804,9 +6714,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 4,
-    "fret": 7
+    "finger_used": [
+      3
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5823,9 +6736,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 4,
-    "fret": 7
+    "finger_used": [
+      4
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5842,9 +6758,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 4,
-    "fret": 8
+    "finger_used": [
+      1
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5861,9 +6780,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 4,
-    "fret": 8
+    "finger_used": [
+      2
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5880,9 +6802,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 4,
-    "fret": 8
+    "finger_used": [
+      3
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5899,9 +6824,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 4,
-    "fret": 8
+    "finger_used": [
+      4
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5918,9 +6846,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 4,
-    "fret": 9
+    "finger_used": [
+      1
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5937,9 +6868,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 4,
-    "fret": 9
+    "finger_used": [
+      2
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5956,9 +6890,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 4,
-    "fret": 9
+    "finger_used": [
+      3
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5975,9 +6912,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 4,
-    "fret": 9
+    "finger_used": [
+      4
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -5994,9 +6934,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 4,
-    "fret": 10
+    "finger_used": [
+      1
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6013,9 +6956,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 4,
-    "fret": 10
+    "finger_used": [
+      2
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6032,9 +6978,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 4,
-    "fret": 10
+    "finger_used": [
+      3
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6051,9 +7000,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 4,
-    "fret": 10
+    "finger_used": [
+      4
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6070,9 +7022,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 4,
-    "fret": 11
+    "finger_used": [
+      1
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6089,9 +7044,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 4,
-    "fret": 11
+    "finger_used": [
+      2
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6108,9 +7066,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 4,
-    "fret": 11
+    "finger_used": [
+      3
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6127,9 +7088,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 4,
-    "fret": 11
+    "finger_used": [
+      4
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6146,9 +7110,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 4,
-    "fret": 12
+    "finger_used": [
+      1
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6165,9 +7132,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 4,
-    "fret": 12
+    "finger_used": [
+      2
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6184,9 +7154,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 4,
-    "fret": 12
+    "finger_used": [
+      3
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6203,9 +7176,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 4,
-    "fret": 12
+    "finger_used": [
+      4
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6222,9 +7198,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 4,
-    "fret": 13
+    "finger_used": [
+      1
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6241,9 +7220,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 4,
-    "fret": 13
+    "finger_used": [
+      2
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6260,9 +7242,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 4,
-    "fret": 13
+    "finger_used": [
+      3
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6279,9 +7264,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 4,
-    "fret": 13
+    "finger_used": [
+      4
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6298,9 +7286,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 4,
-    "fret": 14
+    "finger_used": [
+      1
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6317,9 +7308,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 4,
-    "fret": 14
+    "finger_used": [
+      2
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6336,9 +7330,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 4,
-    "fret": 14
+    "finger_used": [
+      3
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6355,9 +7352,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 4,
-    "fret": 14
+    "finger_used": [
+      4
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6374,9 +7374,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 4,
-    "fret": 15
+    "finger_used": [
+      1
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6393,9 +7396,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 4,
-    "fret": 15
+    "finger_used": [
+      2
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6412,9 +7418,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 4,
-    "fret": 15
+    "finger_used": [
+      3
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6431,9 +7440,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 4,
-    "fret": 15
+    "finger_used": [
+      4
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6450,9 +7462,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 4,
-    "fret": 16
+    "finger_used": [
+      1
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6469,9 +7484,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 4,
-    "fret": 16
+    "finger_used": [
+      2
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6488,9 +7506,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 4,
-    "fret": 16
+    "finger_used": [
+      3
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6507,9 +7528,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 4,
-    "fret": 16
+    "finger_used": [
+      4
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6526,9 +7550,12 @@
     "index_pos": 17,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 4,
-    "fret": 17
+    "finger_used": [
+      1
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6545,9 +7572,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 4,
-    "fret": 17
+    "finger_used": [
+      2
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6564,9 +7594,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 4,
-    "fret": 17
+    "finger_used": [
+      3
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6583,9 +7616,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 4,
-    "fret": 17
+    "finger_used": [
+      4
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6602,9 +7638,12 @@
     "index_pos": 18,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 4,
-    "fret": 18
+    "finger_used": [
+      1
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6621,9 +7660,12 @@
     "index_pos": 17,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 4,
-    "fret": 18
+    "finger_used": [
+      2
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6640,9 +7682,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 4,
-    "fret": 18
+    "finger_used": [
+      3
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6659,9 +7704,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 4,
-    "fret": 18
+    "finger_used": [
+      4
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6678,9 +7726,12 @@
     "index_pos": 19,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 4,
-    "fret": 19
+    "finger_used": [
+      1
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6697,9 +7748,12 @@
     "index_pos": 18,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 4,
-    "fret": 19
+    "finger_used": [
+      2
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6716,9 +7770,12 @@
     "index_pos": 17,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 4,
-    "fret": 19
+    "finger_used": [
+      3
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6735,9 +7792,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 4,
-    "fret": 19
+    "finger_used": [
+      4
+    ],
+    "string": [
+      4
+    ]
   },
   {
     "pitches": [
@@ -6754,8 +7814,10 @@
     "index_pos": 0,
     "width": 0,
     "fingers": 0,
-    "string": 5,
-    "fret": 0
+    "finger_used": [],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -6772,9 +7834,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 5,
-    "fret": 1
+    "finger_used": [
+      1
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -6791,9 +7856,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 5,
-    "fret": 2
+    "finger_used": [
+      1
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -6810,9 +7878,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 5,
-    "fret": 2
+    "finger_used": [
+      2
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -6829,9 +7900,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 5,
-    "fret": 3
+    "finger_used": [
+      1
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -6848,9 +7922,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 5,
-    "fret": 3
+    "finger_used": [
+      2
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -6867,9 +7944,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 5,
-    "fret": 3
+    "finger_used": [
+      3
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -6886,9 +7966,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 5,
-    "fret": 4
+    "finger_used": [
+      1
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -6905,9 +7988,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 5,
-    "fret": 4
+    "finger_used": [
+      2
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -6924,9 +8010,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 5,
-    "fret": 4
+    "finger_used": [
+      3
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -6943,9 +8032,12 @@
     "index_pos": 1,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 5,
-    "fret": 4
+    "finger_used": [
+      4
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -6962,9 +8054,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 5,
-    "fret": 5
+    "finger_used": [
+      1
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -6981,9 +8076,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 5,
-    "fret": 5
+    "finger_used": [
+      2
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7000,9 +8098,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 5,
-    "fret": 5
+    "finger_used": [
+      3
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7019,9 +8120,12 @@
     "index_pos": 2,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 5,
-    "fret": 5
+    "finger_used": [
+      4
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7038,9 +8142,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 5,
-    "fret": 6
+    "finger_used": [
+      1
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7057,9 +8164,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 5,
-    "fret": 6
+    "finger_used": [
+      2
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7076,9 +8186,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 5,
-    "fret": 6
+    "finger_used": [
+      3
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7095,9 +8208,12 @@
     "index_pos": 3,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 5,
-    "fret": 6
+    "finger_used": [
+      4
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7114,9 +8230,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 5,
-    "fret": 7
+    "finger_used": [
+      1
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7133,9 +8252,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 5,
-    "fret": 7
+    "finger_used": [
+      2
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7152,9 +8274,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 5,
-    "fret": 7
+    "finger_used": [
+      3
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7171,9 +8296,12 @@
     "index_pos": 4,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 5,
-    "fret": 7
+    "finger_used": [
+      4
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7190,9 +8318,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 5,
-    "fret": 8
+    "finger_used": [
+      1
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7209,9 +8340,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 5,
-    "fret": 8
+    "finger_used": [
+      2
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7228,9 +8362,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 5,
-    "fret": 8
+    "finger_used": [
+      3
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7247,9 +8384,12 @@
     "index_pos": 5,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 5,
-    "fret": 8
+    "finger_used": [
+      4
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7266,9 +8406,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 5,
-    "fret": 9
+    "finger_used": [
+      1
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7285,9 +8428,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 5,
-    "fret": 9
+    "finger_used": [
+      2
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7304,9 +8450,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 5,
-    "fret": 9
+    "finger_used": [
+      3
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7323,9 +8472,12 @@
     "index_pos": 6,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 5,
-    "fret": 9
+    "finger_used": [
+      4
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7342,9 +8494,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 5,
-    "fret": 10
+    "finger_used": [
+      1
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7361,9 +8516,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 5,
-    "fret": 10
+    "finger_used": [
+      2
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7380,9 +8538,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 5,
-    "fret": 10
+    "finger_used": [
+      3
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7399,9 +8560,12 @@
     "index_pos": 7,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 5,
-    "fret": 10
+    "finger_used": [
+      4
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7418,9 +8582,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 5,
-    "fret": 11
+    "finger_used": [
+      1
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7437,9 +8604,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 5,
-    "fret": 11
+    "finger_used": [
+      2
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7456,9 +8626,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 5,
-    "fret": 11
+    "finger_used": [
+      3
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7475,9 +8648,12 @@
     "index_pos": 8,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 5,
-    "fret": 11
+    "finger_used": [
+      4
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7494,9 +8670,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 5,
-    "fret": 12
+    "finger_used": [
+      1
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7513,9 +8692,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 5,
-    "fret": 12
+    "finger_used": [
+      2
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7532,9 +8714,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 5,
-    "fret": 12
+    "finger_used": [
+      3
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7551,9 +8736,12 @@
     "index_pos": 9,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 5,
-    "fret": 12
+    "finger_used": [
+      4
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7570,9 +8758,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 5,
-    "fret": 13
+    "finger_used": [
+      1
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7589,9 +8780,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 5,
-    "fret": 13
+    "finger_used": [
+      2
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7608,9 +8802,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 5,
-    "fret": 13
+    "finger_used": [
+      3
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7627,9 +8824,12 @@
     "index_pos": 10,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 5,
-    "fret": 13
+    "finger_used": [
+      4
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7646,9 +8846,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 5,
-    "fret": 14
+    "finger_used": [
+      1
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7665,9 +8868,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 5,
-    "fret": 14
+    "finger_used": [
+      2
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7684,9 +8890,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 5,
-    "fret": 14
+    "finger_used": [
+      3
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7703,9 +8912,12 @@
     "index_pos": 11,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 5,
-    "fret": 14
+    "finger_used": [
+      4
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7722,9 +8934,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 5,
-    "fret": 15
+    "finger_used": [
+      1
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7741,9 +8956,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 5,
-    "fret": 15
+    "finger_used": [
+      2
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7760,9 +8978,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 5,
-    "fret": 15
+    "finger_used": [
+      3
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7779,9 +9000,12 @@
     "index_pos": 12,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 5,
-    "fret": 15
+    "finger_used": [
+      4
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7798,9 +9022,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 5,
-    "fret": 16
+    "finger_used": [
+      1
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7817,9 +9044,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 5,
-    "fret": 16
+    "finger_used": [
+      2
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7836,9 +9066,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 5,
-    "fret": 16
+    "finger_used": [
+      3
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7855,9 +9088,12 @@
     "index_pos": 13,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 5,
-    "fret": 16
+    "finger_used": [
+      4
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7874,9 +9110,12 @@
     "index_pos": 17,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 5,
-    "fret": 17
+    "finger_used": [
+      1
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7893,9 +9132,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 5,
-    "fret": 17
+    "finger_used": [
+      2
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7912,9 +9154,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 5,
-    "fret": 17
+    "finger_used": [
+      3
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7931,9 +9176,12 @@
     "index_pos": 14,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 5,
-    "fret": 17
+    "finger_used": [
+      4
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7950,9 +9198,12 @@
     "index_pos": 18,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 5,
-    "fret": 18
+    "finger_used": [
+      1
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7969,9 +9220,12 @@
     "index_pos": 17,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 5,
-    "fret": 18
+    "finger_used": [
+      2
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -7988,9 +9242,12 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 5,
-    "fret": 18
+    "finger_used": [
+      3
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -8007,9 +9264,12 @@
     "index_pos": 15,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 5,
-    "fret": 18
+    "finger_used": [
+      4
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -8026,9 +9286,12 @@
     "index_pos": 19,
     "width": 1,
     "fingers": 1,
-    "finger_used": 1,
-    "string": 5,
-    "fret": 19
+    "finger_used": [
+      1
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -8045,9 +9308,12 @@
     "index_pos": 18,
     "width": 1,
     "fingers": 1,
-    "finger_used": 2,
-    "string": 5,
-    "fret": 19
+    "finger_used": [
+      2
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -8064,9 +9330,12 @@
     "index_pos": 17,
     "width": 1,
     "fingers": 1,
-    "finger_used": 3,
-    "string": 5,
-    "fret": 19
+    "finger_used": [
+      3
+    ],
+    "string": [
+      5
+    ]
   },
   {
     "pitches": [
@@ -8083,8 +9352,11 @@
     "index_pos": 16,
     "width": 1,
     "fingers": 1,
-    "finger_used": 4,
-    "string": 5,
-    "fret": 19
+    "finger_used": [
+      4
+    ],
+    "string": [
+      5
+    ]
   }
 ]
