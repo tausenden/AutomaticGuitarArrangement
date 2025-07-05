@@ -5,7 +5,7 @@ class HMMrepro:
     Guitar HMM following the paper exactly without improvements
     """
     
-    def __init__(self, single_forms_file='guitar_forms_single.json', multi_forms_file='guitar_forms_multi.json'):
+    def __init__(self, single_forms_file='guitar_forms_single_expanded.json', multi_forms_file='guitar_forms_multi.json'):
         # Guitar configuration
         self.num_strings = 6
         self.num_frets = 19

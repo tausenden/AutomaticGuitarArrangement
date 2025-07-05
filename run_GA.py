@@ -1,9 +1,9 @@
-from utils import midi_process
+from GAutils import midi_process
 import numpy as np
 import random
-from utils import Guitar
-from utils import pitch2name
-from utils import visualize_guitar_tab
+from GAutils import Guitar
+from GAutils import pitch2name
+from GAutils import visualize_guitar_tab
 from GA_workonRP_lib import HandGuitarGA
 midi_file_path = "testremiz\misc\caihong-4bar.midi"
 guitar = Guitar()

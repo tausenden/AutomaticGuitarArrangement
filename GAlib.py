@@ -1,7 +1,7 @@
 import numpy as np
 import random
-from utils import Guitar
-from utils import pitch2name,visualize_guitar_tab
+from GAutils import Guitar
+from GAutils import pitch2name,visualize_guitar_tab
 
 class GuitarGeneticAlgorithm:
     def __init__(self, target_melody, target_chords=None, guitar=None, 

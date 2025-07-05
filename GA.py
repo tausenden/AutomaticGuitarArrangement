@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from utils import Guitar
+from GAutils import Guitar
 
 # Define constants
 MUTATION_RATE = 0.2

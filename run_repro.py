@@ -1,4 +1,4 @@
-from utils import Guitar, pitch2name, visualize_guitar_tab, visualize_guitar_tab_withpos
+from GAutils import Guitar, pitch2name, visualize_guitar_tab, visualize_guitar_tab_withpos
 from GA_repro2_lib import GAreproducing
 import os
 
