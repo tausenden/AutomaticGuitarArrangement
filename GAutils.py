@@ -1,4 +1,4 @@
-from remi_z import MultiTrack
+from remi_z import MultiTrack, Bar
 class Guitar():
     def __init__(self,tuning=[40, 45, 50, 55, 59, 64], fretnum=24):
         self.tuning= tuning
@@ -18,7 +18,7 @@ class Guitar():
             "A": {6: 0, 5: 0, 4: 2, 3: 2, 2: 2, 1: 0},
             "G": {6: 3, 5: 2, 4: 0, 3: 0, 2: 0, 1: 3},
             "E": {6: 0, 5: 2, 4: 2, 3: 1, 2: 0, 1: 0},
-            "D": {6: 0, 5: 0, 4: 0, 3: 2, 2: 3, 1: 2}
+            "D": {6: 0, 5: 0, 4: 0, 3: 2, 2: 3, 1: 2}# (Dshape,6弦应该mute掉)
         }
         self.chords = {
             #C major& A minor
@@ -77,7 +77,6 @@ class Guitar():
             ],
         }
 
-        self.chords4NCC={'C': [0, 4, 7], 'D': [2, 6, 9], 'E': [4, 8, 11], 'F': [5, 9, 0], 'G': [7, 11, 2], 'A': [9, 1, 4], 'B': [11, 3, 6]}
         self.rootnote={
             'C': 0,
             'C#': 1,
@@ -103,8 +102,12 @@ class Guitar():
                         'Sus4': [0, 5, 7],            # Suspended 4th: root, perfect fourth, perfect fifth
                         'Sus2': [0, 2, 7]             # Suspended 2nd: root, major second, perfect fifth
         }
-        #def genchord(self,chordname):
-            
+        
+        chords4NCC = {}
+        for root_name, root_value in self.rootnote.items():
+            # Major triad: root, major third (+4), perfect fifth (+7)
+            chords4NCC[root_name] = [root_value, (root_value + 4) % 12, (root_value + 7) % 12]
+        self.chords4NCC = chords4NCC    
 
     def get_chord_midi(self, chord_fingering):
 
@@ -191,147 +194,66 @@ def name2pitch(nameseq):
         res.append(name+12*(lev+1))
     return res
 
-def visualize_guitar_tab_withpos(sequence, position_map=None):
-    """
-    Visualizes guitar tablature and finger positions from a sequence of fret positions,
-    including position numbers above the tablature.
-    
-    Args:
-        sequence: List of tuples, each containing either one or two lists 
-                 (fret positions and optionally finger assignments)
-        position_map: Optional dictionary mapping sequence indices to MIDI positions.
-                     If provided, these values will be shown instead of sequence indices.
-    """
-    # Initialize strings for fret positions
-    strings = ['E|', 'B|', 'G|', 'D|', 'A|', 'E|']
-    position_row = '  '  # Start with padding to align with string names
-    finger_strings = ['E|', 'B|', 'G|', 'D|', 'A|', 'E|']
-    
-    # Process each position in the sequence
-    for i, entry in enumerate(sequence):
-        # Check if the entry is a tuple with finger positions
-        if isinstance(entry, tuple):
-            frets, fingers = entry
-        else:
-            frets = entry
-            fingers = None
-        
-        # Add bar line every 48 positions
-        if i > 0 and i % 48 == 0:
-            for j in range(6):
-                strings[j] += '|'
-                if fingers is not None:
-                    finger_strings[j] += '|'
-            position_row += ' '
-        
-        # Check if any string is played at this position
-        has_note = any(fret != -1 for fret in frets)
-        
-        # Determine position number to display
-        display_pos = position_map[i] if position_map and i in position_map else i
-        
-        # Add position number exactly above the tab notation
-        if has_note:
-            position_row += str(display_pos).rjust(2) + '-'
-        else:
-            position_row += '---'
-        
-        # Process each string
-        for string_idx in range(6):
-            # Handle fret positions
-            fret = frets[string_idx]
-            if fret == -1:
-                strings[string_idx] += '--'
-            else:
-                strings[string_idx] += str(fret).rjust(2)
-            
-            # Handle finger positions if available
-            if fingers is not None:
-                finger = fingers[string_idx]
-                if finger == -1:
-                    finger_strings[string_idx] += '--'
-                else:
-                    finger_strings[string_idx] += str(finger).rjust(2)
-            
-            # Add separator
-            strings[string_idx] += '-'
-            if fingers is not None:
-                finger_strings[string_idx] += '-'
-    
-    # Print results
-    print("Position numbers:")
-    print(position_row)
-    
-    if fingers is not None:
-        print("\nFinger positions:")
-        for line in finger_strings:
-            print(line)
-        print()
-    
-    print("\nFret positions:")
-    for line in strings:
-        print(line)
-
 def visualize_guitar_tab(sequence):
     """
-    Visualizes guitar tablature and finger positions from a sequence of (fret, finger) tuples or just fret positions.
-    Each tuple may contain either two lists (fret positions and finger assignments) or just fret positions.
-    
+    Visualizes guitar tablature from a sequence, showing only positions where at least one string is played.
+    Displays a time axis (position indices) at the top for played positions.
     Args:
-        sequence: List of tuples, each containing either one or two lists (fret positions and optionally finger assignments)
+        sequence: List of tuples or lists, each representing a chord (fret positions, optionally with finger assignments).
     """
-    # Initialize strings for fret positions
-    strings = ['E|', 'B|', 'G|', 'D|', 'A|', 'E|']
-    finger_strings = ['E|', 'B|', 'G|', 'D|', 'A|', 'E|']
-    
-    # Process each position in the sequence
+    # Prepare data: collect only played positions
+    played_indices = []
+    played_frets = []
+    played_fingers = []
     for i, entry in enumerate(sequence):
-        # Check if the entry is a tuple with finger positions
         if isinstance(entry, tuple):
             frets, fingers = entry
         else:
             frets = entry
             fingers = None
-        
-        # Add bar line every 8 positions
-        if i > 0 and i % 8 == 0:
-            for j in range(6):
-                strings[j] += '|'
-                if fingers is not None:
-                    finger_strings[j] += '|'
-        
-        # Process each string
+        if any(fret != -1 for fret in frets):
+            played_indices.append(i)
+            played_frets.append(frets)
+            played_fingers.append(fingers)
+
+    # Build tab lines
+    string_names = ['E', 'B', 'G', 'D', 'A', 'E']
+    tab_lines = [name + '|' for name in string_names]
+    finger_lines = [name + '|' for name in string_names]
+
+    for frets, fingers in zip(played_frets, played_fingers):
         for string_idx in range(6):
-            # Handle fret positions
             fret = frets[string_idx]
             if fret == -1:
-                strings[string_idx] += '--'
+                tab_lines[string_idx] += '--'
             else:
-                strings[string_idx] += str(fret).rjust(2)
-            
-            # Handle finger positions if available
+                tab_lines[string_idx] += str(fret).rjust(2)
             if fingers is not None:
                 finger = fingers[string_idx]
                 if finger == -1:
-                    finger_strings[string_idx] += '--'
+                    finger_lines[string_idx] += '--'
                 else:
-                    finger_strings[string_idx] += str(finger).rjust(2)
-                    
-        # Add separator
-        for j in range(6):
-            strings[j] += '-'
+                    finger_lines[string_idx] += str(finger).rjust(2)
+        for string_idx in range(6):
+            tab_lines[string_idx] += '-'
             if fingers is not None:
-                finger_strings[j] += '-'
-    
-    # Print results
-    # if fingers is not None:
-    #     print("Finger positions:")
-    #     for line in finger_strings:
-    #         print(line)
-    #     print()
-    
-    print("Fret positions:")
-    for line in strings:
+                finger_lines[string_idx] += '-'
+
+    # Print time axis
+    print('Pos:  ', end='')
+    for idx in played_indices:
+        print(str(idx).rjust(2), end='-')
+    print()
+
+    # Print finger positions if available
+    if any(f is not None for f in played_fingers):
+        print("Finger:")
+        for line in finger_lines:
+            print(line)
+        print()
+
+    print("Tab:")
+    for line in tab_lines:
         print(line)
 
 def midi_process(midi_file_path):
@@ -406,3 +328,60 @@ def get_all_notes_from_midi(midi_file_path):
             all_positions.append(position_notes[pos])
     
     return all_positions
+
+def tablature_to_multitrack(tablature, guitar, bar_id=0, time_signature=(4,4), tempo=120, velocity=100, duration=12, inst_id=25):
+    """
+    Convert a single-bar tablature (list of chords) to a MultiTrack object.
+    Args:
+        tablature (list): List of chords, each chord is a list of fret numbers.
+        guitar (Guitar): Your Guitar class instance.
+        bar_id (int): Bar index.
+        time_signature (tuple): Time signature for the bar.
+        tempo (float): Tempo for the bar.
+        velocity (int): MIDI velocity for all notes.
+        duration (int): Duration (in REMI-z ticks, 12 = 16th note).
+        inst_id (int): MIDI program number (25 = Acoustic Guitar).
+    Returns:
+        MultiTrack: A MultiTrack object representing the tablature.
+    """
+    notes_of_insts = {inst_id: {}}  # {inst_id: {onset: [[pitch, duration, velocity], ...]}}
+    for onset, chord in enumerate(tablature):
+        midi_notes = guitar.get_chord_midi({i+1: fret for i, fret in enumerate(chord)})
+        for note in midi_notes:
+            if note > 0:
+                if onset * duration not in notes_of_insts[inst_id]:
+                    notes_of_insts[inst_id][onset * duration] = []
+                notes_of_insts[inst_id][onset * duration].append([note, duration, velocity])
+    bar = Bar(id=bar_id, notes_of_insts=notes_of_insts, time_signature=time_signature, tempo=tempo)
+    mt = MultiTrack([bar])
+    return mt
+
+def tablature_to_midi(tablature, guitar, output_path, **kwargs):
+    """
+    Convert a tablature to a MIDI file using REMI-z's MultiTrack and Bar.
+    Args:
+        tablature (list): List of chords, each chord is a list of fret numbers.
+        guitar (Guitar): Your Guitar class instance.
+        output_path (str): Path to save the MIDI file.
+        kwargs: Additional arguments for tablature_to_multitrack.
+    Usage:
+        tablature_to_midi(best_tablature, guitar, "output.mid")
+    """
+    mt = tablature_to_multitrack(tablature, guitar, **kwargs)
+    mt.to_midi(output_path)
+
+def multi_bar_tablature_to_midi(tab_bars, guitar, output_path, **kwargs):
+    """
+    Convert a multi-bar arrangement (list of bars, each a list of chords) to a MIDI file.
+    Args:
+        tab_bars (list of list): Each element is a bar (list of chords).
+        guitar (Guitar): Your Guitar class instance.
+        output_path (str): Path to save the MIDI file.
+        kwargs: Additional arguments for tablature_to_multitrack (e.g., time_signature, tempo, etc.).
+    """
+    bars = []
+    for bar_id, tab in enumerate(tab_bars):
+        bar = tablature_to_multitrack(tab, guitar, bar_id=bar_id, **kwargs).bars[0]
+        bars.append(bar)
+    mt = MultiTrack(bars)
+    mt.to_midi(output_path)

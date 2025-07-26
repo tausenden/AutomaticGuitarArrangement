@@ -4,19 +4,19 @@ import random
 from GAutils import Guitar
 from GAutils import pitch2name
 from GAutils import visualize_guitar_tab
-from GA_workonRP_lib import HandGuitarGA
-midi_file_path = "testremiz\misc\caihong-4bar.midi"
+from GA_workonRP_lib import RhythmGA
+midi_file_path = "midis\once_guitar.mid"
 guitar = Guitar()
 t_melody,t_chord= midi_process(midi_file_path)
-ga_tool=HandGuitarGA(target_melody=[])
+ga_tool=RhythmGA(target_melody=t_melody, target_chords=t_chord, guitar=guitar)
 def main1():
-    ga = HandGuitarGA(
+    ga = RhythmGA(
         target_melody=t_melody,
         target_chords=t_chord,
         guitar=guitar,
         mutation_rate=0.3,
         population_size=400,
-        generations=20,
+        generations=100,
         reserved_ratio=0.05,
         max_fret=19,
         midi_file_path=midi_file_path,
