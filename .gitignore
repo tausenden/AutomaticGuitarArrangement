@@ -1,5 +1,10 @@
-__pycache__
+__pycache__/
 z_experimental_code/
 testremiz/
 REMI-z/
 midis/
+.DS_Store
+to_arrange_midis/
+arranged_midis/
+test_arr_midis/
+test_arranged_midis/
