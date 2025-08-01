@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from GAutils import Guitar, pitch2name, visualize_guitar_tab
+from GAutils import Guitar, pitch2name, visualize_guitar_tab, GATab, GATabSeq
 from remi_z import MultiTrack
 
 class GAreproducing:
@@ -39,26 +39,43 @@ class GAreproducing:
         mt = MultiTrack.from_midi(midi_file_path)
         self.bars_data = []
         self.target_melody_list = []
-        self.target_chord_list = []
         for bar in mt.bars:
             original_midi_pitches = [[] for _ in range(48)]
+            original_onsets = []  # 保存实际的onset时间
             melody_notes = bar.get_melody('hi_note')
             all_notes = bar.get_all_notes(include_drum=False)
+            
+            # 收集所有onset时间
+            onset_times = set()
+            for note in all_notes:
+                if 0 <= note.onset < 48:
+                    onset_times.add(note.onset)
+            original_onsets = sorted(list(onset_times))
+            
             for note in all_notes:
                 pos = note.onset
                 if 0 <= pos < 48:
                     original_midi_pitches[pos].append(note.pitch)
             chords = bar.get_chord()
             chord_name = chords[0][0] if chords and chords[0] else 'C'
-            self.bars_data.append({'original_midi_pitches': original_midi_pitches, 'chord': chord_name})
+            self.bars_data.append({
+                'original_midi_pitches': original_midi_pitches, 
+                'chord': chord_name,
+                'original_onsets': original_onsets  # 添加onset时间信息
+            })
             self.target_melody_list.append([note.pitch for note in melody_notes])
-            self.target_chord_list.append(chord_name)
+            # Improved melody detection: All positions with notes are considered
+            melody_positions = set()
+            for pos, pitches in enumerate(original_midi_pitches):
+                if pitches:  # Any position with notes is considered melody
+                    melody_positions.add(pos)
+            
             bar_categories = {}
-            melody_positions = {note.onset for note in melody_notes if 0 <= note.onset < 48}
-            for note in all_notes:
-                pos = note.onset
-                if 0 <= pos < 48:
-                    bar_categories[pos] = 'melody' if pos in melody_positions else 'harmony'
+            for pos in range(48):
+                if pos in melody_positions:
+                    bar_categories[pos] = 'melody'
+                elif original_midi_pitches[pos]:
+                    bar_categories[pos] = 'harmony'
             self.note_categories.update(bar_categories)
 
     def initialize_population(self, bar_idx):
@@ -140,7 +157,7 @@ class GAreproducing:
             chord_dict = {j+1: fret for j, fret in enumerate(chord)}
             midi_notes = [note for note in self.guitar.get_chord_midi(chord_dict) if note != -1]
             if not midi_notes:
-                total_score -= 10
+                total_score -= 100  # Large penalty for missing the entire position
                 continue
             category = self.note_categories.get(pos, 'harmony')
             weight = self.category_weights.get(category, 1.0)
@@ -250,7 +267,7 @@ class GAreproducing:
                 ncc = self.calculate_NCC(gen_best_tablature, original_midi_pitches)
                 print(f"[Bar {bar_idx} | Gen {generation}] PC: {pc:.4f}, NWC: {nwc:.4f}, NCC: {ncc:.4f}, Total: {pc + nwc + ncc:.4f}")
                 print("Current best tab:")
-                visualize_guitar_tab(gen_best_tablature)
+                visualize_guitar_tab(gen_best_tablature, show_onset=True)
             # Elitism: keep the best
             new_population = [population[gen_best_idx]]
             # Fill the rest of the population using tournament selection
@@ -278,14 +295,45 @@ class GAreproducing:
         """
         Run the genetic algorithm for all bars in the MIDI file.
         Returns:
-            list: List of best tablatures for each bar.
+            GATabSeq: Encapsulated arrangement results with onset time information.
         """
         results = []
         for i in range(len(self.bars_data)):
             best_tablature = self.run_single(i)
-            results.append(best_tablature)
+            
+            # 创建GATab对象，保存onset时间信息
+            bar_data = self.bars_data[i]
+            ga_tab = GATab(
+                bar_data=best_tablature,
+                original_onsets=bar_data.get('original_onsets', [])
+            )
+            
+            # 添加和弦信息
+            ga_tab.add_chord_info(0, bar_data['chord'])
+            
+            # 标记旋律位置 - 从原始MIDI数据中获取旋律位置
+            melody_positions = set()
+            for pos, pitches in enumerate(bar_data['original_midi_pitches']):
+                if pitches:  # 如果有音符在这个位置
+                    # 检查这个位置是否包含旋律音符（通过比较音高）
+                    melody_pitches = [pitch for pitch in self.target_melody_list[i] if pitch != -1]
+                    if any(pitch in pitches for pitch in melody_pitches):
+                        melody_positions.add(pos)
+            
+            for pos in melody_positions:
+                ga_tab.add_melody_position(pos)
+            
+            results.append(ga_tab)
+            
             pc = self.calculate_playability(best_tablature)
             nwc = self.calculate_NWC(best_tablature, self.bars_data[i]['original_midi_pitches'])
             ncc = self.calculate_NCC(best_tablature, self.bars_data[i]['original_midi_pitches'])
             print(f"[Bar {i+1}] PC: {pc:.4f}, NWC: {nwc:.4f}, NCC: {ncc:.4f}, Total: {pc + nwc + ncc:.4f}")
-        return results
+        
+        # 返回GATabSeq对象，保持向后兼容
+        ga_tab_seq = GATabSeq(results)
+        
+        # 为了向后兼容，也保存原始格式的结果
+        self.raw_results = [tab.bar_data for tab in results]
+        
+        return ga_tab_seq

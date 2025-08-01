@@ -2,58 +2,112 @@ from GAutils import Guitar, pitch2name, visualize_guitar_tab, multi_bar_tablatur
 #from GA_repro2_lib import GAreproducing
 from ga_reproduction import GAreproducing
 import os
+import time
 
 def main():
-    # Path to the MIDI file
-    midi_file_path = 'midis\caihong-4bar.midi'  # Replace with your actual MIDI file path
+    # Configuration
+    input_folder = 'test_arr_midis'  # Fixed input folder
+    output_folder = 'test_arranged_midis'     # Fixed output folder
     
-    # Check if file exists
-    if not os.path.exists(midi_file_path):
-        print(f"Error: MIDI file not found at {midi_file_path}")
-        return
+    # Create output folder if it doesn't exist
+    os.makedirs(output_folder, exist_ok=True)
     
-    print(f"Processing MIDI file: {midi_file_path}")
+    # Get all MIDI files
+    midi_files = [f for f in os.listdir(input_folder) if f.lower().endswith(('.mid', '.midi'))]
     
-    # Create Guitar instance
-    guitar = Guitar()
-    
-    # Create GA instance with position-based approach
-    ga = GAreproducing(
-        guitar=guitar,
-        midi_file_path=midi_file_path,
-        mutation_rate=0.03,
-        population_size=100,
-        generations=100,
-        max_fret=15,
-    )
-    
-    # You can adjust the weights for different fitness components
-    ga.weight_PC = 0.8   # Playability
-    ga.weight_NWC = 1.5  # Note Weight (higher weight for accurate notes)
-    ga.weight_NCC = 1.0  # Notes in Chord
+    for filename in midi_files:
+        midi_file_path = os.path.join(input_folder, filename)
+        
+        # Get output filename (keep same name, normalize .midi to .mid)
+        if filename.lower().endswith('.midi'):
+            output_name = filename[:-5] + '.mid'
+        else:
+            output_name = filename
+        output_midi_path = os.path.join(output_folder, output_name)
+        
+        # GA parameters
+        ga_config = {
+            'mutation_rate': 0.03,
+            'population_size': 400,
+            'generations': 120,
+            'max_fret': 15,
+        }
+        
+        # Fitness weights
+        fitness_weights = {
+            'PC': 1.0,    # Playability
+            'NWC': 1.5,   # Note Weight (higher weight for accurate notes)
+            'NCC': 1.0,   # Notes in Chord
+        }
+        
+        # MIDI export settings
+        midi_settings = {
+            'tempo': 140,
+            'time_signature': (4, 4),
+            'velocity': 100,
+            'duration': 12,  # 16th note duration
+            'inst_id': 25,   # Acoustic Guitar
+        }
+        
+        print(f"Processing MIDI file: {midi_file_path}")
+        print(f"Output will be saved to: {output_midi_path}")
+        
+        # Create Guitar instance
+        guitar = Guitar()
+        
+        # Create GA instance with position-based approach
+        print("\nInitializing Genetic Algorithm...")
+        ga = GAreproducing(
+            guitar=guitar,
+            midi_file_path=midi_file_path,
+            **ga_config
+        )
+        
+        # Set fitness weights
+        ga.weight_PC = fitness_weights['PC']
+        ga.weight_NWC = fitness_weights['NWC']
+        ga.weight_NCC = fitness_weights['NCC']
+        
+        print(f"GA Configuration:")
+        print(f"  Population: {ga_config['population_size']}")
+        print(f"  Generations: {ga_config['generations']}")
+        print(f"  Mutation Rate: {ga_config['mutation_rate']}")
+        print(f"  Max Fret: {ga_config['max_fret']}")
+        print(f"Fitness Weights:")
+        print(f"  Playability (PC): {fitness_weights['PC']}")
+        print(f"  Note Weight (NWC): {fitness_weights['NWC']}")
+        print(f"  Notes in Chord (NCC): {fitness_weights['NCC']}")
 
-    print("Starting genetic algorithm arrangement...")
-    
-    # Run the genetic algorithm
-    best_tablatures = ga.run()
-    
-    print("\nArrangement complete!")
+        print("\nStarting genetic algorithm arrangement...")
+        start_time = time.time()
+        
+        # Run the genetic algorithm
+        best_tablatures = ga.run()
+        
+        end_time = time.time()
+        print(f"\nArrangement complete! Time taken: {end_time - start_time:.2f} seconds")
 
-    # Save the arrangement as a MIDI file
-    if best_tablatures and len(best_tablatures) > 0:
-        print("\nSaving arrangement to MIDI file: arrangement_output.mid")
-        multi_bar_tablature_to_midi(best_tablatures, guitar, "arrangement_output.mid")
+        # Save the arrangement as a MIDI file
+        print(f"\nSaving arrangement to MIDI file: {output_midi_path}")
+        
+        # 使用新的GATabSeq转换方法
+        mt = best_tablatures.convert_to_multitrack(
+            guitar, 
+            tempo=midi_settings['tempo'],
+            time_signature=midi_settings['time_signature']
+        )
 
-    # Visualize each bar
-    print("\nFinal tablature")
-    for tab_idx, tab in enumerate(best_tablatures):
-        print(f"\nBar {tab_idx+1}:")
-        active_positions = [
-            chord for pos, chord in enumerate(tab)
-            if any(fret != -1 for fret in chord) and ga.bars_data[tab_idx]['original_midi_pitches'][pos]
-        ]
-        if active_positions:
-            visualize_guitar_tab(active_positions)
+        mt.to_midi(output_midi_path)
+        print(f"✓ MIDI file saved successfully: {output_midi_path}")
+
+        # Visualize each bar
+        print("\nFinal tablature visualization:")
+        print(str(best_tablatures))  # 使用新的字符串表示
+        
+        
+        print(f"\nProcess completed!")
+        print(f"Input: {midi_file_path}")
+        print(f"Output: {output_midi_path}")
 
 if __name__ == "__main__":
     main()
