@@ -2,6 +2,7 @@ import numpy as np
 import json
 import os
 from remi_z import MultiTrack, Bar
+from hmm_export import export_hmm_path
 
 class HMMrepro:
     """
@@ -25,6 +26,11 @@ class HMMrepro:
         
         # Precompute form groups by pitch for efficiency
         self._group_forms_by_pitch()
+        
+        # Determine available pitch range for octave transposition
+        self.min_available_pitch = min(self.forms_by_pitch.keys())
+        self.max_available_pitch = max(self.forms_by_pitch.keys())
+        print(f"Available pitch range: {self.min_available_pitch} - {self.max_available_pitch}")
     
     def _load_forms(self, forms_file):
         """Load forms from JSON file"""
@@ -40,6 +46,50 @@ class HMMrepro:
                 if pitch not in self.forms_by_pitch:
                     self.forms_by_pitch[pitch] = []
                 self.forms_by_pitch[pitch].append(i)
+    
+    def _transpose_pitch_to_valid_range(self, pitch):
+        """
+        Transpose a pitch to the valid range by moving it up or down by octaves.
+        Returns the transposed pitch and the number of octaves moved.
+        """
+        if pitch in self.forms_by_pitch:
+            return pitch, 0
+        
+        original_pitch = pitch
+        octaves_moved = 0
+        
+        # Try moving down by octaves if pitch is too high
+        while pitch > self.max_available_pitch:
+            pitch -= 12
+            octaves_moved -= 1
+            if pitch in self.forms_by_pitch:
+                print(f"Transposed pitch {original_pitch} down {-octaves_moved} octave(s) to {pitch}")
+                return pitch, octaves_moved
+        
+        # Reset and try moving up by octaves if pitch is too low
+        pitch = original_pitch
+        octaves_moved = 0
+        while pitch < self.min_available_pitch:
+            pitch += 12
+            octaves_moved += 1
+            if pitch in self.forms_by_pitch:
+                print(f"Transposed pitch {original_pitch} up {octaves_moved} octave(s) to {pitch}")
+                return pitch, octaves_moved
+        
+        # If still not found, try both directions more aggressively
+        for direction in [-1, 1]:
+            test_pitch = original_pitch
+            test_octaves = 0
+            for _ in range(10):  # Try up to 10 octaves in each direction
+                test_pitch += direction * 12
+                test_octaves += direction
+                if self.min_available_pitch <= test_pitch <= self.max_available_pitch and test_pitch in self.forms_by_pitch:
+                    direction_str = "up" if direction > 0 else "down"
+                    print(f"Transposed pitch {original_pitch} {direction_str} {abs(test_octaves)} octave(s) to {test_pitch}")
+                    return test_pitch, test_octaves
+        
+        print(f"Warning: Could not transpose pitch {original_pitch} to valid range")
+        return original_pitch, 0
     
     def initial_probability(self, form):
         """
@@ -82,7 +132,7 @@ class HMMrepro:
     
     def viterbi(self, pitch_sequence, time_intervals=None):
         """
-        Viterbi algorithm implementation
+        Viterbi algorithm implementation with automatic pitch transposition
         """
         T = len(pitch_sequence)
         N = len(self.forms)
@@ -90,17 +140,29 @@ class HMMrepro:
         if time_intervals is None:
             time_intervals = [1.0] * (T - 1)
         
-        # Find valid forms for each pitch
+        # Find valid forms for each pitch, with automatic transposition
         valid_forms = []
+        transposed_pitches = []
         for pitch in pitch_sequence:
             # Input is always a list, take first element
-            pitch = pitch[0] if pitch else -1
+            original_pitch = pitch[0] if pitch else -1
             
-            if pitch in self.forms_by_pitch:
-                valid_forms.append(self.forms_by_pitch[pitch])
+            if original_pitch in self.forms_by_pitch:
+                valid_forms.append(self.forms_by_pitch[original_pitch])
+                transposed_pitches.append([original_pitch])
             else:
-                print(f"No valid forms for pitch {pitch}")
-                return None
+                # Try to transpose the pitch to a valid range
+                transposed_pitch, octaves_moved = self._transpose_pitch_to_valid_range(original_pitch)
+                
+                if transposed_pitch in self.forms_by_pitch:
+                    valid_forms.append(self.forms_by_pitch[transposed_pitch])
+                    transposed_pitches.append([transposed_pitch])
+                else:
+                    print(f"Failed to find valid arrangement even after transposition for pitch {original_pitch}")
+                    return None
+        
+        # Update pitch_sequence to use transposed pitches for the rest of the algorithm
+        pitch_sequence = transposed_pitches
         
         # Initialize Viterbi tables
         delta = np.full((T, N), -np.inf)
@@ -539,9 +601,9 @@ if __name__ == "__main__":
         path = hmm.viterbi(melody)
         
         if path:
-            # Convert to MIDI and save
-            hmm.path_to_midi(path, output_midi_path, tempo=10)
-            hmm.visualize_tablature(path)
+            # Use unified export pipeline (tab, midi, wav)
+            song_name = os.path.splitext(output_name)[0]
+            export_hmm_path(path, song_name=song_name, positions_per_bar=8, tempo=10, output_dir=output_folder)
         else:
             print(f"Failed to find valid arrangement for {filename}")
         
