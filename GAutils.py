@@ -1,4 +1,5 @@
 from remi_z import MultiTrack, Bar
+import numpy as np
 class Guitar():
     def __init__(self,tuning=[40, 45, 50, 55, 59, 64], fretnum=24):
         self.tuning= tuning
@@ -196,87 +197,60 @@ def name2pitch(nameseq):
 
 class GATab:
     """
-    GA编排结果的封装类，保存完整的onset时间信息
-    参考tab_util.Tab的设计，但适配GA的数据结构
+    A Tab-like container for GA results.
+    Exactly mirrors `tab_util.Tab` API: matrix-based 6xN, chord_dict, add_note/add_chord, convert_to_bar.
     """
-    def __init__(self, bar_data=None, original_onsets=None):
-        """
-        初始化GA编排结果
-        
-        Args:
-            bar_data: GA生成的编排数据，格式为 [pos1, pos2, ...] 其中每个pos是 [string1_fret, ..., string6_fret]
-            original_onsets: 原始MIDI中的onset时间列表，用于映射位置到实际时间
-        """
-        self.bar_data = bar_data if bar_data is not None else []
-        self.original_onsets = original_onsets if original_onsets is not None else []
-        self.chord_dict = {}  # 保存和弦信息
-        self.melody_positions = set()  # 保存旋律位置
-        
-    def get_position_onset(self, pos_idx):
-        """
-        获取位置对应的onset时间
-        
-        Args:
-            pos_idx: 位置索引
-            
-        Returns:
-            onset时间，如果original_onsets可用则使用实际时间，否则使用pos_idx * 2
-        """
-        if self.original_onsets and pos_idx < len(self.original_onsets):
-            return self.original_onsets[pos_idx]
-        else:
-            return pos_idx * 2  # 48 positions per bar, bar = 96 ticks, so each position = 2 ticks
-    
-    def get_active_positions(self):
-        """
-        获取有音符的位置列表
-        
-        Returns:
-            [(pos_idx, onset_time, chord_data), ...]
-        """
-        active_positions = []
-        for pos_idx, chord in enumerate(self.bar_data):
-            if any(fret != -1 for fret in chord):
-                onset_time = self.get_position_onset(pos_idx)
-                active_positions.append((pos_idx, onset_time, chord))
-        return active_positions
-    
-    def add_chord_info(self, pos_idx, chord_name):
-        """添加和弦信息"""
-        self.chord_dict[pos_idx] = chord_name
-    
-    def add_melody_position(self, pos_idx):
-        """标记旋律位置"""
-        self.melody_positions.add(pos_idx)
-    
+    def __init__(self, n_positions=8):
+        n_strings = 6
+        self.matrix = np.full((n_strings, n_positions), -1, dtype=int)
+        self.chord_dict = {}
+
     def __str__(self):
-        """字符串表示"""
-        active_positions = self.get_active_positions()
-        if not active_positions:
-            return "Empty GATab"
-        
-        # 构建可视化字符串
         lines = []
-        lines.append(f"GATab with {len(active_positions)} active positions")
-        
-        # 显示onset时间轴
-        onset_line = "Onset: "
-        pos_line = "Pos:   "
-        for pos_idx, onset_time, chord in active_positions:
-            onset_line += f"{onset_time:2d}-"
-            pos_line += f"{pos_idx:2d}-"
-        lines.append(onset_line)
-        lines.append(pos_line)
-        
-        # 显示和弦信息
-        if self.chord_dict:
-            chord_line = "Chord: "
-            for pos_idx, onset_time, chord in active_positions:
-                chord_name = self.chord_dict.get(pos_idx, "---")
-                chord_line += f"{chord_name:3s}-"
-            lines.append(chord_line)
-        
-        return "\n".join(lines)
+        for s in range(self.matrix.shape[0]):
+            line = ' '.join([
+                '--' if self.matrix[s, p] == -1 else str(self.matrix[s, p]).rjust(2)
+                for p in range(self.matrix.shape[1])
+            ])
+            lines.append(line)
+        return '\n'.join(lines)
+
+    def add_note(self, position_id, string_id, fret):
+        if string_id < 1 or string_id > 6:
+            raise ValueError("String ID must be between 1 and 6.")
+        if position_id < 0 or position_id >= self.matrix.shape[1]:
+            raise ValueError(f"Position must be between 0 and {self.matrix.shape[1] - 1}.")
+        self.matrix[string_id - 1, position_id] = fret
+
+    def add_chord(self, position_id, chord_name: str):
+        if position_id < 0 or position_id >= self.matrix.shape[1]:
+            raise ValueError(f"Position must be between 0 and {self.matrix.shape[1] - 1}.")
+        self.chord_dict[position_id] = chord_name
+
+    def convert_to_bar(self, guitar):
+        """
+        Convert the tab to a REMI-z Bar using the provided `guitar` (GAutils.Guitar) for pitch mapping.
+        Each slot: onset=slot*6, duration=6.
+        """
+        notes = {}
+        n_positions = self.matrix.shape[1]
+        n_strings = self.matrix.shape[0]
+        for p_pos in range(n_positions):
+            for s in range(n_strings):
+                fret = self.matrix[s, p_pos]
+                if fret != -1:
+                    string_id = s + 1
+                    pitch = guitar.fboard[string_id][fret]
+                    onset = p_pos * 6
+                    dur = 6
+                    velocity = 96
+                    note = [int(pitch), dur, velocity]
+                    if onset not in notes:
+                        notes[onset] = []
+                    notes[onset].append(note)
+        time_signature = (4, 4)
+        tempo = 120
+        return Bar(id=-1, notes_of_insts={0: notes}, time_signature=time_signature, tempo=tempo)
 
 
 class GATabSeq:
@@ -327,17 +301,20 @@ class GATabSeq:
         bars = []
         for bar_id, tab in enumerate(self.tab_list):
             notes = {}
-            
-            for pos_idx, onset_time, chord in tab.get_active_positions():
-                for string_idx, fret in enumerate(chord):
-                    if fret != -1 and fret > 0:
+            # Build notes from GATab.matrix directly by slot
+            n_positions = tab.matrix.shape[1]
+            for slot in range(n_positions):
+                onset_time = slot * 6
+                for string_idx in range(6):
+                    fret = tab.matrix[string_idx, slot]
+                    if fret != -1 and fret >= 0:
                         string_id = string_idx + 1
                         if string_id in guitar.fboard and fret < len(guitar.fboard[string_id]):
                             midi_note = guitar.fboard[string_id][fret]
                             if midi_note > 0:
                                 if onset_time not in notes:
                                     notes[onset_time] = []
-                                notes[onset_time].append([midi_note, 6, 96])  # [pitch, duration, velocity]
+                                notes[onset_time].append([midi_note, 6, 96])
             
             bar = Bar(
                 id=bar_id,
