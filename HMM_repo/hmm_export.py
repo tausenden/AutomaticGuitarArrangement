@@ -4,6 +4,7 @@ from typing import List, Dict, Any
 from remi_z import Bar, MultiTrack
 from pydub import AudioSegment
 import subprocess
+import fluidsynth
 
 
 class Tab:

@@ -3,26 +3,26 @@ import json
 import os
 from remi_z import MultiTrack, Bar
 from hmm_export import export_hmm_path
+import fluidsynth
 
 class HMMrepro:
     """
     Guitar HMM following the paper exactly without improvements
     """
     
-    def __init__(self, single_forms_file='guitar_forms_single_expanded.json', multi_forms_file='guitar_forms_multi.json'):
+    def __init__(self, forms_files=['guitar_forms_single_expanded.json', 'guitar_forms_multi.json']):
         # Guitar configuration
         self.num_strings = 6
-        self.num_frets = 19
+        self.num_frets = 20
         self.open_strings = [40, 45, 50, 55, 59, 64]
         self.string_names = ['E', 'A', 'D', 'G', 'B', 'E']
         
         # Load forms from both files
-        single_forms = self._load_forms(single_forms_file)
-        multi_forms = self._load_forms(multi_forms_file)
-        self.forms = single_forms + multi_forms
-        print(f"Loaded {len(single_forms)} single forms from {single_forms_file}")
-        print(f"Loaded {len(multi_forms)} multi forms from {multi_forms_file}")
-        print(f"Total {len(self.forms)} forms")
+        self.forms = []
+        for name in forms_files:
+            forms = self._load_forms(name)
+            self.forms.extend(forms)
+        print(f"Loaded {len(self.forms)} forms from {forms_files}")
         
         # Precompute form groups by pitch for efficiency
         self._group_forms_by_pitch()
@@ -603,7 +603,7 @@ if __name__ == "__main__":
         if path:
             # Use unified export pipeline (tab, midi, wav)
             song_name = os.path.splitext(output_name)[0]
-            export_hmm_path(path, song_name=song_name, positions_per_bar=8, tempo=10, output_dir=output_folder)
+            export_hmm_path(path, song_name=song_name, positions_per_bar=8, tempo=100, output_dir=output_folder)
         else:
             print(f"Failed to find valid arrangement for {filename}")
         
