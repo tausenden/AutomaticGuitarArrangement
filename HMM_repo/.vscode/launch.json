@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "name": "Debug HMM_repro",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "./HMM_repro.py",
+            "console": "integratedTerminal",
+            "args": ""
+        },
+    ]
+}

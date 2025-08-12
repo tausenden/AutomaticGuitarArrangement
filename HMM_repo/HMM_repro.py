@@ -4,20 +4,27 @@ import os
 from remi_z import MultiTrack, Bar
 from hmm_export import export_hmm_path
 import fluidsynth
+import fluidsynth
 
 class HMMrepro:
     """
     Guitar HMM following the paper exactly without improvements
     """
     
-    def __init__(self, forms_files=['guitar_forms_single_expanded.json', 'guitar_forms_multi.json']):
+    def __init__(self, forms_files=['states/guitar_forms_single_expanded.json', 'states/guitar_forms_multi.json']):
         # Guitar configuration
         self.num_strings = 6
         self.num_frets = 20
+        self.num_frets = 20
         self.open_strings = [40, 45, 50, 55, 59, 64]
-        self.string_names = ['E', 'A', 'D', 'G', 'B', 'E']
+        self.string_names = ['E', 'A', 'D', 'G', 'B', 'E']  # low to high E to match open_strings order
         
         # Load forms from both files
+        self.forms = []
+        for name in forms_files:
+            forms = self._load_forms(name)
+            self.forms.extend(forms)
+        print(f"Loaded {len(self.forms)} forms from {forms_files}")
         self.forms = []
         for name in forms_files:
             forms = self._load_forms(name)
@@ -75,18 +82,6 @@ class HMMrepro:
             if pitch in self.forms_by_pitch:
                 print(f"Transposed pitch {original_pitch} up {octaves_moved} octave(s) to {pitch}")
                 return pitch, octaves_moved
-        
-        # If still not found, try both directions more aggressively
-        for direction in [-1, 1]:
-            test_pitch = original_pitch
-            test_octaves = 0
-            for _ in range(10):  # Try up to 10 octaves in each direction
-                test_pitch += direction * 12
-                test_octaves += direction
-                if self.min_available_pitch <= test_pitch <= self.max_available_pitch and test_pitch in self.forms_by_pitch:
-                    direction_str = "up" if direction > 0 else "down"
-                    print(f"Transposed pitch {original_pitch} {direction_str} {abs(test_octaves)} octave(s) to {test_pitch}")
-                    return test_pitch, test_octaves
         
         print(f"Warning: Could not transpose pitch {original_pitch} to valid range")
         return original_pitch, 0
@@ -229,6 +224,9 @@ class HMMrepro:
     def visualize_tablature(self, path):
         """Create tablature visualization"""
         tab_strings = []
+        # Display strings from high to low (standard tab format)
+        # self.string_names = ['E', 'A', 'D', 'G', 'B', 'E'] (low to high)
+        # Display order should be: E(high), B, G, D, A, E(low)
         for i in range(6):
             tab_strings.append(f"{self.string_names[5-i]}|")
         
@@ -238,14 +236,18 @@ class HMMrepro:
                     tab_strings[string_idx] += "|"
             
             for string_idx in range(6):
-                display_string = 5 - string_idx
+                # string_idx 0 = high E display line, should get data from fret_config["5"] (high E)
+                # string_idx 1 = B display line, should get data from fret_config["4"] (B string)
+                # string_idx 2 = G display line, should get data from fret_config["3"] (G string)
+                # string_idx 3 = D display line, should get data from fret_config["2"] (D string)
+                # string_idx 4 = A display line, should get data from fret_config["1"] (A string)
+                # string_idx 5 = low E display line, should get data from fret_config["0"] (low E)
+                fret_config_key = str(5 - string_idx)
                 
-                # Handle fret_config - try both int and string keys
+                # Handle fret_config - keys are strings "0" through "5"
                 fret_config = form['fret_config']
-                if display_string in fret_config:
-                    fret = fret_config[display_string]
-                elif str(display_string) in fret_config:
-                    fret = fret_config[str(display_string)]
+                if fret_config_key in fret_config:
+                    fret = fret_config[fret_config_key]
                 else:
                     fret = -1
                 
