@@ -1,82 +1,23 @@
 from remi_z import MultiTrack, Bar
 import numpy as np
-class Guitar():
-    def __init__(self,tuning=[40, 45, 50, 55, 59, 64], fretnum=24):
-        self.tuning= tuning
-        self.fretnum=fretnum
+class Guitar:
+    """
+    Minimal guitar model aligned to tab_util.Tab conventions:
+    - string_id 1 is high e (64), ... string_id 6 is low E (40)
+    - fboard[string_id][fret] gives MIDI pitch
+    Unused legacy fields removed.
+    """
+    def __init__(self, tuning=[40, 45, 50, 55, 59, 64], fretnum=24):
+        self.tuning = tuning  # low E to high e
+        self.fretnum = fretnum
         def genfboard():
-            boarddic={}
-            stri=6
-            for i in self.tuning:
-                boarddic[stri]=[]
-                for j in range(self.fretnum+1):
-                    boarddic[stri].append(i+j)
-                stri-=1
-            return boarddic
-        self.fboard=genfboard()
-        self.cagedshape={
-            "C": {6: 0, 5: 3, 4: 2, 3: 0, 2: 1, 1: 0},
-            "A": {6: 0, 5: 0, 4: 2, 3: 2, 2: 2, 1: 0},
-            "G": {6: 3, 5: 2, 4: 0, 3: 0, 2: 0, 1: 3},
-            "E": {6: 0, 5: 2, 4: 2, 3: 1, 2: 0, 1: 0},
-            "D": {6: 0, 5: 0, 4: 0, 3: 2, 2: 3, 1: 2}# (Dshape,6弦应该mute掉)
-        }
-        self.chords = {
-            #C major& A minor
-            "C": [  # 再细化，只包含可替换的和弦，根据chords with color来
-                    # CAGED 根据规则
-                {6: 0, 5: 3, 4: 2, 3: 0, 2: 1, 1: 0},#Triad
-                {6: 0, 5: 3, 4: 0, 3: 0, 2: 3, 1: 3},#sus2
-                {6: 0, 5: 3, 4: 3, 3: 0, 2: 1, 1: 3},#sus4
-                {6: 0, 5: 3, 4: 2, 3: 0, 2: 3, 1: 3},#add9
-                {6: 0, 5: 3, 4: 2, 3: 2, 2: 1, 1: 0},#6
-                {6: 0, 5: 3, 4: 2, 3: 0, 2: 0, 1: 0},#7
-                {6: 0, 5: 3, 4: 2, 3: 4, 2: 3, 1: 0}#9
-            ],
-            "D": [
-                {6: 0, 5: 0, 4: 0, 3: 2, 2: 3, 1: 1},#Triad
-                {6: 0, 5: 0, 4: 0, 3: 2, 2: 3, 1: 0},#sus2
-                {6: 0, 5: 0, 4: 0, 3: 2, 2: 3, 1: 3},#sus4
-                {6: 0, 5: 0, 4: 3, 3: 2, 2: 3, 1: 0},#add9
-                {6: 0, 5: 0, 4: 0, 3: 2, 2: 0, 1: 1},#6
-                {6: 0, 5: 0, 4: 0, 3: 2, 2: 1, 1: 1},#7
-                {6: 0, 5: 5, 4: 3, 3: 5, 2: 5, 1: 0}#9
-            ],
-            "E": [
-                {6: 0, 5: 2, 4: 2, 3: 0, 2: 0, 1: 0},#Triad
-                {6: 0, 5: 2, 4: 2, 3: 2, 2: 0, 1: 0},#sus4
-                {6: 0, 5: 2, 4: 2, 3: 0, 2: 3, 1: 0}#7
-            ],
-            "F": [
-                {6: 1, 5: 3, 4: 3, 3: 2, 2: 1, 1: 1},#Triad
-                {6: 0, 5: 3, 4: 3, 3: 0, 2: 1, 1: 1},#sus2
-                {6: 0, 5: 0, 4: 3, 3: 2, 2: 1, 1: 3},#add9
-                {6: 0, 5: 0, 4: 3, 3: 2, 2: 3, 1: 1},#6
-                {6: 0, 5: 0, 4: 3, 3: 2, 2: 1, 1: 0},#7
-                {6: 0, 5: 8, 4: 7, 3: 9, 2: 8, 1: 0}#9
-
-            ],
-            "G": [
-                {6: 3, 5: 2, 4: 0, 3: 0, 2: 0, 1: 3},#Triad
-                {6: 3, 5: 0, 4: 0, 3: 2, 2: 3, 1: 3},#sus2
-                {6: 3, 5: 3, 4: 0, 3: 0, 2: 1, 1: 3},#sus4
-                {6: 3, 5: 0, 4: 0, 3: 2, 2: 0, 1: 3},#add9
-                {6: 3, 5: 2, 4: 0, 3: 0, 2: 3, 1: 0},#6 
-                {6: 3, 5: 2, 4: 3, 3: 0, 2: 0, 1: 3}#7
-            ],
-            "A": [
-                {6: 0, 5: 0, 4: 2, 3: 2, 2: 1, 1: 0},#Triad
-                {6: 0, 5: 0, 4: 2, 3: 2, 2: 0, 1: 0},#sus2
-                {6: 0, 5: 0, 4: 2, 3: 2, 2: 3, 1: 0},#sus4
-                {6: 0, 5: 0, 4: 2, 3: 4, 2: 1, 1: 0},#add9
-                {6: 0, 5: 0, 4: 2, 3: 0, 2: 1, 1: 0},#7
-
-            ],
-            "B": [
-                {6: 0, 5: 2, 4: 3, 3: 4, 2: 3, 1: 0},#Triad
-                {6: 0, 5: 2, 4: 3, 3: 2, 2: 3, 1: 0}#7
-            ],
-        }
+            mapping = {}
+            stri = 6
+            for open_pitch in self.tuning:
+                mapping[stri] = [open_pitch + j for j in range(self.fretnum + 1)]
+                stri -= 1
+            return mapping
+        self.fboard = genfboard()
 
         self.rootnote={
             'C': 0,
@@ -92,18 +33,6 @@ class Guitar():
             'A#': 10,
             'B': 11
         }
-        self.chord_rule = {
-                        'Major': [0, 4, 7],
-                        'Minor': [0, 3, 7],
-                        'Augmented': [0, 4, 8],
-                        'Diminished': [0, 3, 6],
-                        'Major7': [0, 4, 7, 11],      # Major 7th: root, major third, perfect fifth, major seventh
-                        'Minor7': [0, 3, 7, 10],      # Minor 7th: root, minor third, perfect fifth, minor seventh
-                        'Dominant7': [0, 4, 7, 10],   # Dominant 7th: root, major third, perfect fifth, minor seventh
-                        'Sus4': [0, 5, 7],            # Suspended 4th: root, perfect fourth, perfect fifth
-                        'Sus2': [0, 2, 7]             # Suspended 2nd: root, major second, perfect fifth
-        }
-        
         chords4NCC = {}
         for root_name, root_value in self.rootnote.items():
             # Major triad: root, major third (+4), perfect fifth (+7)
