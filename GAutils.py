@@ -1,11 +1,13 @@
+from mido import midifiles
 from remi_z import MultiTrack, Bar
 import numpy as np
+import random
+
 class Guitar:
     """
     Minimal guitar model aligned to tab_util.Tab conventions:
     - string_id 1 is high e (64), ... string_id 6 is low E (40)
     - fboard[string_id][fret] gives MIDI pitch
-    Unused legacy fields removed.
     """
     def __init__(self, tuning=[40, 45, 50, 55, 59, 64], fretnum=24):
         self.tuning = tuning  # low E to high e
@@ -57,7 +59,7 @@ def pitch2name(seq):
         lev=i//12-1
         name=i%12
         if i==-1:
-            res.append('#')
+            res.append('X')
             continue
 
         if name==0:
@@ -87,54 +89,49 @@ def pitch2name(seq):
         res.append(name+str(lev))
     return res
 
-def name2pitch(nameseq):
-    res=[]
-    for term in nameseq:
-        if len(term)==2:
-            name=term[0]
-            lev=int(term[1])
-        else:
-            name=term[0:2]
-            lev=int(term[2])
 
-        if name=='C':
-            name=0
-        elif name=='C#':
-            name=1
-        elif name=='D':
-            name=2
-        elif name=='D#':
-            name=3
-        elif name=='E':
-            name=4
-        elif name=='F':
-            name=5
-        elif name=='F#':
-            name=6
-        elif name=='G':
-            name=7
-        elif name=='G#':
-            name=8
-        elif name=='A':
-            name=9
-        elif name=='A#':
-            name=10
-        elif name=='B':
-            name=11
-        res.append(name+12*(lev+1))
-    return res
 
 class GATab:
     """
-    A Tab-like container for GA results.
-    Exactly mirrors `tab_util.Tab` API: matrix-based 6xN, chord_dict, add_note/add_chord, convert_to_bar.
+    GATab class - functionally identical to tab_util.Tab.
+    This class represents a guitar tab for GA results.
+    Matrix-based 6xN structure where each position represents a time slot.
     """
-    def __init__(self, n_positions=8):
+    def __init__(self, n_positions=8, bar_data=None, original_onsets=None):
+        """
+        Initialize a GATab.
+        
+        Args:
+            n_positions: Number of positions in the tab, default is 8 (used when bar_data is None)
+            bar_data: List of lists representing chord fingerings (ga_reproduction.py format)
+            original_onsets: List of onset times (for compatibility with ga_reproduction.py)
+        """
         n_strings = 6
-        self.matrix = np.full((n_strings, n_positions), -1, dtype=int)
-        self.chord_dict = {}
+        
+        # Handle bar_data format from ga_reproduction.py
+        if bar_data is not None:
+            n_positions = len(bar_data)
+            self.matrix = np.full((n_strings, n_positions), -1, dtype=int)
+            # Convert bar_data (list of lists) to matrix format
+            for pos, chord in enumerate(bar_data):
+                for string_idx, fret in enumerate(chord):
+                    if pos < self.matrix.shape[1] and string_idx < self.matrix.shape[0]:
+                        self.matrix[string_idx, pos] = fret
+        else:
+            # Standard Tab-like initialization
+            self.matrix = np.full((n_strings, n_positions), -1, dtype=int)
+        
+        self.chord_dict = {}  # Maps position_id to chord name
+        self.original_onsets = original_onsets if original_onsets is not None else []
+        self.melody_positions = set()  # For tracking melody positions
 
     def __str__(self):
+        """
+        Return a string representation of the tab.
+        Each row represents a string, each column a position.
+        -1 means no note pressed.
+        Each position is 2 characters wide, separated by a single space.
+        """
         lines = []
         for s in range(self.matrix.shape[0]):
             line = ' '.join([
@@ -145,6 +142,11 @@ class GATab:
         return '\n'.join(lines)
 
     def add_note(self, position_id, string_id, fret):
+        """
+        Add a note to the tab at the specified string and position.
+        String_id: 1~6 (1 is high e, 6 is low E).
+        Position: 0~n_positions-1 (0 is the first position).
+        """
         if string_id < 1 or string_id > 6:
             raise ValueError("String ID must be between 1 and 6.")
         if position_id < 0 or position_id >= self.matrix.shape[1]:
@@ -152,14 +154,45 @@ class GATab:
         self.matrix[string_id - 1, position_id] = fret
 
     def add_chord(self, position_id, chord_name: str):
+        """
+        Add a chord to the tab at the specified position.
+        """
         if position_id < 0 or position_id >= self.matrix.shape[1]:
             raise ValueError(f"Position must be between 0 and {self.matrix.shape[1] - 1}.")
         self.chord_dict[position_id] = chord_name
+    
+    def add_chord_info(self, position_id, chord_name: str):
+        """
+        Add chord information (alias for add_chord for ga_reproduction.py compatibility).
+        """
+        self.add_chord(position_id, chord_name)
+    
+    def add_melody_position(self, position_id):
+        """
+        Mark a position as containing melody notes (for ga_reproduction.py compatibility).
+        """
+        if position_id < 0 or position_id >= self.matrix.shape[1]:
+            raise ValueError(f"Position must be between 0 and {self.matrix.shape[1] - 1}.")
+        self.melody_positions.add(position_id)
+    
+    @property
+    def bar_data(self):
+        """
+        Return the tab as bar_data format (list of lists) for backward compatibility.
+        """
+        result = []
+        for pos in range(self.matrix.shape[1]):
+            chord = []
+            for string_idx in range(self.matrix.shape[0]):
+                chord.append(self.matrix[string_idx, pos])
+            result.append(chord)
+        return result
 
     def convert_to_bar(self, guitar):
         """
-        Convert the tab to a REMI-z Bar using the provided `guitar` (GAutils.Guitar) for pitch mapping.
-        Each slot: onset=slot*6, duration=6.
+        Convert the GATab to a Bar object using the provided guitar for pitch mapping.
+        Each pressed fret in self.matrix is converted to a note.
+        onset and duration are both multiplied by 6.
         """
         notes = {}
         n_positions = self.matrix.shape[1]
@@ -168,89 +201,118 @@ class GATab:
             for s in range(n_strings):
                 fret = self.matrix[s, p_pos]
                 if fret != -1:
-                    string_id = s + 1
+                    # Calculate pitch using guitar fretboard
+                    string_id = s + 1  # string_id: 1 (high e) to 6 (low E)
                     pitch = guitar.fboard[string_id][fret]
                     onset = p_pos * 6
-                    dur = 6
-                    velocity = 96
+                    dur = 6  # Default duration, you can adjust if needed
+                    velocity = 96  # Default velocity
                     note = [int(pitch), dur, velocity]
                     if onset not in notes:
                         notes[onset] = []
                     notes[onset].append(note)
-        time_signature = (4, 4)
-        tempo = 120
+        time_signature = (4, 4)  # Default time signature, can be adjusted as needed
+        tempo = 120  # Default tempo, can be adjusted as needed
         return Bar(id=-1, notes_of_insts={0: notes}, time_signature=time_signature, tempo=tempo)
 
 
 class GATabSeq:
     """
-    GA编排结果序列的封装类
-    参考tab_util.TabSeq的设计
+    GATabSeq class - functionally similar to tab_util.TabSeq.
+    A container for multiple GATab objects.
+    For user-friendly display of song-level tabs.
     """
     def __init__(self, tab_list=None):
         """
-        初始化GA编排结果序列
-        
-        Args:
-            tab_list: GATab对象列表
+        Initialize with a list of GATab objects.
         """
         self.tab_list = tab_list if tab_list is not None else []
     
     def add_tab(self, tab):
-        """添加一个GATab"""
+        """Add a GATab to the sequence."""
         self.tab_list.append(tab)
     
     def __str__(self):
-        """字符串表示"""
+        """
+        Return a string representation of the GATabSeq.
+        Each line shows 4 GATabs in a row, properly aligned.
+        The first row displays chord names if available, using GATab.chord_dict.
+        """
         if not self.tab_list:
             return "Empty GATabSeq"
         
+        tab_lines_list = [str(tab).split('\n') for tab in self.tab_list]
+        tab_height = len(tab_lines_list[0]) if tab_lines_list else 0
         lines = []
-        for i, tab in enumerate(self.tab_list):
-            lines.append(f"Bar {i+1}:")
-            lines.append(str(tab))
-            lines.append("")
         
-        return "\n".join(lines)
+        for i in range(0, len(tab_lines_list), 4):
+            row_tabs = tab_lines_list[i:i + 4]
+            tab_objs = self.tab_list[i:i + 4]
+            
+            # Pad with empty tabs if less than 4
+            while len(row_tabs) < 4:
+                row_tabs.append([' ' * (len(row_tabs[0][0]) if row_tabs else 10)] * tab_height)
+                tab_objs.append(None)
+            
+            # First row: chord names, aligned to positions
+            chord_name_lines = []
+            for tab, tab_lines in zip(tab_objs, row_tabs):
+                chord_line = [' ' for _ in range(len(tab_lines[0]))]
+                if tab is not None and hasattr(tab, 'chord_dict') and tab.chord_dict:
+                    n_positions = len(tab_lines[0].split())
+                    # Find positions for first and second chord
+                    sorted_positions = sorted(tab.chord_dict.keys())
+                    if len(sorted_positions) > 0:
+                        first_pos = sorted_positions[0]
+                        chord1 = tab.chord_dict[first_pos]
+                        # Place chord1 at the start
+                        # Each position is 3 chars: 2 for fret, 1 for space
+                        chord_line_pos = first_pos * 3
+                        chord_line[chord_line_pos:chord_line_pos+len(chord1)] = chord1
+                    if len(sorted_positions) > 1:
+                        second_pos = sorted_positions[1]
+                        chord2 = tab.chord_dict[second_pos]
+                        chord_line_pos = second_pos * 3
+                        chord_line[chord_line_pos:chord_line_pos+len(chord2)] = chord2
+                chord_name_lines.append(''.join(chord_line))
+            
+            lines.append('   '.join(chord_name_lines))
+            
+            # For each line in the tab, join horizontally
+            for line_idx in range(tab_height):
+                row_line = '   '.join(tab[line_idx] for tab in row_tabs)
+                lines.append(row_line)
+            lines.append('')
+        
+        return '\n'.join(lines)
+    
+    def save_to_file(self, filename):
+        """
+        Save the GATabSeq to a text file.
+        """
+        with open(filename, 'w') as f:
+            f.write(str(self))
     
     def convert_to_multitrack(self, guitar, tempo=120, time_signature=(4, 4)):
         """
-        转换为MultiTrack对象
+        Convert the GATabSeq to a MultiTrack object.
+        Similar to TabSeq.convert_to_note_seq() but returns MultiTrack directly.
         
         Args:
-            guitar: Guitar实例
-            tempo: 速度
-            time_signature: 拍号
+            guitar: Guitar instance for pitch mapping
+            tempo: Tempo for the track
+            time_signature: Time signature for all bars
             
         Returns:
-            MultiTrack对象
+            MultiTrack object
         """
-        from remi_z import MultiTrack, Bar
+        from remi_z import MultiTrack
         
         bars = []
-        for bar_id, tab in enumerate(self.tab_list):
-            notes = {}
-            # Build notes from GATab.matrix directly by slot
-            n_positions = tab.matrix.shape[1]
-            for slot in range(n_positions):
-                onset_time = slot * 6
-                for string_idx in range(6):
-                    fret = tab.matrix[string_idx, slot]
-                    if fret != -1 and fret >= 0:
-                        string_id = string_idx + 1
-                        if string_id in guitar.fboard and fret < len(guitar.fboard[string_id]):
-                            midi_note = guitar.fboard[string_id][fret]
-                            if midi_note > 0:
-                                if onset_time not in notes:
-                                    notes[onset_time] = []
-                                notes[onset_time].append([midi_note, 6, 96])
-            
-            bar = Bar(
-                id=bar_id,
-                notes_of_insts={0: notes},
-                time_signature=time_signature,
-                tempo=tempo
-            )
+        for tab in self.tab_list:
+            bar = tab.convert_to_bar(guitar)
+            bar.tempo = tempo
+            bar.time_signature = time_signature
             bars.append(bar)
         
         return MultiTrack.from_bars(bars)
@@ -398,63 +460,6 @@ def get_all_notes_from_midi(midi_file_path):
     
     return all_positions
 
-def tablature_to_multitrack(tablature, guitar, bar_id=0, time_signature=(4,4), tempo=120, velocity=100, duration=12, inst_id=25):
-    """
-    Convert a single-bar tablature (list of chords) to a MultiTrack object.
-    Args:
-        tablature (list): List of chords, each chord is a list of fret numbers.
-        guitar (Guitar): Your Guitar class instance.
-        bar_id (int): Bar index.
-        time_signature (tuple): Time signature for the bar.
-        tempo (float): Tempo for the bar.
-        velocity (int): MIDI velocity for all notes.
-        duration (int): Duration (in REMI-z ticks, 12 = 16th note).
-        inst_id (int): MIDI program number (25 = Acoustic Guitar).
-    Returns:
-        MultiTrack: A MultiTrack object representing the tablature.
-    """
-    notes_of_insts = {inst_id: {}}  # {inst_id: {onset: [[pitch, duration, velocity], ...]}}
-    for onset, chord in enumerate(tablature):
-        # 修复：直接使用guitar的fboard来获取MIDI音符
-        for string_idx, fret in enumerate(chord):
-            if fret != -1 and fret >= 0:  # 有效的按弦
-                string_id = string_idx + 1
-                if string_id in guitar.fboard and fret < len(guitar.fboard[string_id]):
-                    midi_note = guitar.fboard[string_id][fret]
-                    if midi_note > 0:
-                        if onset * duration not in notes_of_insts[inst_id]:
-                            notes_of_insts[inst_id][onset * duration] = []
-                        notes_of_insts[inst_id][onset * duration].append([midi_note, duration, velocity])
-    bar = Bar(id=bar_id, notes_of_insts=notes_of_insts, time_signature=time_signature, tempo=tempo)
-    mt = MultiTrack([bar])
-    return mt
-
-def tablature_to_midi(tablature, guitar, output_path, **kwargs):
-    """
-    Convert a tablature to a MIDI file using REMI-z's MultiTrack and Bar.
-    Args:
-        tablature (list): List of chords, each chord is a list of fret numbers.
-        guitar (Guitar): Your Guitar class instance.
-        output_path (str): Path to save the MIDI file.
-        kwargs: Additional arguments for tablature_to_multitrack.
-    Usage:
-        tablature_to_midi(best_tablature, guitar, "output.mid")
-    """
-    mt = tablature_to_multitrack(tablature, guitar, **kwargs)
-    mt.to_midi(output_path)
-
-def multi_bar_tablature_to_midi(tab_bars, guitar, output_path, **kwargs):
-    """
-    Convert a multi-bar arrangement (list of bars, each a list of chords) to a MIDI file.
-    Args:
-        tab_bars (list of list): Each element is a bar (list of chords).
-        guitar (Guitar): Your Guitar class instance.
-        output_path (str): Path to save the MIDI file.
-        kwargs: Additional arguments for tablature_to_multitrack (e.g., time_signature, tempo, etc.).
-    """
-    bars = []
-    for bar_id, tab in enumerate(tab_bars):
-        bar = tablature_to_multitrack(tab, guitar, bar_id=bar_id, **kwargs).bars[0]
-        bars.append(bar)
-    mt = MultiTrack(bars)
-    mt.to_midi(output_path)
+def set_random(seed=42):
+    random.seed(seed)
+    np.random.seed(seed)
