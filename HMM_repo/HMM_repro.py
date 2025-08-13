@@ -11,7 +11,8 @@ class HMMrepro:
     Guitar HMM following the paper exactly without improvements
     """
     
-    def __init__(self, forms_files=['states/guitar_forms_single_expanded.json', 'states/guitar_forms_multi.json']):
+    #def __init__(self, forms_files=['states/guitar_forms_single_expanded.json', 'states/guitar_forms_multi.json']):
+    def __init__(self, forms_files=['states/guitar_forms_CAGED.json']):
         # Guitar configuration
         self.num_strings = 6
         self.num_frets = 20
@@ -20,11 +21,6 @@ class HMMrepro:
         self.string_names = ['E', 'A', 'D', 'G', 'B', 'E']  # low to high E to match open_strings order
         
         # Load forms from both files
-        self.forms = []
-        for name in forms_files:
-            forms = self._load_forms(name)
-            self.forms.extend(forms)
-        print(f"Loaded {len(self.forms)} forms from {forms_files}")
         self.forms = []
         for name in forms_files:
             forms = self._load_forms(name)
@@ -419,140 +415,6 @@ def get_all_notes_from_midi(midi_file_path):
     
     return all_positions
 
-def hmm_path_to_midi(path, output_path, open_strings=None, tempo=120, time_signature=(4, 4), velocity=96, duration=6):
-    """
-    Standalone function to convert HMM path to MIDI file.
-    
-    Args:
-        path: List of form dictionaries from HMM viterbi algorithm
-        output_path: Path to save the MIDI file
-        open_strings: List of open string MIDI pitches [low_E, A, D, G, B, high_E] (default: [40, 45, 50, 55, 59, 64])
-        tempo: Tempo in BPM (default: 120)
-        time_signature: Time signature as tuple (numerator, denominator) (default: (4, 4))
-        velocity: MIDI velocity for all notes (default: 96)
-        duration: Duration in REMI-z ticks (default: 6 = 16th note)
-    """
-    if open_strings is None:
-        open_strings = [40, 45, 50, 55, 59, 64]  # Standard guitar tuning
-    
-    if not path:
-        print("Empty path provided")
-        return None
-    
-    # Create notes dictionary for the bar
-    notes = {}
-    
-    # Process each form in the path
-    for time_step, form in enumerate(path):
-        onset_time = time_step * duration//2
-        
-        # Get fret configuration
-        fret_config = form['fret_config']
-        
-        # Process each string
-        for string_idx in range(6):
-            # Get fret for this string (handle both int and string keys)
-            if string_idx in fret_config:
-                fret = fret_config[string_idx]
-            elif str(string_idx) in fret_config:
-                fret = fret_config[str(string_idx)]
-            else:
-                fret = -1
-            
-            # If fret is valid (not -1), create a note
-            if fret >= 0:
-                # Calculate MIDI pitch based on string and fret
-                open_pitch = open_strings[string_idx]
-                midi_pitch = open_pitch + fret
-                
-                # Add note to the onset time
-                if onset_time not in notes:
-                    notes[onset_time] = []
-                
-                note_data = [midi_pitch, duration, velocity]
-                notes[onset_time].append(note_data)
-    
-    # Create Bar object
-    bar = Bar(
-        id=0,
-        notes_of_insts={0: notes},  # Use instrument 0 (acoustic guitar)
-        time_signature=time_signature,
-        tempo=tempo
-    )
-    
-    # Create MultiTrack and save to MIDI
-    mt = MultiTrack([bar])
-    mt.to_midi(output_path)
-    
-    print(f"MIDI file saved to: {output_path}")
-    return mt
-
-def hmm_path_to_multitrack(path, open_strings=None, tempo=120, time_signature=(4, 4), velocity=96, duration=6):
-    """
-    Standalone function to convert HMM path to MultiTrack object.
-    
-    Args:
-        path: List of form dictionaries from HMM viterbi algorithm
-        open_strings: List of open string MIDI pitches [low_E, A, D, G, B, high_E] (default: [40, 45, 50, 55, 59, 64])
-        tempo: Tempo in BPM (default: 120)
-        time_signature: Time signature as tuple (numerator, denominator) (default: (4, 4))
-        velocity: MIDI velocity for all notes (default: 96)
-        duration: Duration in REMI-z ticks (default: 6 = 16th note)
-        
-    Returns:
-        MultiTrack object
-    """
-    if open_strings is None:
-        open_strings = [40, 45, 50, 55, 59, 64]  # Standard guitar tuning
-    
-    if not path:
-        print("Empty path provided")
-        return None
-    
-    # Create notes dictionary for the bar
-    notes = {}
-    
-    # Process each form in the path
-    for time_step, form in enumerate(path):
-        onset_time = time_step * duration
-        
-        # Get fret configuration
-        fret_config = form['fret_config']
-        
-        # Process each string
-        for string_idx in range(6):
-            # Get fret for this string (handle both int and string keys)
-            if string_idx in fret_config:
-                fret = fret_config[string_idx]
-            elif str(string_idx) in fret_config:
-                fret = fret_config[str(string_idx)]
-            else:
-                fret = -1
-            
-            # If fret is valid (not -1), create a note
-            if fret >= 0:
-                # Calculate MIDI pitch based on string and fret
-                open_pitch = open_strings[string_idx]
-                midi_pitch = open_pitch + fret
-                
-                # Add note to the onset time
-                if onset_time not in notes:
-                    notes[onset_time] = []
-                
-                note_data = [midi_pitch, duration, velocity]
-                notes[onset_time].append(note_data)
-    
-    # Create Bar object
-    bar = Bar(
-        id=0,
-        notes_of_insts={0: notes},
-        time_signature=time_signature,
-        tempo=tempo
-    )
-    
-    # Create and return MultiTrack
-    return MultiTrack([bar])
-
 # Test the exact paper reproduction
 if __name__ == "__main__":
     print("Testing Guitar HMM - Exact Paper Reproduction")
@@ -577,8 +439,8 @@ if __name__ == "__main__":
     print("\n\nTEST 3: Processing all MIDI files in folder")
     
     # Configuration
-    input_folder = '../test_arr_midis'  # Fixed input folder
-    output_folder = './test_arranged_midis'  # Fixed output folder
+    input_folder = '../caihong_clip'  # Fixed input folder
+    output_folder = './arranged_caihong_clip_CAGED'  # Fixed output folder
     
     # Create output folder if it doesn't exist
     os.makedirs(output_folder, exist_ok=True)

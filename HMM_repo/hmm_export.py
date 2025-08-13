@@ -42,20 +42,20 @@ class Tab:
 
     def convert_to_bar(self) -> Bar:
         """
-        Convert the Tab to a Bar object using standard tuning E2 A2 D3 G3 B3 E4:
-        open pitches [40, 45, 50, 55, 59, 64] mapping to rows [lowE..highE].
+        Convert the Tab to a Bar object using standard tuning E4 B3 G3 D3 A2 E2:
+        open pitches [64, 59, 55, 50, 45, 40] mapping to rows [highE..lowE].
         Each position becomes onset = pos * 6, duration = 6, velocity = 96.
         """
-        open_pitches = [40, 45, 50, 55, 59, 64]
+        open_pitches = [64,59,55,50,45,40]
         notes: Dict[int, List[List[int]]] = {}
         n_positions = self.matrix.shape[1]
         for p_pos in range(n_positions):
-            for s in range(6):  # 0..5 = lowE..highE
+            for s in range(6):  # 0..5 = highE..lowE
                 fret = int(self.matrix[s, p_pos])
                 if fret >= 0:
                     pitch = int(open_pitches[s] + fret)
-                    onset = int(p_pos * 6)
                     dur = 6
+                    onset = int(p_pos * dur)
                     velocity = 96
                     note = [pitch, dur, velocity]
                     notes.setdefault(onset, []).append(note)
@@ -111,27 +111,7 @@ class TabSeq:
         return MultiTrack.from_bars(bars)
 
 
-def path_to_tab(path: List[Dict[str, Any]]) -> Tab:
-    """
-    Convert an HMM path (list of forms with 'fret_config') to a single Tab.
-    path index -> tab position; fret_config keys accept int (0..5) or str.
-    """
-    if path is None:
-        raise ValueError('path is None')
-    tab = Tab(n_positions=len(path))
-    for position_idx, form in enumerate(path):
-        fret_config = form.get('fret_config', {})
-        for string_idx in range(6):  # 0=lowE .. 5=highE
-            fret = fret_config.get(string_idx, fret_config.get(str(string_idx), -1))
-            if isinstance(fret, (int, np.integer)) and fret >= 0:
-                string_id = 6 - string_idx  # 1=highE .. 6=lowE
-                tab.add_note(position_idx, string_id, int(fret))
-    return tab
-
-
 def path_to_tabseq(path: List[Dict[str, Any]], positions_per_bar: int = 8) -> TabSeq:
-    if path is None:
-        raise ValueError('path is None')
     tabs: List[Tab] = []
     for start_idx in range(0, len(path), positions_per_bar):
         segment = path[start_idx:start_idx + positions_per_bar]
@@ -141,10 +121,10 @@ def path_to_tabseq(path: List[Dict[str, Any]], positions_per_bar: int = 8) -> Ta
         for local_pos, form in enumerate(segment):
             fret_config = form.get('fret_config', {})
             for string_idx in range(6):
-                fret = fret_config.get(string_idx, fret_config.get(str(string_idx), -1))
+                # fret_config is lowE to highE
+                fret = fret_config.get(5-string_idx, fret_config.get(str(5-string_idx), -1))
                 if isinstance(fret, (int, np.integer)) and fret >= 0:
-                    string_id = 6 - string_idx
-                    tab.add_note(local_pos, string_id, int(fret))
+                    tab.add_note(local_pos, string_idx+1, int(fret))
         tabs.append(tab)
     return TabSeq(tabs)
 
