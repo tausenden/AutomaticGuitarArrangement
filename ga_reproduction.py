@@ -325,15 +325,12 @@ class GAreproducing:
             
             results.append(ga_tab)
             
-            pc = self.calculate_playability(best_tablature)
-            nwc = self.calculate_NWC(best_tablature, self.bars_data[i]['original_midi_pitches'])
-            ncc = self.calculate_NCC(best_tablature, self.bars_data[i]['original_midi_pitches'])
+            # Use the structured GATab object for final fitness calculation
+            pc = self.calculate_playability(ga_tab.bar_data)
+            nwc = self.calculate_NWC(ga_tab.bar_data, self.bars_data[i]['original_midi_pitches'])
+            ncc = self.calculate_NCC(ga_tab.bar_data, self.bars_data[i]['original_midi_pitches'])
             print(f"[Bar {i+1}] PC: {pc:.4f}, NWC: {nwc:.4f}, NCC: {ncc:.4f}, Total: {pc + nwc + ncc:.4f}")
         
-        # 返回GATabSeq对象，保持向后兼容
+        # Return GATabSeq object - the structured approach
         ga_tab_seq = GATabSeq(results)
-        
-        # 为了向后兼容，也保存原始格式的结果
-        self.raw_results = [tab.bar_data for tab in results]
-        
         return ga_tab_seq
