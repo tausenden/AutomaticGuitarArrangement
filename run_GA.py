@@ -1,4 +1,4 @@
-from GAutils import midi_process
+from GAutils import midi_process, set_random
 import numpy as np
 import random
 from GAutils import Guitar
@@ -10,6 +10,8 @@ guitar = Guitar()
 t_melody,t_chord= midi_process(midi_file_path)
 ga_tool=RhythmGA(target_melody=t_melody, target_chords=t_chord, guitar=guitar)
 def main1():
+    set_random(42)
+    
     ga = RhythmGA(
         target_melody=t_melody,
         target_chords=t_chord,

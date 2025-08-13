@@ -1,10 +1,11 @@
-from GAutils import Guitar, pitch2name, visualize_guitar_tab, multi_bar_tablature_to_midi
+from GAutils import Guitar, pitch2name, visualize_guitar_tab, set_random
 #from GA_repro2_lib import GAreproducing
 from ga_reproduction import GAreproducing
 import os
 import time
 
 def main():
+    set_random(42)
     # Configuration
     input_folder = 'test_arr_midis'  # Fixed input folder
     output_folder = 'test_arranged_midis'     # Fixed output folder

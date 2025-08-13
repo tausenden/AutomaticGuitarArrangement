@@ -2,6 +2,7 @@ import numpy as np
 import random
 from GAutils import Guitar
 from GAutils import pitch2name,visualize_guitar_tab
+from ga_reproduction import GAreproducing
 
 class GuitarGeneticAlgorithm:
     def __init__(self, target_melody, target_chords=None, guitar=None, 

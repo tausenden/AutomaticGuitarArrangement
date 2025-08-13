@@ -1,4 +1,5 @@
 __pycache__/
+**/.vscode/
 z_experimental_code/
 testremiz/
 REMI-z/
@@ -6,8 +7,8 @@ midis/
 .DS_Store
 to_arrange_midis/
 arranged_midis/
-test_arr_midis/
-test_arranged_midis/
+HMM_repo/arranged_*/
 HMM_repo/sonata/
-HMM_repo/test_arranged_midis_CAGED/
-HMM_repo/test_arranged_midis_original/
+**/test_*/
+caihong_clip/
+**/*.zip
