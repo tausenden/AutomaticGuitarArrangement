@@ -132,11 +132,14 @@ class GATab:
         -1 means no note pressed.
         Each position is 2 characters wide, separated by a single space.
         """
+        # Only show positions with notes
+        active_positions = [p for p in range(self.matrix.shape[1]) 
+                          if any(self.matrix[s, p] != -1 for s in range(self.matrix.shape[0]))]
         lines = []
         for s in range(self.matrix.shape[0]):
             line = ' '.join([
                 '--' if self.matrix[s, p] == -1 else str(self.matrix[s, p]).rjust(2)
-                for p in range(self.matrix.shape[1])
+                for p in active_positions
             ])
             lines.append(line)
         return '\n'.join(lines)
@@ -191,12 +194,15 @@ class GATab:
     def convert_to_bar(self, guitar):
         """
         Convert the GATab to a Bar object using the provided guitar for pitch mapping.
-        Each pressed fret in self.matrix is converted to a note.
-        onset and duration are both multiplied by 6.
+        Uses original onset values if available, otherwise falls back to position * 6.
         """
         notes = {}
         n_positions = self.matrix.shape[1]
         n_strings = self.matrix.shape[0]
+        
+        # Find all positions with notes
+        active_positions = [p for p in range(n_positions) if any(self.matrix[s, p] != -1 for s in range(n_strings))]
+        
         for p_pos in range(n_positions):
             for s in range(n_strings):
                 fret = self.matrix[s, p_pos]
@@ -204,7 +210,17 @@ class GATab:
                     # Calculate pitch using guitar fretboard
                     string_id = s + 1  # string_id: 1 (high e) to 6 (low E)
                     pitch = guitar.fboard[string_id][fret]
-                    onset = p_pos * 6
+                    
+                    # Use original onset if available
+                    if self.original_onsets and p_pos in active_positions:
+                        active_idx = active_positions.index(p_pos)
+                        if active_idx < len(self.original_onsets):
+                            onset = self.original_onsets[active_idx]
+                        else:
+                            onset = p_pos * 6
+                    else:
+                        onset = p_pos * 6
+                    
                     dur = 6  # Default duration, you can adjust if needed
                     velocity = 96  # Default velocity
                     note = [int(pitch), dur, velocity]
@@ -256,6 +272,7 @@ class GATabSeq:
             
             # First row: chord names, aligned to positions
             chord_name_lines = []
+            position_lines = []
             for tab, tab_lines in zip(tab_objs, row_tabs):
                 chord_line = [' ' for _ in range(len(tab_lines[0]))]
                 if tab is not None and hasattr(tab, 'chord_dict') and tab.chord_dict:
@@ -275,8 +292,28 @@ class GATabSeq:
                         chord_line_pos = second_pos * 3
                         chord_line[chord_line_pos:chord_line_pos+len(chord2)] = chord2
                 chord_name_lines.append(''.join(chord_line))
+                
+                # Position row: show position numbers aligned with tab
+                if tab is not None:
+                    active_positions = [p for p in range(tab.matrix.shape[1]) 
+                                      if any(tab.matrix[s, p] != -1 for s in range(tab.matrix.shape[0]))]
+                    position_line = ' '.join([str(p).rjust(2) for p in active_positions])
+                else:
+                    position_line = ' ' * len(tab_lines[0]) if tab_lines else ''
+                position_lines.append(position_line)
             
             lines.append('   '.join(chord_name_lines))
+            lines.append('   '.join(position_lines))
+            
+            # Add segmentation line under position row
+            seg_lines = []
+            for tab_lines in row_tabs:
+                if tab_lines and tab_lines[0]:
+                    seg_line = '-' * len(tab_lines[0])
+                else:
+                    seg_line = ''
+                seg_lines.append(seg_line)
+            lines.append('   '.join(seg_lines))
             
             # For each line in the tab, join horizontally
             for line_idx in range(tab_height):
