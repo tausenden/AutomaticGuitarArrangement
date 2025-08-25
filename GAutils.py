@@ -9,15 +9,15 @@ class Guitar:
     - string_id 1 is high e (64), ... string_id 6 is low E (40)
     - fboard[string_id][fret] gives MIDI pitch
     """
-    def __init__(self, tuning=[40, 45, 50, 55, 59, 64], fretnum=24):
-        self.tuning = tuning  # low E to high e
+    def __init__(self, tuning=[64, 59, 55, 50, 45, 40], fretnum=24):
+        self.tuning = tuning  # high E to low E
         self.fretnum = fretnum
         def genfboard():
             mapping = {}
-            stri = 6
+            stri = 1
             for open_pitch in self.tuning:
                 mapping[stri] = [open_pitch + j for j in range(self.fretnum + 1)]
-                stri -= 1
+                stri += 1
             return mapping
         self.fboard = genfboard()
 
@@ -217,9 +217,9 @@ class GATab:
                         if active_idx < len(self.original_onsets):
                             onset = self.original_onsets[active_idx]
                         else:
-                            onset = p_pos * 6
+                            onset = p_pos
                     else:
-                        onset = p_pos * 6
+                        onset = p_pos
                     
                     dur = 6  # Default duration, you can adjust if needed
                     velocity = 96  # Default velocity
@@ -355,28 +355,42 @@ class GATabSeq:
         return MultiTrack.from_bars(bars)
 
 
-def visualize_guitar_tab(sequence, show_onset=True):
+def visualize_guitar_tab(sequence):
     """
     Visualizes guitar tablature from a sequence, showing only positions where at least one string is played.
     Displays a time axis (position indices or onset times) at the top for played positions.
     Args:
-        sequence: List of tuples or lists, each representing a chord (fret positions, optionally with finger assignments).
+        sequence: Can be one of:
+                 - List of lists: [[fret1, fret2, ...], [fret1, fret2, ...], ...] (fret positions only)
+                 - Dictionary: {'tab_candi': [...], 'hand_candi': [...]} (from GAimproved)
         show_onset: If True, show onset times (0, 6, 12, 18, ...), if False, show position indices (0, 1, 2, 3, ...)
     """
+    # Handle different input formats
+    if isinstance(sequence, dict) and 'tab_candi' in sequence:
+        # GAimproved format: {'tab_candi': [...], 'hand_candi': [...]}
+        tab_candi = sequence['tab_candi']
+        hand_candi = sequence.get('hand_candi', None)
+        frets_sequence = tab_candi
+        fingers_sequence = hand_candi
+    elif isinstance(sequence, list):
+        # List of lists format: [[frets], [frets], ...] - from ga_reproduction.py
+        frets_sequence = sequence
+        fingers_sequence = None
+    else:
+        raise ValueError(f"Unsupported sequence type: {type(sequence)}")
+    
     # Prepare data: collect only played positions
     played_indices = []
     played_frets = []
     played_fingers = []
-    for i, entry in enumerate(sequence):
-        if isinstance(entry, tuple):
-            frets, fingers = entry
-        else:
-            frets = entry
-            fingers = None
+    for i, frets in enumerate(frets_sequence):
         if any(fret != -1 for fret in frets):
             played_indices.append(i)
             played_frets.append(frets)
-            played_fingers.append(fingers)
+            if fingers_sequence and i < len(fingers_sequence):
+                played_fingers.append(fingers_sequence[i])
+            else:
+                played_fingers.append(None)
 
     # Build tab lines
     string_names = ['E', 'B', 'G', 'D', 'A', 'E']
@@ -402,25 +416,27 @@ def visualize_guitar_tab(sequence, show_onset=True):
                 finger_lines[string_idx] += '-'
 
     # Print time axis - convert position indices to onset times if requested
-    if show_onset:
-        print('os:   ', end='')
-        for idx in played_indices:
-            onset_time = idx  # Convert position index to onset time (16th note = 6 ticks)
-            print(str(onset_time).rjust(2), end='-')
-    else:
-        print('Pos:  ', end='')
-        for idx in played_indices:
-            print(str(idx).rjust(2), end='-')
-    print()
+    # print('os:', end='')
+    # for idx in played_indices:
+    #     print(str(idx).rjust(2), end='-')
+    # print()
 
     # Print finger positions if available
     if any(f is not None for f in played_fingers):
         print("Finger:")
+        print('  ', end='')
+        for idx in played_indices:
+            print(str(idx).rjust(2), end='-')
+        print()
         for line in finger_lines:
             print(line)
         print()
 
     print("Tab:")
+    print('  ', end='')
+    for idx in played_indices:
+        print(str(idx).rjust(2), end='-')
+    print()
     for line in tab_lines:
         print(line)
 
