@@ -12,7 +12,7 @@ class HMMrepro:
     """
     
     #def __init__(self, forms_files=['states/guitar_forms_single_expanded.json', 'states/guitar_forms_multi.json']):
-    def __init__(self, forms_files=['states/guitar_forms_CAGED.json']):
+    def __init__(self, forms_files=['states/guitar_forms_CAGED_2.json']):
         # Guitar configuration
         self.num_strings = 6
         self.num_frets = 20
@@ -440,7 +440,7 @@ if __name__ == "__main__":
     
     # Configuration
     input_folder = '../caihong_clip'  # Fixed input folder
-    output_folder = './arranged_caihong_clip_CAGED'  # Fixed output folder
+    output_folder = './arranged_caihong_clip_CAGED_2'  # Fixed output folder
     
     # Create output folder if it doesn't exist
     os.makedirs(output_folder, exist_ok=True)
