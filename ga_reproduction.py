@@ -8,8 +8,13 @@ class GAreproducing:
     Genetic Algorithm for Guitar Arrangement (Position-Based Approach).
     This class arranges guitar music by optimizing playability, note accuracy, and chord richness.
     """
-    def __init__(self, guitar=None, mutation_rate=0.03, population_size=300, 
-                 generations=100, num_strings=6, max_fret=20, midi_file_path=None):
+    def __init__(self, guitar=None, 
+                 mutation_rate=0.03, crossover_rate=0.6,
+                 population_size=300, generations=100, 
+                 num_strings=6, max_fret=20,
+                 weight_PC=1.0, weight_NWC=1.0, weight_NCC=1.0,
+                 midi_file_path=None,tournament_k=5):
+        self.tournament_k = tournament_k
         """
         Initialize the genetic algorithm for guitar arrangement.
         Args:
@@ -20,6 +25,10 @@ class GAreproducing:
             num_strings (int): Number of guitar strings.
             max_fret (int): Maximum fret position to consider.
             midi_file_path (str): Path to the MIDI file to process.
+            weight_PC (float): Weight for playability.
+            weight_NWC (float): Weight for note weight component.
+            weight_NCC (float): Weight for notes in chord component.
+            crossover_rate (float): Probability of crossover.
         """
         self.guitar = guitar if guitar is not None else Guitar()
         self.mutation_rate = mutation_rate
@@ -27,12 +36,13 @@ class GAreproducing:
         self.generations = generations
         self.num_strings = num_strings
         self.max_fret = max_fret
-        self.crossover_rate = 0.6
-        self.weight_PC = 1.0
-        self.weight_NWC = 1.0
-        self.weight_NCC = 1.0
+        self.crossover_rate = crossover_rate
+        self.weight_PC = weight_PC
+        self.weight_NWC = weight_NWC
+        self.weight_NCC = weight_NCC
         self.note_categories = {}
         self.category_weights = {'melody': 2.0, 'harmony': 1.0}
+        self.tournament_k = tournament_k
 
         if not midi_file_path:
             raise ValueError("MIDI file path is required")
@@ -122,8 +132,7 @@ class GAreproducing:
                 prev_avg = sum(prev_frets) / len(prev_frets)
                 curr_avg = sum(curr_frets) / len(curr_frets)
                 fret_distance_penalty -= abs(curr_avg - prev_avg)
-        open_string_reward = sum(sum(1 for fret in chord if fret == 0) for chord in active_chords)
-        chord_difficulty = 0
+        span_difficulty = 0
         for chord in active_chords:
             pressed = [fret for fret in chord if fret > 0]
             if not pressed:
@@ -132,11 +141,8 @@ class GAreproducing:
             max_fret = max(pressed)
             span = max_fret - min_fret + 1
             if span > 4:
-                chord_difficulty -= (span - 4) * 0.5
-            same_fret_count = sum(1 for fret in chord if fret == min_fret and fret > 0)
-            if same_fret_count >= 3 and span <= 5:
-                chord_difficulty += 1.0
-        playability = (played_strings_penalty + fret_distance_penalty + open_string_reward + chord_difficulty)
+                span_difficulty -= (span - 4) ** 2
+        playability = (played_strings_penalty + fret_distance_penalty + span_difficulty)
         return playability
 
     def calculate_NWC(self, tablature, original_midi_pitches):
@@ -234,8 +240,8 @@ class GAreproducing:
                     tablature[pos][string_idx] = -1
                 else:
                     tablature[pos][string_idx] = random.randint(0, self.max_fret)
-                if all(fret == -1 for fret in tablature[pos]):
-                    tablature[pos][random.randint(0, self.num_strings - 1)] = random.randint(0, self.max_fret)
+                # if all(fret == -1 for fret in tablature[pos]):
+                #     tablature[pos][random.randint(0, self.num_strings - 1)] = random.randint(0, self.max_fret)
         return tablature
 
     def run_single(self, bar_idx):
@@ -251,7 +257,7 @@ class GAreproducing:
         population = self.initialize_population(bar_idx)
         best_tablature = None
         best_fitness = float('-inf')
-        tournament_k = 5  # Tournament size for selection
+        tournament_k = self.tournament_k  # Tournament size for selection
         for generation in range(self.generations):
             fitnesses = [self.fitness(tab, original_midi_pitches) for tab in population]
             sorted_indices = np.argsort(fitnesses)[::-1]
@@ -267,7 +273,7 @@ class GAreproducing:
                 ncc = self.calculate_NCC(gen_best_tablature, original_midi_pitches)
                 print(f"[Bar {bar_idx} | Gen {generation}] PC: {pc:.4f}, NWC: {nwc:.4f}, NCC: {ncc:.4f}, Total: {pc + nwc + ncc:.4f}")
                 print("Current best tab:")
-                visualize_guitar_tab(gen_best_tablature, show_onset=True)
+                visualize_guitar_tab(gen_best_tablature)
             # Elitism: keep the best
             new_population = [population[gen_best_idx]]
             # Fill the rest of the population using tournament selection
@@ -298,11 +304,11 @@ class GAreproducing:
             GATabSeq: Encapsulated arrangement results with onset time information.
         """
         results = []
-        for i in range(len(self.bars_data)):
-            best_tablature = self.run_single(i)
+        for bar_idx in range(len(self.bars_data)):
+            best_tablature = self.run_single(bar_idx)
             
             # 创建GATab对象，保存onset时间信息
-            bar_data = self.bars_data[i]
+            bar_data = self.bars_data[bar_idx]
             ga_tab = GATab(
                 bar_data=best_tablature,
                 original_onsets=bar_data.get('original_onsets', [])
@@ -316,7 +322,7 @@ class GAreproducing:
             for pos, pitches in enumerate(bar_data['original_midi_pitches']):
                 if pitches:  # 如果有音符在这个位置
                     # 检查这个位置是否包含旋律音符（通过比较音高）
-                    melody_pitches = [pitch for pitch in self.target_melody_list[i] if pitch != -1]
+                    melody_pitches = [pitch for pitch in self.target_melody_list[bar_idx] if pitch != -1]
                     if any(pitch in pitches for pitch in melody_pitches):
                         melody_positions.add(pos)
             
@@ -327,9 +333,9 @@ class GAreproducing:
             
             # Use the structured GATab object for final fitness calculation
             pc = self.calculate_playability(ga_tab.bar_data)
-            nwc = self.calculate_NWC(ga_tab.bar_data, self.bars_data[i]['original_midi_pitches'])
-            ncc = self.calculate_NCC(ga_tab.bar_data, self.bars_data[i]['original_midi_pitches'])
-            print(f"[Bar {i+1}] PC: {pc:.4f}, NWC: {nwc:.4f}, NCC: {ncc:.4f}, Total: {pc + nwc + ncc:.4f}")
+            nwc = self.calculate_NWC(ga_tab.bar_data, self.bars_data[bar_idx]['original_midi_pitches'])
+            ncc = self.calculate_NCC(ga_tab.bar_data, self.bars_data[bar_idx]['original_midi_pitches'])
+            print(f"[Bar {bar_idx+1}] PC: {pc:.4f}, NWC: {nwc:.4f}, NCC: {ncc:.4f}, Total: {pc + nwc + ncc:.4f}")
         
         # Return GATabSeq object - the structured approach
         ga_tab_seq = GATabSeq(results)
