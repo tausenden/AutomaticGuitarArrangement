@@ -12,3 +12,8 @@ HMM_repo/sonata/
 **/test_*/
 caihong_clip/
 **/*.zip
+arranged_caihong_clip_GA_repro/
+arranged_caihong_clip_GA_improved/
+debug_folder1/
+to_delete/
+to_debug/
