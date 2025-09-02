@@ -78,7 +78,7 @@ class MetricsEvaluator:
             
         return bars_data
     
-    def calculate_note_accuracy(self):
+    def calculate_note_precision(self):
         """
         Calculate Note Weight Component (NWC) accuracy.
         Measures what percentage of original notes are present in arranged version.
@@ -110,30 +110,50 @@ class MetricsEvaluator:
         Calculate Rhythm Pattern (RP) accuracy.
         Measures correlation between original and arranged rhythm patterns.
         """
-        original_rhythm = []
-        arranged_rhythm = []
+        original_rp = []
+        arranged_rp = []
+        rhythm_matches = 0
+        total_rhythm_positions = 0
         
         for bar_idx in range(len(self.original_data)):
             original_bar = self.original_data[bar_idx]['midi_pitches']
             arranged_bar = self.arranged_data[bar_idx]['midi_pitches']
-            
+            original_bar_rhythm=[]
+            arranged_bar_rhythm=[]
             # Convert to rhythm pattern (1 if notes present, 0 if not)
-            for pos in range(min(len(original_bar), len(arranged_bar))):
-                original_rhythm.append(1 if original_bar[pos] else 0)
-                arranged_rhythm.append(1 if arranged_bar[pos] else 0)
-        
-        if len(original_rhythm) == 0:
-            return 0.0
-        
-        # Calculate correlation coefficient
-        if np.std(original_rhythm) == 0 or np.std(arranged_rhythm) == 0:
-            # If either is constant, use simple matching
-            matches = sum(1 for o, a in zip(original_rhythm, arranged_rhythm) if o == a)
-            return matches / len(original_rhythm)
-        
-        correlation = np.corrcoef(original_rhythm, arranged_rhythm)[0, 1]
-        # Convert correlation (-1 to 1) to accuracy (0 to 1)
-        return (correlation + 1) / 2
+            if len(original_bar) != len(arranged_bar):
+                raise ValueError("original and arranged bar length is not equal")
+            for pos in range(len(original_bar)):
+                original_bar_rhythm.append(len(original_bar[pos]) if original_bar[pos] else 0)
+                arranged_bar_rhythm.append(len(arranged_bar[pos]) if arranged_bar[pos] else 0)
+            
+            sum_original=sum(original_bar_rhythm)
+            sum_arranged=sum(arranged_bar_rhythm)
+            avg_original=sum_original/len([n for n in original_bar_rhythm if n > 0])
+            avg_arranged=sum_arranged/len([n for n in arranged_bar_rhythm if n > 0])
+            for pos in range(len(original_bar_rhythm)):
+                if original_bar_rhythm[pos] > avg_original:
+                    original_rp.append(2)
+                elif original_bar_rhythm[pos] > 0:
+                    original_rp.append(1)
+                else:
+                    original_rp.append(0)
+            for pos in range(len(arranged_bar_rhythm)):
+                if arranged_bar_rhythm[pos] > avg_arranged:
+                    arranged_rp.append(2)
+                elif arranged_bar_rhythm[pos] > 0:
+                    arranged_rp.append(1)
+                else:
+                    arranged_rp.append(0)
+
+        for pos in range(len(original_rp)):
+            if original_rp[pos] == arranged_rp[pos]:
+                rhythm_matches += 1
+            total_rhythm_positions += 1
+
+        result = rhythm_matches / total_rhythm_positions
+        return result
+    
     
     def calculate_chord_accuracy(self):
         """
@@ -147,6 +167,7 @@ class MetricsEvaluator:
             original_chords = self.original_data[bar_idx].get('chords')
             arranged_chords = self.arranged_data[bar_idx].get('chords')
             # Extract chord from arranged MIDI notes
+            pass
             for pos in range(min(len(original_chords), len(arranged_chords))):
                 original_chord = original_chords[pos]
                 arranged_chord = arranged_chords[pos]
@@ -156,8 +177,8 @@ class MetricsEvaluator:
         
         if total_comparisons == 0:
             return 0.0
-        
-        return chord_matches / total_comparisons
+        result = chord_matches / total_comparisons
+        return result
     
     def calculate_melody_accuracy(self):
         """
@@ -172,17 +193,17 @@ class MetricsEvaluator:
             arranged_bar = self.arranged_data[bar_idx]['melody_pitches']
             
             for pos in range(min(len(original_bar), len(arranged_bar))):
-                original_notes = original_bar[pos]
-                arranged_notes = arranged_bar[pos]
-                for pos in range(min(len(original_notes), len(arranged_notes))):
-                    if original_notes[pos] == arranged_notes[pos]:
+                if len(original_bar[pos]) > 1 or len(arranged_bar[pos]) > 1:
+                    raise ValueError("melody should be only one note, now multiple notes")
+                if original_bar[pos]:
+                    if original_bar[pos][0] == arranged_bar[pos][0]:
                         melody_matches += 1
-                        total_melody_positions += 1
-        
+                    total_melody_positions += 1
+            pass
         if total_melody_positions == 0:
             return 0.0
-        
-        return melody_matches / total_melody_positions
+        result = melody_matches / total_melody_positions
+        return result
     
     def calculate_coverage_metrics(self):
         """
@@ -222,7 +243,7 @@ class MetricsEvaluator:
             dict: Comprehensive metrics dictionary
         """    
         metrics = {
-            'note_accuracy': round(self.calculate_note_accuracy(), 4),
+            'note_precision': round(self.calculate_note_precision(), 4),
             'rhythm_accuracy': round(self.calculate_rhythm_accuracy(), 4),
             'chord_accuracy': round(self.calculate_chord_accuracy(), 4),
             'melody_accuracy': round(self.calculate_melody_accuracy(), 4),
