@@ -68,7 +68,15 @@ class MetricsEvaluator:
                     melody_pitches[pos].append(note.pitch)
             # Extract chord information - same as GA classes
             chords = bar.get_chord()
-            chord_name = [chord[0]+chord[1] for chord in chords]
+            # Filter out None values and handle cases where chord components might be None
+            chord_name = []
+            if chords:
+                for chord in chords:
+                    if chord and len(chord) >= 2 and chord[0] is not None and chord[1] is not None:
+                        chord_name.append(chord[0] + chord[1])
+            # If no valid chords found, use empty list
+            if not chord_name:
+                chord_name = []
             
             bars_data.append({
                 'midi_pitches': midi_pitches,
@@ -108,7 +116,6 @@ class MetricsEvaluator:
     def calculate_rhythm_accuracy(self):
         """
         Calculate Rhythm Pattern (RP) accuracy.
-        Measures correlation between original and arranged rhythm patterns.
         """
         original_rp = []
         arranged_rp = []
@@ -163,17 +170,22 @@ class MetricsEvaluator:
         chord_matches = 0
         total_comparisons = 0
         
-        for bar_idx in range(len(self.original_data)):
-            original_chords = self.original_data[bar_idx].get('chords')
-            arranged_chords = self.arranged_data[bar_idx].get('chords')
-            # Extract chord from arranged MIDI notes
-            pass
+        min_bars = min(len(self.original_data), len(self.arranged_data))
+        
+        for bar_idx in range(min_bars):
+            original_chords = self.original_data[bar_idx].get('chords', [])
+            arranged_chords = self.arranged_data[bar_idx].get('chords', [])
+            
+            # Compare chords within each bar
             for pos in range(min(len(original_chords), len(arranged_chords))):
                 original_chord = original_chords[pos]
                 arranged_chord = arranged_chords[pos]
                 if original_chord == arranged_chord:
                     chord_matches += 1
                 total_comparisons += 1
+            
+            # Count mismatches when one bar has more chords than the other
+            total_comparisons += abs(len(original_chords) - len(arranged_chords))
         
         if total_comparisons == 0:
             return 0.0
@@ -196,6 +208,9 @@ class MetricsEvaluator:
                 if len(original_bar[pos]) > 1 or len(arranged_bar[pos]) > 1:
                     raise ValueError("melody should be only one note, now multiple notes")
                 if original_bar[pos]:
+                    if not arranged_bar[pos]:
+                        total_melody_positions += 1
+                        continue
                     if original_bar[pos][0] == arranged_bar[pos][0]:
                         melody_matches += 1
                     total_melody_positions += 1
@@ -205,36 +220,28 @@ class MetricsEvaluator:
         result = melody_matches / total_melody_positions
         return result
     
-    def calculate_coverage_metrics(self):
-        """
-        Calculate coverage metrics - how much of the original content is preserved.
-        """
-        # Pitch coverage
-        original_pitches = set()
-        arranged_pitches = set()
-        
-        for bar_data in self.original_data:
-            for pos_notes in bar_data['midi_pitches']:
-                original_pitches.update(pos_notes)
-        
-        for bar_data in self.arranged_data:
-            for pos_notes in bar_data['midi_pitches']:
-                arranged_pitches.update(pos_notes)
-        
-        pitch_coverage = len(arranged_pitches.intersection(original_pitches)) / len(original_pitches) if original_pitches else 0
-        
-        # Note density (notes per bar)
-        original_density = sum(len([n for pos in bar['midi_pitches'] for n in pos]) for bar in self.original_data) / len(self.original_data)
-        arranged_density = sum(len([n for pos in bar['midi_pitches'] for n in pos]) for bar in self.arranged_data) / len(self.arranged_data)
-        
-        density_ratio = arranged_density / original_density if original_density > 0 else 0
-        
-        return {
-            'pitch_coverage': pitch_coverage,
-            'original_density': original_density,
-            'arranged_density': arranged_density, 
-            'density_ratio': density_ratio
-        }
+    def calculate_melody_cor(self):
+        original_melody_whole=[]
+        arranged_melody_whole=[]
+        for bar_idx in range(len(self.original_data)):
+            original_bar = self.original_data[bar_idx]['melody_pitches']
+            arranged_bar = self.arranged_data[bar_idx]['melody_pitches']
+            
+            for pos in range(min(len(original_bar), len(arranged_bar))):
+                if len(original_bar[pos]) > 1 or len(arranged_bar[pos]) > 1:
+                    raise ValueError("melody should be only one note, now multiple notes")
+                original_melody_whole.append(original_bar[pos][0] if original_bar[pos] else np.nan)
+                arranged_melody_whole.append(arranged_bar[pos][0] if arranged_bar[pos] else np.nan)
+            pass
+        a = np.array(original_melody_whole, dtype=float)
+        b = np.array(arranged_melody_whole, dtype=float)
+
+        mask = ~np.isnan(a) & ~np.isnan(b)
+        if mask.sum() < 2:
+            return 0.0 
+        result = float(np.corrcoef(a[mask], b[mask])[0, 1])
+        return result
+
     
     def evaluate_all_metrics(self):
         """
@@ -247,13 +254,8 @@ class MetricsEvaluator:
             'rhythm_accuracy': round(self.calculate_rhythm_accuracy(), 4),
             'chord_accuracy': round(self.calculate_chord_accuracy(), 4),
             'melody_accuracy': round(self.calculate_melody_accuracy(), 4),
-            #'coverage_metrics': self.calculate_coverage_metrics()
+            'melody_correlation': round(self.calculate_melody_cor(), 4)
         }
-        
-        # Round coverage metrics
-        # for key, value in metrics['coverage_metrics'].items():
-        #     if isinstance(value, float):
-        #         metrics['coverage_metrics'][key] = round(value, 4)
         
         return metrics
     
