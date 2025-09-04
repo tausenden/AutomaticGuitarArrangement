@@ -1,8 +1,9 @@
 import os
 import subprocess
+import contextlib
 from typing import Dict
 from pydub import AudioSegment
-from GAutils import Guitar, GATabSeq
+from .GAutils import Guitar, GATabSeq
 
 
 def ensure_dir(path: str) -> None:
@@ -10,7 +11,7 @@ def ensure_dir(path: str) -> None:
     os.makedirs(path, exist_ok=True)
 
 
-def midi_to_wav(midi_fp: str, sf_path: str, wav_fp: str) -> None:
+def midi_to_wav(midi_fp: str, sf_path: str, wav_fp: str, verbose: bool = True) -> None:
     """Convert MIDI to WAV using fluidsynth."""
     cmd = [
         'fluidsynth',
@@ -20,7 +21,12 @@ def midi_to_wav(midi_fp: str, sf_path: str, wav_fp: str) -> None:
         '-F', wav_fp,
         '-r', '44100',
     ]
-    subprocess.run(cmd, check=True)
+    
+    if verbose:
+        subprocess.run(cmd, check=True)
+    else:
+        # Suppress output from fluidsynth
+        subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
 def post_process_wav(wav_fp: str, silence_thresh_db: float = -40.0, padding_ms: int = 200, target_dbfs: float = -0.1) -> None:
@@ -45,8 +51,8 @@ def _detect_leading_silence(sound: AudioSegment, silence_threshold: float = -40.
     return trim_ms
 
 
-def export_ga_results(ga_tab_seq: GATabSeq, song_name: str = 'ga_arrangement', tempo: int = 120,
-                     output_dir: str = 'outputs', sf2_path: str = 'resources/Tyros Nylon.sf2') -> Dict[str, str]:
+def export_ga_results(ga_tab_seq: GATabSeq, resolution: int, song_name: str = 'ga_arrangement', tempo: int = 120,
+                     output_dir: str = 'outputs', sf2_path: str = 'resources/Tyros Nylon.sf2', verbose: bool = True) -> Dict[str, str]:
     """
     End-to-end export for GA arrangement results following rule_based.py and hmm_export.py pattern.
     
@@ -56,6 +62,7 @@ def export_ga_results(ga_tab_seq: GATabSeq, song_name: str = 'ga_arrangement', t
         tempo: Tempo for the MIDI/audio output
         output_dir: Directory to save outputs
         sf2_path: Path to SoundFont file for audio rendering
+        verbose: Whether to print progress messages
     
     Returns:
         Dict with paths to generated files: {'tab_fp', 'midi_fp', 'wav_fp'}
@@ -66,21 +73,29 @@ def export_ga_results(ga_tab_seq: GATabSeq, song_name: str = 'ga_arrangement', t
     
     # Save the tab to file
     tab_fp = os.path.join(output_dir, f'{song_name}.tab')
-    print(f'Saving tab to {tab_fp}')
+    if verbose:
+        print(f'Saving tab to {tab_fp}')
     ga_tab_seq.save_to_file(tab_fp)
     
     # Convert to note sequence
-    mt = ga_tab_seq.convert_to_multitrack(guitar, tempo=tempo)
+    mt = ga_tab_seq.convert_to_multitrack(guitar, tempo=tempo,resolution=resolution)
     
     # Save the note sequence to MIDI
     midi_fp = os.path.join(output_dir, f'{song_name}.midi')
-    print(f'Saving MIDI to {midi_fp}')
-    mt.to_midi(midi_fp)
+    if verbose:
+        print(f'Saving MIDI to {midi_fp}')
+        mt.to_midi(midi_fp)
+    else:
+        # Suppress REMI-z output
+        with open(os.devnull, 'w') as devnull:
+            with contextlib.redirect_stdout(devnull):
+                mt.to_midi(midi_fp)
     
     # Synthesize the MIDI to WAV
     wav_fp = os.path.join(output_dir, f'{song_name}.wav')
-    print(f'Synthesizing MIDI to WAV: {wav_fp}')
-    midi_to_wav(midi_fp, sf2_path, wav_fp)
+    if verbose:
+        print(f'Synthesizing MIDI to WAV: {wav_fp}')
+    midi_to_wav(midi_fp, sf2_path, wav_fp, verbose=verbose)
     post_process_wav(wav_fp, silence_thresh_db=-40.0, padding_ms=200, target_dbfs=-0.1)
     
     return {
