@@ -1,5 +1,8 @@
 import numpy as np
 import random
+import time
+import json
+import os
 from ..utils import Guitar, pitch2name, visualize_guitar_tab, GATab, GATabSeq
 from remi_z import MultiTrack
 
@@ -13,7 +16,7 @@ class GAreproducing:
                  population_size=300, generations=100, 
                  num_strings=6, max_fret=20,
                  weight_PC=1.0, weight_NWC=1.0, weight_NCC=1.0,
-                 midi_file_path=None,tournament_k=5):
+                 midi_file_path=None, tournament_k=5, resolution=16):
         self.tournament_k = tournament_k
         """
         Initialize the genetic algorithm for guitar arrangement.
@@ -29,6 +32,8 @@ class GAreproducing:
             weight_NWC (float): Weight for note weight component.
             weight_NCC (float): Weight for notes in chord component.
             crossover_rate (float): Probability of crossover.
+            tournament_k (int): Tournament size for selection.
+            resolution (int): Time resolution per bar (default 16 for 16th notes).
         """
         self.guitar = guitar if guitar is not None else Guitar()
         self.mutation_rate = mutation_rate
@@ -43,34 +48,38 @@ class GAreproducing:
         self.note_categories = {}
         self.category_weights = {'melody': 2.0, 'harmony': 1.0}
         self.tournament_k = tournament_k
+        self.resolution = resolution
 
         if not midi_file_path:
             raise ValueError("MIDI file path is required")
         mt = MultiTrack.from_midi(midi_file_path)
         self.bars_data = []
         self.target_melody_list = []
+        remiz_resolution = 48
+        self.resolution_scale = remiz_resolution // self.resolution
         for bar in mt.bars:
-            original_midi_pitches = [[] for _ in range(48)]
+            original_midi_pitches = [[] for _ in range(self.resolution)]
             original_onsets = []  # 保存实际的onset时间
-            melody_notes = bar.get_melody('hi_note')
+            melody_notes = bar.get_melody('hi_track')
             all_notes = bar.get_all_notes(include_drum=False)
-            
+            for note in all_notes:
+                note.onset = int(note.onset//self.resolution_scale)
+                note.duration = int(note.duration//self.resolution_scale)
             # 收集所有onset时间
             onset_times = set()
             for note in all_notes:
-                if 0 <= note.onset < 48:
-                    onset_times.add(note.onset)
+                onset_times.add(int(note.onset//self.resolution_scale))
             original_onsets = sorted(list(onset_times))
             
             for note in all_notes:
                 pos = note.onset
-                if 0 <= pos < 48:
+                if 0 <= pos < self.resolution:
                     original_midi_pitches[pos].append(note.pitch)
             chords = bar.get_chord()
-            chord_name = chords[0][0] if chords and chords[0] else 'C'
+            chord_name = [chord[0]+chord[1] for chord in chords]
             self.bars_data.append({
                 'original_midi_pitches': original_midi_pitches, 
-                'chord': chord_name,
+                'chords': chord_name,
                 'original_onsets': original_onsets  # 添加onset时间信息
             })
             self.target_melody_list.append([note.pitch for note in melody_notes])
@@ -81,12 +90,37 @@ class GAreproducing:
                     melody_positions.add(pos)
             
             bar_categories = {}
-            for pos in range(48):
+            for pos in range(self.resolution):
                 if pos in melody_positions:
                     bar_categories[pos] = 'melody'
                 elif original_midi_pitches[pos]:
                     bar_categories[pos] = 'harmony'
             self.note_categories.update(bar_categories)
+        
+        # Initialize statistics tracking
+        self.statistics = {
+            'processing_time_seconds': 0.0,
+            'total_bars': len(self.bars_data),
+            'fitness_stats': {
+                'avg_PC': 0.0,
+                'avg_NWC': 0.0,
+                'avg_NCC': 0.0,
+                'avg_fitness': 0.0
+            },
+            'ga_config': {
+                'mutation_rate': self.mutation_rate,
+                'crossover_rate': self.crossover_rate,
+                'population_size': self.population_size,
+                'generations': self.generations,
+                'num_strings': self.num_strings,
+                'max_fret': self.max_fret,
+                'weight_PC': self.weight_PC,
+                'weight_NWC': self.weight_NWC,
+                'weight_NCC': self.weight_NCC,
+                'tournament_k': self.tournament_k,
+                'resolution': self.resolution
+            }
+        }
 
     def initialize_population(self, bar_idx):
         """
@@ -98,7 +132,7 @@ class GAreproducing:
         population = []
         for _ in range(self.population_size):
             tablature = []
-            for pos in range(48):
+            for pos in range(self.resolution):
                 if not original_midi_pitches[pos]:
                     tablature.append([-1] * self.num_strings)
                 else:
@@ -170,9 +204,9 @@ class GAreproducing:
             highest_note = max(midi_notes)
             pitch_distance = abs(highest_note - target)
             if pitch_distance == 0:
-                total_score += weight * 2
+                total_score += 10
             else:
-                total_score -= pitch_distance * weight
+                total_score -= pitch_distance ** 2 * weight 
         return total_score
 
     def calculate_NCC(self, tablature, original_midi_pitches):
@@ -303,7 +337,14 @@ class GAreproducing:
         Returns:
             GATabSeq: Encapsulated arrangement results with onset time information.
         """
+        # Start timing
+        start_time = time.time()
+        
         results = []
+        total_pc = 0.0
+        total_nwc = 0.0
+        total_ncc = 0.0
+        
         for bar_idx in range(len(self.bars_data)):
             best_tablature = self.run_single(bar_idx)
             
@@ -315,7 +356,11 @@ class GAreproducing:
             )
             
             # 添加和弦信息
-            ga_tab.add_chord_info(0, bar_data['chord'])
+            chords = bar_data['chords']
+            if len(chords) > 0:
+                ga_tab.add_chord_info(0, chords[0])
+            if len(chords) > 1:
+                ga_tab.add_chord_info(self.resolution // 2, chords[1])
             
             # 标记旋律位置 - 从原始MIDI数据中获取旋律位置
             melody_positions = set()
@@ -335,8 +380,57 @@ class GAreproducing:
             pc = self.calculate_playability(ga_tab.bar_data)
             nwc = self.calculate_NWC(ga_tab.bar_data, self.bars_data[bar_idx]['original_midi_pitches'])
             ncc = self.calculate_NCC(ga_tab.bar_data, self.bars_data[bar_idx]['original_midi_pitches'])
+            
+            # Accumulate fitness statistics
+            total_pc += pc
+            total_nwc += nwc
+            total_ncc += ncc
+            
             print(f"[Bar {bar_idx+1}] PC: {pc:.4f}, NWC: {nwc:.4f}, NCC: {ncc:.4f}, Total: {pc + nwc + ncc:.4f}")
+        
+        # End timing and calculate statistics
+        end_time = time.time()
+        processing_time = end_time - start_time
+        
+        num_bars = len(self.bars_data)
+        total_fitness = total_pc * self.weight_PC + total_nwc * self.weight_NWC + total_ncc * self.weight_NCC
+        
+        # Update statistics
+        self.statistics['processing_time_seconds'] = round(processing_time, 2)
+        self.statistics['fitness_stats']['avg_PC'] = round(total_pc / num_bars, 4)
+        self.statistics['fitness_stats']['avg_NWC'] = round(total_nwc / num_bars, 4)
+        self.statistics['fitness_stats']['avg_NCC'] = round(total_ncc / num_bars, 4)
+        self.statistics['fitness_stats']['avg_fitness'] = round(total_fitness / num_bars, 4)
         
         # Return GATabSeq object - the structured approach
         ga_tab_seq = GATabSeq(results)
         return ga_tab_seq
+    
+    def get_statistics(self):
+        """
+        Get the statistics for the current run.
+        Returns:
+            dict: Statistics including timing and fitness information.
+        """
+        return self.statistics.copy()
+    
+    def export_statistics(self, output_dir, song_name=None):
+        """
+        Export statistics to a JSON file.
+        Args:
+            output_dir (str): Directory to save the statistics file.
+            song_name (str, optional): Name of the song for the statistics.
+        """
+        if song_name:
+            self.statistics['song_name'] = song_name
+            filename = f"{song_name}_statistics.json"
+        else:
+            raise ValueError("Song name is None")
+        
+        os.makedirs(output_dir, exist_ok=True)
+        statistics_file_path = os.path.join(output_dir, filename)
+        
+        with open(statistics_file_path, 'w') as f:
+            json.dump(self.statistics, f, indent=2)
+        
+        return statistics_file_path

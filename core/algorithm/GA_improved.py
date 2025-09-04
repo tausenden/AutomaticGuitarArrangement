@@ -1,5 +1,6 @@
 import numpy as np
 import random
+import time
 from .GA_reproduction import GAreproducing
 from ..utils import set_random, visualize_guitar_tab
 from remi_z import MultiTrack
@@ -12,18 +13,22 @@ class GAimproved(GAreproducing):
                  population_size=300, generations=100, 
                  num_strings=6, max_fret=20,
                  weight_PC=1.0, weight_NWC=1.0, weight_NCC=1.0,weight_RP=1.0,
-                 midi_file_path=None,tournament_k=5):  
+                 midi_file_path=None, tournament_k=5, resolution=16):  
         self.weight_RP = weight_RP
         super().__init__(guitar, 
         mutation_rate, crossover_rate, 
         population_size, generations, num_strings, max_fret, 
-        weight_PC, weight_NWC, weight_NCC, midi_file_path,tournament_k)
+        weight_PC, weight_NWC, weight_NCC, midi_file_path, tournament_k, resolution)
         
         # Add rhythm pattern functionality
         self.rhythm_pattern = None
         if midi_file_path:
             rhythm_pattern = self.extract_rhythm_pattern(midi_file_path)     
-            self.rhythm_pattern = rhythm_pattern     
+            self.rhythm_pattern = rhythm_pattern
+        
+        # Update statistics to include RP component
+        self.statistics['fitness_stats']['avg_RP'] = 0.0
+        self.statistics['ga_config']['weight_RP'] = self.weight_RP     
 
     def extract_rhythm_pattern(self, midi_file_path):
         """
@@ -56,7 +61,7 @@ class GAimproved(GAreproducing):
             
             # Create a list with position counts for this bar
             if position_counts:
-                bar_position_counts = [position_counts.get(i, 0) for i in range(48)]
+                bar_position_counts = [position_counts.get(i, 0) for i in range(self.resolution)]
             else:
                 bar_position_counts = []
             
@@ -179,7 +184,7 @@ class GAimproved(GAreproducing):
         probabilities = np.array(raw_probabilities) / sum(raw_probabilities)
         for _ in range(self.population_size):
             tab_candi=[]
-            for pos in range(48):
+            for pos in range(self.resolution):
                 if np.random.random() < 0.7:
                     form_pos = [-1]*self.num_strings
                 else:
@@ -378,30 +383,60 @@ class GAimproved(GAreproducing):
                 total_score -= pitch_distance ** 2 * weight 
         return total_score
     
-    def calculate_NCC(self, candidate, original_midi_pitches, original_chord_name):
+    def calculate_NCC(self, candidate, original_midi_pitches, chord_names):
         tab_candi, hand_candi = candidate['tab_candi'], candidate['hand_candi']
 
         tot_err = 0
-        if not original_chord_name:
+        
+        # Handle both single chord name (backward compatibility) and two chord names
+        if isinstance(chord_names, str):
+            # Single chord for entire bar (backward compatibility)
+            first_half_chord = chord_names
+            second_half_chord = chord_names
+        elif isinstance(chord_names, (list, tuple)) and len(chord_names) == 2:
+            # Two chords: first half and second half
+            first_half_chord, second_half_chord = chord_names
+        else:
+            # No valid chord information
             return 0
         
-        target_chord_note = self.guitar.chords4NCC[original_chord_name]
+        # Skip if no chord names are provided
+        if not first_half_chord and not second_half_chord:
+            return 0
+        
+        # Get target chord notes for each half
+        first_half_chord_notes = self.guitar.chords4NCC.get(first_half_chord, []) if first_half_chord else []
+        second_half_chord_notes = self.guitar.chords4NCC.get(second_half_chord, []) if second_half_chord else []
+        
+        # Split bar into two halves based on resolution
+        half_point = self.resolution // 2
         
         for i in range(len(tab_candi)):
             if original_midi_pitches[i]:
                 target_melody = max(original_midi_pitches[i])
             else:
                 target_melody = -1
+            
             chord_dict = {j+1: fret for j, fret in enumerate(tab_candi[i])}
             midi_notes = self.guitar.get_chord_midi(chord_dict)
-            pass
+            
+            # Determine which chord to use based on position
+            if i < half_point:
+                target_chord_notes = first_half_chord_notes
+            else:
+                target_chord_notes = second_half_chord_notes
+            
+            # Skip if no chord notes available for this half
+            if not target_chord_notes:
+                continue
+            
             for note in midi_notes:
                 if note == -1:
                     continue
                 if note == target_melody:
                     continue
                 note %= 12
-                if note not in target_chord_note:
+                if note not in target_chord_notes:
                     tot_err += 1
         
         return -(tot_err)
@@ -411,11 +446,11 @@ class GAimproved(GAreproducing):
 
     def fitness(self, candidate, bar_idx=None):
         original_midi_pitches = self.bars_data[bar_idx]['original_midi_pitches']
-        original_chord_name = self.bars_data[bar_idx]['chord']
+        chord_data = self.bars_data[bar_idx]['chords']
         pc = self.calculate_playability(candidate)
         nwc = self.calculate_NWC(candidate,original_midi_pitches)
         nccinrepro=super().calculate_NCC(candidate['tab_candi'],original_midi_pitches)
-        ncc = self.calculate_NCC(candidate, original_midi_pitches, original_chord_name) if original_chord_name else 0
+        ncc = self.calculate_NCC(candidate, original_midi_pitches, chord_data) if chord_data else 0
         rp = self.calculate_RP(candidate, bar_idx)
         return pc * self.weight_PC + nwc * self.weight_NWC + ncc * self.weight_NCC + rp * self.weight_RP
     
@@ -484,7 +519,7 @@ class GAimproved(GAreproducing):
         """
         bar_data = self.bars_data[bar_idx]
         original_midi_pitches: list[int] = bar_data['original_midi_pitches']
-        original_chord_name: str = bar_data['chord']
+        chord_data = bar_data['chords']
         population = self.initialize_population()
         best_candidate = None
         best_fitness = float('-inf')
@@ -504,7 +539,7 @@ class GAimproved(GAreproducing):
             if generation % max(1, self.generations // 5) == 0:
                 pc = self.calculate_playability(gen_best_candidate)*self.weight_PC
                 nwc = self.calculate_NWC(gen_best_candidate, original_midi_pitches)*self.weight_NWC
-                ncc = self.calculate_NCC(gen_best_candidate, original_midi_pitches, original_chord_name)*self.weight_NCC
+                ncc = self.calculate_NCC(gen_best_candidate, original_midi_pitches, chord_data)*self.weight_NCC
                 rp = self.calculate_RP(gen_best_candidate, bar_idx)*self.weight_RP
                 print(f"[Bar{bar_idx}|Gen{generation}]PC:{pc:.4f},NWC:{nwc:.4f},NCC:{ncc:.4f},RP:{rp:.4f},Total:{pc + nwc + ncc + rp:.4f}")
                 print("Current best tab:")
@@ -542,7 +577,17 @@ class GAimproved(GAreproducing):
         Returns:
             GATabSeq: Encapsulated arrangement results with onset time information.
         """
+        # Start timing
+        start_time = time.time()
+        
         results = []
+        total_pc = 0.0
+        total_nwc = 0.0
+        total_ncc = 0.0
+        total_rp = 0.0
+
+        
+        
         for bar_idx in range(len(self.bars_data)):
             best_candidate = self.run_single(bar_idx)
             
@@ -556,7 +601,11 @@ class GAimproved(GAreproducing):
             )
             
             # 添加和弦信息
-            ga_tab.add_chord_info(0, bar_data['chord'])
+            chords = bar_data['chords']
+            if len(chords) > 0:
+                ga_tab.add_chord_info(0, chords[0])
+            if len(chords) > 1:
+                ga_tab.add_chord_info(self.resolution // 2, chords[1])
             
             # 标记旋律位置 - 从原始MIDI数据中获取旋律位置
             melody_positions = set()
@@ -575,8 +624,29 @@ class GAimproved(GAreproducing):
             # Use the structured GATab object for final fitness calculation
             pc = self.calculate_playability(best_candidate)
             nwc = self.calculate_NWC(best_candidate, self.bars_data[bar_idx]['original_midi_pitches'])
-            ncc = self.calculate_NCC(best_candidate, self.bars_data[bar_idx]['original_midi_pitches'], self.bars_data[bar_idx]['chord'])
-            print(f"[Bar {bar_idx+1}] PC: {pc:.4f}, NWC: {nwc:.4f}, NCC: {ncc:.4f}, Total: {pc + nwc + ncc:.4f}")
+            ncc = self.calculate_NCC(best_candidate, self.bars_data[bar_idx]['original_midi_pitches'], self.bars_data[bar_idx]['chords'])
+            rp = self.calculate_RP(best_candidate, bar_idx)
+            print(f"[Bar {bar_idx+1}] PC: {pc:.4f}, NWC: {nwc:.4f}, NCC: {ncc:.4f}, RP: {rp:.4f}, Total: {pc + nwc + ncc + rp:.4f}")
+            # Accumulate fitness statistics
+            total_pc += pc
+            total_nwc += nwc
+            total_ncc += ncc
+            total_rp += rp        
+        # End timing and calculate statistics
+        end_time = time.time()
+        processing_time = end_time - start_time
+        
+        num_bars = len(self.bars_data)
+        total_fitness = (total_pc * self.weight_PC + total_nwc * self.weight_NWC + 
+                        total_ncc * self.weight_NCC + total_rp * self.weight_RP)
+        
+        # Update statistics (including RP component)
+        self.statistics['processing_time_seconds'] = round(processing_time, 2)
+        self.statistics['fitness_stats']['avg_PC'] = round(total_pc / num_bars, 4)
+        self.statistics['fitness_stats']['avg_NWC'] = round(total_nwc / num_bars, 4)
+        self.statistics['fitness_stats']['avg_NCC'] = round(total_ncc / num_bars, 4)
+        self.statistics['fitness_stats']['avg_RP'] = round(total_rp / num_bars, 4)
+        self.statistics['fitness_stats']['avg_fitness'] = round(total_fitness / num_bars, 4)
         
         # Return GATabSeq object - the structured approach
         ga_tab_seq = GATabSeq(results)
