@@ -2,6 +2,7 @@ from mido import midifiles
 from remi_z import MultiTrack, Bar
 import numpy as np
 import random
+from typing import List, Dict, Tuple, Optional
 
 class Guitar:
     """
@@ -89,7 +90,9 @@ def pitch2name(seq):
         res.append(name+str(lev))
     return res
 
-
+class GAMultiTrack(MultiTrack):
+    def __init__(self, bars:List[Bar]):
+        super().__init__(bars)
 
 class GATab:
     """
@@ -132,14 +135,11 @@ class GATab:
         -1 means no note pressed.
         Each position is 2 characters wide, separated by a single space.
         """
-        # Only show positions with notes
-        active_positions = [p for p in range(self.matrix.shape[1]) 
-                          if any(self.matrix[s, p] != -1 for s in range(self.matrix.shape[0]))]
         lines = []
         for s in range(self.matrix.shape[0]):
             line = ' '.join([
                 '--' if self.matrix[s, p] == -1 else str(self.matrix[s, p]).rjust(2)
-                for p in active_positions
+                for p in range(self.matrix.shape[1])
             ])
             lines.append(line)
         return '\n'.join(lines)
@@ -191,7 +191,7 @@ class GATab:
             result.append(chord)
         return result
 
-    def convert_to_bar(self, guitar):
+    def convert_to_bar(self, guitar, resolution=16):
         """
         Convert the GATab to a Bar object using the provided guitar for pitch mapping.
         Uses original onset values if available, otherwise falls back to position * 6.
@@ -212,16 +212,9 @@ class GATab:
                     pitch = guitar.fboard[string_id][fret]
                     
                     # Use original onset if available
-                    if self.original_onsets and p_pos in active_positions:
-                        active_idx = active_positions.index(p_pos)
-                        if active_idx < len(self.original_onsets):
-                            onset = self.original_onsets[active_idx]
-                        else:
-                            onset = p_pos
-                    else:
-                        onset = p_pos
+                    onset = p_pos * (48//resolution)
                     
-                    dur = 6  # Default duration, you can adjust if needed
+                    dur = (48//resolution)  # Default duration, you can adjust if needed
                     velocity = 96  # Default velocity
                     note = [int(pitch), dur, velocity]
                     if onset not in notes:
@@ -238,11 +231,13 @@ class GATabSeq:
     A container for multiple GATab objects.
     For user-friendly display of song-level tabs.
     """
-    def __init__(self, tab_list=None):
+    def __init__(self, tab_list=None, tab_per_row=4):
         """
         Initialize with a list of GATab objects.
+        Recommend to set tab_per_row to 4 when tab_list use 8 positions. And set to 2 when tab_list use 16 positions.
         """
         self.tab_list = tab_list if tab_list is not None else []
+        self.tab_per_row = tab_per_row
     
     def add_tab(self, tab):
         """Add a GATab to the sequence."""
@@ -251,28 +246,24 @@ class GATabSeq:
     def __str__(self):
         """
         Return a string representation of the GATabSeq.
-        Each line shows 4 GATabs in a row, properly aligned.
+        Each line shows self.tab_per_row GATabs in a row, properly aligned.
         The first row displays chord names if available, using GATab.chord_dict.
+        The first chord is aligned with the beginning of the bar,
+        and the second chord is aligned right after the middle of the bar.
         """
-        if not self.tab_list:
-            return "Empty GATabSeq"
-        
         tab_lines_list = [str(tab).split('\n') for tab in self.tab_list]
         tab_height = len(tab_lines_list[0]) if tab_lines_list else 0
         lines = []
-        
-        for i in range(0, len(tab_lines_list), 4):
-            row_tabs = tab_lines_list[i:i + 4]
-            tab_objs = self.tab_list[i:i + 4]
-            
-            # Pad with empty tabs if less than 4
-            while len(row_tabs) < 4:
+        tabs_per_row = self.tab_per_row
+        for i in range(0, len(tab_lines_list), tabs_per_row):
+            row_tabs = tab_lines_list[i:i + tabs_per_row]
+            tab_objs = self.tab_list[i:i + tabs_per_row]
+            # Pad with empty tabs if less than tabs_per_row
+            while len(row_tabs) < tabs_per_row:
                 row_tabs.append([' ' * (len(row_tabs[0][0]) if row_tabs else 10)] * tab_height)
                 tab_objs.append(None)
-            
             # First row: chord names, aligned to positions
             chord_name_lines = []
-            position_lines = []
             for tab, tab_lines in zip(tab_objs, row_tabs):
                 chord_line = [' ' for _ in range(len(tab_lines[0]))]
                 if tab is not None and hasattr(tab, 'chord_dict') and tab.chord_dict:
@@ -282,45 +273,23 @@ class GATabSeq:
                     if len(sorted_positions) > 0:
                         first_pos = sorted_positions[0]
                         chord1 = tab.chord_dict[first_pos]
-                        # Place chord1 at the start
+                        # Place chord1 at its original position
                         # Each position is 3 chars: 2 for fret, 1 for space
                         chord_line_pos = first_pos * 3
                         chord_line[chord_line_pos:chord_line_pos+len(chord1)] = chord1
                     if len(sorted_positions) > 1:
                         second_pos = sorted_positions[1]
                         chord2 = tab.chord_dict[second_pos]
+                        # Place chord2 at its original position
                         chord_line_pos = second_pos * 3
                         chord_line[chord_line_pos:chord_line_pos+len(chord2)] = chord2
                 chord_name_lines.append(''.join(chord_line))
-                
-                # Position row: show position numbers aligned with tab
-                if tab is not None:
-                    active_positions = [p for p in range(tab.matrix.shape[1]) 
-                                      if any(tab.matrix[s, p] != -1 for s in range(tab.matrix.shape[0]))]
-                    position_line = ' '.join([str(p).rjust(2) for p in active_positions])
-                else:
-                    position_line = ' ' * len(tab_lines[0]) if tab_lines else ''
-                position_lines.append(position_line)
-            
             lines.append('   '.join(chord_name_lines))
-            lines.append('   '.join(position_lines))
-            
-            # Add segmentation line under position row
-            seg_lines = []
-            for tab_lines in row_tabs:
-                if tab_lines and tab_lines[0]:
-                    seg_line = '-' * len(tab_lines[0])
-                else:
-                    seg_line = ''
-                seg_lines.append(seg_line)
-            lines.append('   '.join(seg_lines))
-            
             # For each line in the tab, join horizontally
             for line_idx in range(tab_height):
                 row_line = '   '.join(tab[line_idx] for tab in row_tabs)
                 lines.append(row_line)
             lines.append('')
-        
         return '\n'.join(lines)
     
     def save_to_file(self, filename):
@@ -330,7 +299,7 @@ class GATabSeq:
         with open(filename, 'w') as f:
             f.write(str(self))
     
-    def convert_to_multitrack(self, guitar, tempo=120, time_signature=(4, 4)):
+    def convert_to_multitrack(self, guitar, tempo=120, time_signature=(4, 4), resolution=16):
         """
         Convert the GATabSeq to a MultiTrack object.
         Similar to TabSeq.convert_to_note_seq() but returns MultiTrack directly.
@@ -347,7 +316,7 @@ class GATabSeq:
         
         bars = []
         for tab in self.tab_list:
-            bar = tab.convert_to_bar(guitar)
+            bar = tab.convert_to_bar(guitar, resolution=resolution)
             bar.tempo = tempo
             bar.time_signature = time_signature
             bars.append(bar)
