@@ -76,7 +76,12 @@ class GAreproducing:
                 if 0 <= pos < self.resolution:
                     original_midi_pitches[pos].append(note.pitch)
             chords = bar.get_chord()
-            chord_name = [chord[0]+chord[1] for chord in chords]
+            chord_name = []
+            for chord in chords:
+                if chord is None:
+                    chord_name.append('C')
+                else:
+                    chord_name.append(chord[0]+chord[1])
             self.bars_data.append({
                 'original_midi_pitches': original_midi_pitches, 
                 'chords': chord_name,
@@ -84,14 +89,14 @@ class GAreproducing:
             })
             self.target_melody_list.append([note.pitch for note in melody_notes])
             # Improved melody detection: All positions with notes are considered
-            melody_positions = set()
+            self.melody_positions = set()
             for pos, pitches in enumerate(original_midi_pitches):
                 if pitches:  # Any position with notes is considered melody
-                    melody_positions.add(pos)
+                    self.melody_positions.add(pos)
             
             bar_categories = {}
             for pos in range(self.resolution):
-                if pos in melody_positions:
+                if pos in self.melody_positions:
                     bar_categories[pos] = 'melody'
                 elif original_midi_pitches[pos]:
                     bar_categories[pos] = 'harmony'
@@ -309,7 +314,8 @@ class GAreproducing:
                 print("Current best tab:")
                 visualize_guitar_tab(gen_best_tablature)
             # Elitism: keep the best
-            new_population = [population[gen_best_idx]]
+            # new_population = [population[gen_best_idx]]
+            new_population = []
             # Fill the rest of the population using tournament selection
             while len(new_population) < self.population_size:
                 # Tournament selection for parent1
@@ -362,16 +368,7 @@ class GAreproducing:
             if len(chords) > 1:
                 ga_tab.add_chord_info(self.resolution // 2, chords[1])
             
-            # 标记旋律位置 - 从原始MIDI数据中获取旋律位置
-            melody_positions = set()
-            for pos, pitches in enumerate(bar_data['original_midi_pitches']):
-                if pitches:  # 如果有音符在这个位置
-                    # 检查这个位置是否包含旋律音符（通过比较音高）
-                    melody_pitches = [pitch for pitch in self.target_melody_list[bar_idx] if pitch != -1]
-                    if any(pitch in pitches for pitch in melody_pitches):
-                        melody_positions.add(pos)
-            
-            for pos in melody_positions:
+            for pos in self.melody_positions:
                 ga_tab.add_melody_position(pos)
             
             results.append(ga_tab)
@@ -423,7 +420,7 @@ class GAreproducing:
         """
         if song_name:
             self.statistics['song_name'] = song_name
-            filename = f"{song_name}_statistics.json"
+            filename = f"{song_name}_fitness.json"
         else:
             raise ValueError("Song name is None")
         
