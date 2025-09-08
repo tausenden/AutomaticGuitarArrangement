@@ -50,7 +50,15 @@ class GAimproved(GAreproducing):
             position_counts = {}
             
             # Get all notes in the bar (excluding drums)
-            all_notes = bar.get_all_notes(include_drum=False)
+            try:
+                all_notes = bar.get_all_notes(include_drum=False)
+            except Exception:
+                all_notes = []
+            
+            # Handle empty bar: append zeros pattern and continue
+            if len(bar) == 0 or not all_notes:
+                bars_rhythm_pattern.append([0 for _ in range(self.resolution)])
+                continue
             
             # Count notes at each onset position within the bar
             for note in all_notes:
@@ -60,13 +68,10 @@ class GAimproved(GAreproducing):
                 position_counts[position] += 1
             
             # Create a list with position counts for this bar
-            if position_counts:
-                bar_position_counts = [position_counts.get(i, 0) for i in range(self.resolution)]
-            else:
-                bar_position_counts = []
+            bar_position_counts = [position_counts.get(i, 0) for i in range(self.resolution)]
             
             # Calculate average note density for this bar (dynamic, adapts to different bars)
-            avg_count = sum(position_counts.values()) / len(position_counts)
+            avg_count = sum(position_counts.values()) / max(1, len(position_counts))
             
             # Classify positions by importance using this bar's average
             bar_rhythm_pattern = []
@@ -518,6 +523,13 @@ class GAimproved(GAreproducing):
             list: Best tablature found for the bar.
         """
         bar_data = self.bars_data[bar_idx]
+        # Skip GA if this bar is empty
+        if all(len(pitches) == 0 for pitches in bar_data['original_midi_pitches']):
+            empty_candidate = {
+                'tab_candi': [[-1] * self.num_strings for _ in range(self.resolution)],
+                'hand_candi': [[-1] * self.num_strings for _ in range(self.resolution)],
+            }
+            return empty_candidate
         original_midi_pitches: list[int] = bar_data['original_midi_pitches']
         chord_data = bar_data['chords']
         population = self.initialize_population()
@@ -546,8 +558,8 @@ class GAimproved(GAreproducing):
                 visualize_guitar_tab(best_candidate['tab_candi'])
 
             new_population = []
-            new_population.append(gen_best_candidate)
-            new_population.append(best_candidate)
+            # new_population.append(gen_best_candidate)
+            # new_population.append(best_candidate)
             
             while len(new_population) < self.population_size:
                 candidate_indices1 = random.sample(range(len(population)), tournament_k)
@@ -607,16 +619,8 @@ class GAimproved(GAreproducing):
             if len(chords) > 1:
                 ga_tab.add_chord_info(self.resolution // 2, chords[1])
             
-            # 标记旋律位置 - 从原始MIDI数据中获取旋律位置
-            melody_positions = set()
-            for pos, pitches in enumerate(bar_data['original_midi_pitches']):
-                if pitches:  # 如果有音符在这个位置
-                    # 检查这个位置是否包含旋律音符（通过比较音高）
-                    melody_pitches = [pitch for pitch in self.target_melody_list[bar_idx] if pitch != -1]
-                    if any(pitch in pitches for pitch in melody_pitches):
-                        melody_positions.add(pos)
-            
-            for pos in melody_positions:
+            # 标记旋律位置 - 使用已计算的melody_positions（若存在）
+            for pos in bar_data.get('melody_positions', set()):
                 ga_tab.add_melody_position(pos)
             
             results.append(ga_tab)

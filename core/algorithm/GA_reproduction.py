@@ -60,8 +60,37 @@ class GAreproducing:
         for bar in mt.bars:
             original_midi_pitches = [[] for _ in range(self.resolution)]
             original_onsets = []  # 保存实际的onset时间
+            
+            # First, collect notes. Empty bars will return an empty list.
+            try:
+                all_notes = bar.get_all_notes(include_drum=False)
+            except Exception:
+                all_notes = []
+
+            # Handle empty bar safely: no melody, no onsets, empty pitches
+            if len(bar) == 0 or not all_notes:
+                melody_notes = []
+                chords = bar.get_chord() if hasattr(bar, 'get_chord') else [None, None]
+                chord_name = []
+                for chord in chords:
+                    if chord is None:
+                        chord_name.append('C')
+                    else:
+                        chord_name.append(chord[0]+chord[1])
+                self.bars_data.append({
+                    'original_midi_pitches': original_midi_pitches, 
+                    'chords': chord_name,
+                    'original_onsets': original_onsets,
+                    'melody_positions': set()
+                })
+                self.target_melody_list.append([])
+                # No melody positions in an empty bar
+                self.note_categories.update({})
+                continue
+            
+            self.melody_positions = set()
+            # Non-empty bar: proceed as usual
             melody_notes = bar.get_melody('hi_track')
-            all_notes = bar.get_all_notes(include_drum=False)
             for note in all_notes:
                 note.onset = int(note.onset//self.resolution_scale)
                 note.duration = int(note.duration//self.resolution_scale)
@@ -85,11 +114,12 @@ class GAreproducing:
             self.bars_data.append({
                 'original_midi_pitches': original_midi_pitches, 
                 'chords': chord_name,
-                'original_onsets': original_onsets  # 添加onset时间信息
+                'original_onsets': original_onsets,  # 添加onset时间信息
+                'melody_positions': set(self.melody_positions)
             })
             self.target_melody_list.append([note.pitch for note in melody_notes])
             # Improved melody detection: All positions with notes are considered
-            self.melody_positions = set()
+            
             for pos, pitches in enumerate(original_midi_pitches):
                 if pitches:  # Any position with notes is considered melody
                     self.melody_positions.add(pos)
@@ -292,6 +322,11 @@ class GAreproducing:
             list: Best tablature found for the bar.
         """
         bar_data = self.bars_data[bar_idx]
+        # Skip GA if this bar is empty
+        if all(len(pitches) == 0 for pitches in bar_data['original_midi_pitches']):
+            # Construct an all-rest tablature for empty bar
+            empty_tab = [[-1] * self.num_strings for _ in range(self.resolution)]
+            return empty_tab
         original_midi_pitches = bar_data['original_midi_pitches']
         population = self.initialize_population(bar_idx)
         best_tablature = None
@@ -368,7 +403,7 @@ class GAreproducing:
             if len(chords) > 1:
                 ga_tab.add_chord_info(self.resolution // 2, chords[1])
             
-            for pos in self.melody_positions:
+            for pos in bar_data.get('melody_positions', set()):
                 ga_tab.add_melody_position(pos)
             
             results.append(ga_tab)
