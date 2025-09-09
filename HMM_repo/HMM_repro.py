@@ -5,6 +5,7 @@ from remi_z import MultiTrack, Bar
 from hmm_export import export_hmm_path
 import fluidsynth
 import fluidsynth
+from core.hmm_repro import *
 
 class HMMrepro:
     """
@@ -232,12 +233,7 @@ class HMMrepro:
                     tab_strings[string_idx] += "|"
             
             for string_idx in range(6):
-                # string_idx 0 = high E display line, should get data from fret_config["5"] (high E)
-                # string_idx 1 = B display line, should get data from fret_config["4"] (B string)
-                # string_idx 2 = G display line, should get data from fret_config["3"] (G string)
-                # string_idx 3 = D display line, should get data from fret_config["2"] (D string)
-                # string_idx 4 = A display line, should get data from fret_config["1"] (A string)
-                # string_idx 5 = low E display line, should get data from fret_config["0"] (low E)
+
                 fret_config_key = str(5 - string_idx)
                 
                 # Handle fret_config - keys are strings "0" through "5"
@@ -415,10 +411,38 @@ def get_all_notes_from_midi(midi_file_path):
     
     return all_positions
 
+def get_notes_grouped_by_bars(midi_file_path):
+    """
+    Extract notes grouped by bar. Returns List[List[List[int]]]
+    where outer list indexes bars, inner list indexes positions within a bar,
+    and each position is a list of MIDI pitches (deduplicated).
+    """
+    from remi_z import MultiTrack
+    mt = MultiTrack.from_midi(midi_file_path)
+    bars_notes = []
+    for bar in mt.bars:
+        position_notes = {}
+        all_notes = bar.get_all_notes(include_drum=False)
+        for note in all_notes:
+            pos = note.onset
+            if pos not in position_notes:
+                position_notes[pos] = []
+            position_notes[pos].append(note.pitch)
+            position_notes[pos] = sorted(list(set(position_notes[pos])))
+        sorted_positions = sorted(position_notes.keys())
+        bar_positions = [position_notes[pos] for pos in sorted_positions]
+        bars_notes.append(bar_positions)
+    return bars_notes
+
+def _flatten_bars_to_sequence(bars_notes):
+    """Flatten a list of bars (each a list of positions) into a single sequence of positions."""
+    flat = []
+    for bar in bars_notes:
+        flat.extend(bar)
+    return flat
+
 # Test the exact paper reproduction
 if __name__ == "__main__":
-    print("Testing Guitar HMM - Exact Paper Reproduction")
-    print("=" * 60)
     
     hmm = HMMrepro()
     
@@ -436,11 +460,9 @@ if __name__ == "__main__":
     # if path:
     #     hmm.visualize_tablature(path)
     
-    print("\n\nTEST 3: Processing all MIDI files in folder")
-    
     # Configuration
-    input_folder = '../caihong_clip'  # Fixed input folder
-    output_folder = './arranged_caihong_clip_CAGED_2'  # Fixed output folder
+    input_folder = '../song_midis'  # Fixed input folder
+    output_folder = './arranged_songs_CAGED_2'  # Fixed output folder
     
     # Create output folder if it doesn't exist
     os.makedirs(output_folder, exist_ok=True)
@@ -461,8 +483,22 @@ if __name__ == "__main__":
         print(f"Processing MIDI file: {midi_file_path}")
         print(f"Output will be saved to: {output_midi_path}")
 
-        melody = get_all_notes_from_midi(midi_file_path)
-        path = hmm.viterbi(melody)
+        bars_notes = get_notes_grouped_by_bars(midi_file_path)
+        print(f"Total bars detected: {len(bars_notes)}")
+        overall_path = []
+        bars_per_segment = 8
+        for start_bar in range(0, len(bars_notes), bars_per_segment):
+            segment_bars = bars_notes[start_bar:start_bar + bars_per_segment]
+            melody_segment = _flatten_bars_to_sequence(segment_bars)
+            if not melody_segment:
+                continue
+            print(f"Running HMM on bars {start_bar} to {start_bar + len(segment_bars) - 1} (positions: {len(melody_segment)})")
+            segment_path = hmm.viterbi(melody_segment)
+            if segment_path:
+                overall_path.extend(segment_path)
+            else:
+                print(f"  Segment {start_bar}-{start_bar + len(segment_bars) - 1} failed, skipping.")
+        path = overall_path
         
         if path:
             # Use unified export pipeline (tab, midi, wav)
