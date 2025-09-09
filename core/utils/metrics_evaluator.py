@@ -36,26 +36,22 @@ class MetricsEvaluator:
         self.arranged_mt = MultiTrack.from_midi(arranged_midi_path)
         
         # Extract data
-        self.original_data = self._extract_midi_data(self.original_mt,single_track=False)
-        self.arranged_data = self._extract_midi_data(self.arranged_mt,single_track=True)
-        
-    def _extract_midi_data(self, mt, single_track=False):
+        self.original_data = self._extract_midi_data(self.original_mt)
+        self.arranged_data = self._extract_midi_data(self.arranged_mt)
+
+    def _extract_midi_data(self, mt):
         bars_data = []
         remiz_resolution = 48
         resolution_scale = remiz_resolution / self.resolution
-        
         for bar in mt.bars:
             # Initialize arrays for this bar
             midi_pitches = [[] for _ in range(self.resolution)]
             melody_pitches = [[] for _ in range(self.resolution)]
             # Get all notes in the bar (excluding drums) - same as GA classes
             all_notes = bar.get_all_notes(include_drum=False)
-            if single_track:
-                melody_notes = bar.get_melody('hi_note')
-            else:
-                melody_notes = bar.get_melody('hi_track')
+            melody_notes = bar.get_melody('hi_track')
             # Extract notes for this bar
-            pass
+            
             for note in all_notes:
                 # Calculate position using same approach as GA classes
                 pos = int(note.onset // resolution_scale)
@@ -66,6 +62,8 @@ class MetricsEvaluator:
                 pos = int(note.onset // resolution_scale)
                 if 0 <= pos < self.resolution:
                     melody_pitches[pos].append(note.pitch)
+                    if len(melody_pitches[pos]) > 1:
+                        melody_pitches[pos]=[max(melody_pitches[pos])]
             # Extract chord information - same as GA classes
             chords = bar.get_chord()
             # Filter out None values and handle cases where chord components might be None
@@ -300,59 +298,11 @@ def evaluate_arrangement(original_midi_path, arranged_midi_path, output_dir=None
     evaluator = MetricsEvaluator(original_midi_path, arranged_midi_path, resolution)
     metrics = evaluator.evaluate_all_metrics()
     
-    # If output_dir and song_name provided, merge with existing GA statistics
+    # If output_dir and song_name provided, write evaluation metrics only
     if output_dir and song_name:
         stats_file = os.path.join(output_dir, f"{song_name}_statistics.json")
-        
-        if os.path.exists(stats_file):
-            with open(stats_file, 'r') as f:
-                ga_data = json.load(f)
-            
-            # Create properly ordered structure: name → fitness → metrics → config
-            ordered_data = {}
-            
-            # 1. Song name first
-            if 'song_name' in ga_data:
-                ordered_data['song_name'] = ga_data['song_name']
-            
-            # 2. Processing info
-            if 'processing_time_seconds' in ga_data:
-                ordered_data['processing_time_seconds'] = ga_data['processing_time_seconds']
-            if 'total_bars' in ga_data:
-                ordered_data['total_bars'] = ga_data['total_bars']
-                
-            # 3. Fitness stats - reorganize to proper order with only averages
-            if 'fitness_stats' in ga_data:
-                fitness_data = ga_data['fitness_stats']
-                ordered_fitness = {}
-                
-                # Only keep averages in proper order: PC → NWC → NCC → RP → final fitness
-                if 'avg_PC' in fitness_data:
-                    ordered_fitness['avg_PC'] = fitness_data['avg_PC']
-                if 'avg_NWC' in fitness_data:
-                    ordered_fitness['avg_NWC'] = fitness_data['avg_NWC']
-                if 'avg_NCC' in fitness_data:
-                    ordered_fitness['avg_NCC'] = fitness_data['avg_NCC']
-                if 'avg_RP' in fitness_data:
-                    ordered_fitness['avg_RP'] = fitness_data['avg_RP']
-                if 'avg_fitness' in fitness_data:
-                    ordered_fitness['avg_fitness'] = fitness_data['avg_fitness']
-                
-                ordered_data['fitness_stats'] = ordered_fitness
-            
-            # 4. Evaluation metrics
-            ordered_data.update(metrics)
-            
-            # 5. GA config last
-            if 'ga_config' in ga_data:
-                ordered_data['ga_config'] = ga_data['ga_config']
-            
-            with open(stats_file, 'w') as f:
-                json.dump(ordered_data, f, indent=2)
-        else:
-            # Create new file with just evaluation metrics
-            with open(stats_file, 'w') as f:
-                json.dump(metrics, f, indent=2)
+        with open(stats_file, 'w') as f:
+            json.dump(metrics, f, indent=2)
     
     # Only export separate metrics file if explicitly requested
     if export_separate and output_dir and song_name:
