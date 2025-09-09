@@ -396,8 +396,8 @@ class GAimproved(GAreproducing):
         # Handle both single chord name (backward compatibility) and two chord names
         if isinstance(chord_names, str):
             # Single chord for entire bar (backward compatibility)
-            first_half_chord = chord_names
-            second_half_chord = chord_names
+            first_half_chord = chord_names[0]
+            second_half_chord = chord_names[1]
         elif isinstance(chord_names, (list, tuple)) and len(chord_names) == 2:
             # Two chords: first half and second half
             first_half_chord, second_half_chord = chord_names
