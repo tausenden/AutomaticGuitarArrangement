@@ -36,10 +36,28 @@ class Guitar:
             'A#': 10,
             'B': 11
         }
+        # Build chord tones dictionary aligned with remi_z chord detection
+        # Suffix patterns follow REMI-z/remi_z/chord_detection.py
+        chord_suffix_to_intervals = {
+            '':   [0, 4, 7],       # Major triad
+            'm':  [0, 3, 7],       # Minor triad
+            'dim':[0, 3, 6],       # Diminished triad
+            'aug':[0, 4, 8],       # Augmented triad
+            'sus4':[0, 5, 7],      # Suspended 4th
+            'sus2':[0, 2, 7],      # Suspended 2nd
+            'M7': [0, 4, 7, 11],   # Major 7th
+            'm7': [0, 3, 7, 10],   # Minor 7th
+            '7':  [0, 4, 7, 10],   # Dominant 7th
+            'o':  [0, 3, 6, 9],    # Diminished 7th
+            'm7b5':[0, 3, 6, 10],  # Half-diminished 7th
+        }
+
         chords4NCC = {}
         for root_name, root_value in self.rootnote.items():
-            # Major triad: root, major third (+4), perfect fifth (+7)
-            chords4NCC[root_name] = [root_value, (root_value + 4) % 12, (root_value + 7) % 12]
+            for suffix, pattern in chord_suffix_to_intervals.items():
+                name = f"{root_name}{suffix}"
+                tones = [ (root_value + iv) % 12 for iv in pattern ]
+                chords4NCC[name] = tones
         self.chords4NCC = chords4NCC    
 
     def get_chord_midi(self, chord_fingering):
@@ -231,7 +249,7 @@ class GATabSeq:
     A container for multiple GATab objects.
     For user-friendly display of song-level tabs.
     """
-    def __init__(self, tab_list=None, tab_per_row=4):
+    def __init__(self, tab_list=None, tab_per_row=2):
         """
         Initialize with a list of GATab objects.
         Recommend to set tab_per_row to 4 when tab_list use 8 positions. And set to 2 when tab_list use 16 positions.
