@@ -51,7 +51,7 @@ def _detect_leading_silence(sound: AudioSegment, silence_threshold: float = -40.
     return trim_ms
 
 
-def export_ga_results(ga_tab_seq: GATabSeq, resolution: int, song_name: str = 'ga_arrangement', tempo: int = 120,
+def export_ga_results(ga_tab_seq: GATabSeq, resolution: int, song_name: str = 'you_didnt_assign_name', tempo: int = 120,
                      output_dir: str = 'outputs', sf2_path: str = 'resources/Tyros Nylon.sf2', verbose: bool = True) -> Dict[str, str]:
     """
     End-to-end export for GA arrangement results following rule_based.py and hmm_export.py pattern.

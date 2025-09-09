@@ -1,20 +1,31 @@
-# Minimal requirements for Automatic Guitar Score Generation and Tabs Demonstration
-# Core dependencies only
-
-# MIDI processing (essential for the project)
-miditoolkit
-mido
-remi-z==0.5.9
-
-# Scientific computing
-numpy
-scipy
-
-# Machine learning (for genetic algorithm)
-scikit-learn
-
-# Visualization
-matplotlib
-
-# Utilities
-requests 
+certifi==2025.7.14
+chardet==5.2.0
+charset-normalizer==3.4.2
+contourpy==1.3.2
+cycler==0.12.1
+fluidsynth==0.2
+fonttools==4.59.0
+idna==3.10
+joblib==1.5.1
+jsonpickle==4.1.1
+kiwisolver==1.4.8
+matplotlib==3.10.3
+miditoolkit==1.0.1
+mido==1.3.3
+more-itertools==10.7.0
+music21==9.7.1
+numpy==2.2.6
+packaging==25.0
+pillow==11.3.0
+pretty_midi==0.2.10
+pydub==0.25.1
+pyparsing==3.2.3
+python-dateutil==2.9.0.post0
+PyYAML==6.0.2
+requests==2.32.4
+scikit-learn==1.7.1
+scipy==1.15.3
+six==1.17.0
+threadpoolctl==3.6.0
+urllib3==2.5.0
+webcolors==24.11.1
