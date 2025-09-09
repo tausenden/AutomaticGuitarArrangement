@@ -14,6 +14,10 @@ caihong_clip/
 **/*.zip
 arranged_caihong_clip_GA_repro/
 arranged_caihong_clip_GA_improved/
-debug_folder1/
+debug_folder**/
 to_delete/
 to_debug/
+human_guitar/
+all_midis/
+debug**.py
+arranged_songs*/
