@@ -1,0 +1,24 @@
+{
+  "processing_time_seconds": 3853.52,
+  "total_bars": 87,
+  "fitness_stats": {
+    "avg_PC": -19.0747,
+    "avg_NWC": -63.2874,
+    "avg_NCC": 3.7322,
+    "avg_fitness": -78.6298
+  },
+  "ga_config": {
+    "mutation_rate": 0.03,
+    "crossover_rate": 0.6,
+    "population_size": 500,
+    "generations": 200,
+    "num_strings": 6,
+    "max_fret": 15,
+    "weight_PC": 1.0,
+    "weight_NWC": 1.0,
+    "weight_NCC": 1.0,
+    "tournament_k": 5,
+    "resolution": 16
+  },
+  "song_name": "I_want_it_that_way"
+}

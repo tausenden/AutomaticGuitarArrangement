@@ -1,0 +1,8 @@
+{
+  "average_pc": -17.8725,
+  "average_terms": {
+    "played_strings_penalty": -10.098,
+    "fret_distance_penalty": -7.4412,
+    "span_difficulty": -0.3333
+  }
+}

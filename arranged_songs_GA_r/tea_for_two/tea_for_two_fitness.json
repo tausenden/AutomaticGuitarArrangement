@@ -1,0 +1,24 @@
+{
+  "processing_time_seconds": 4583.17,
+  "total_bars": 102,
+  "fitness_stats": {
+    "avg_PC": -17.8725,
+    "avg_NWC": 17.1373,
+    "avg_NCC": 2.5608,
+    "avg_fitness": 1.8255
+  },
+  "ga_config": {
+    "mutation_rate": 0.03,
+    "crossover_rate": 0.6,
+    "population_size": 500,
+    "generations": 200,
+    "num_strings": 6,
+    "max_fret": 15,
+    "weight_PC": 1.0,
+    "weight_NWC": 1.0,
+    "weight_NCC": 1.0,
+    "tournament_k": 5,
+    "resolution": 16
+  },
+  "song_name": "tea_for_two"
+}
