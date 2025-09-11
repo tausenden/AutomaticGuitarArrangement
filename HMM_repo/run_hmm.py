@@ -18,7 +18,8 @@ def arrange_midi_file(hmm: HMMrepro, midi_file_path: str, output_dir: str, tempo
 		if not bar_positions:
 			bars_paths.append([])
 			continue
-		segment_path = hmm.viterbi(bar_positions)
+		melody_positions = [[max(pitches)] for pitches in bar_positions if pitches]
+		segment_path = hmm.viterbi(melody_positions)
 		if segment_path:
 			bars_paths.append(segment_path)
 		else:

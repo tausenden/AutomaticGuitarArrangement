@@ -13,7 +13,7 @@ class HMMrepro:
 	"""
 	
 	#def __init__(self, forms_files=['states/guitar_forms_single_expanded.json', 'states/guitar_forms_multi.json']):
-	def __init__(self, forms_files=['states/guitar_forms_CAGED_2.json']):
+	def __init__(self, forms_files=['./states/guitar_forms_CAGED_2.json']):
 		# Guitar configuration
 		self.num_strings = 6
 		self.num_frets = 20
