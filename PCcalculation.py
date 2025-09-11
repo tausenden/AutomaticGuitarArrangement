@@ -264,4 +264,14 @@ def cal_from_human():
 
 if __name__ == "__main__":
     cal_from_human()
-    cal_from_ga(tab_path='./debug_folder_repro/debug_ga.tab')
+    base_dir='./arranged_songs_GA_r'
+    if os.path.isdir(base_dir):
+        for song_name in sorted(os.listdir(base_dir)):
+            song_dir = os.path.join(base_dir, song_name)
+            if not os.path.isdir(song_dir):
+                continue
+            tab_files = [fn for fn in os.listdir(song_dir) if fn.endswith('.tab')]
+            if not tab_files:
+                continue
+            tab_path = os.path.join(song_dir, tab_files[0])
+            cal_from_ga(tab_path)
