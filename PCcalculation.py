@@ -135,7 +135,7 @@ def convert_to_ga_tab_seq(bars_data):
     return GATabSeq(tab_list=ga_tabs)
 
 def cal_from_human():
-    tempos=[80,80,110,75]
+    tempos=[80,80,110,75,90]
     # Read guitar tab from JSON file
     with open('human_guitar_tab.json', 'r') as file:
         tabs_data = json.load(file)
@@ -201,7 +201,7 @@ def cal_from_human():
 
 if __name__ == "__main__":
     cal_from_human()
-    base_dir='./arranged_songs_GA_i'
+    base_dir='./arranged_songs_hmm'
     if os.path.isdir(base_dir):
         for song_name in sorted(os.listdir(base_dir)):
             song_dir = os.path.join(base_dir, song_name)
