@@ -48,8 +48,20 @@ class MetricsEvaluator:
             midi_pitches = [[] for _ in range(self.resolution)]
             melody_pitches = [[] for _ in range(self.resolution)]
             # Get all notes in the bar (excluding drums) - same as GA classes
-            all_notes = bar.get_all_notes(include_drum=False)
-            melody_notes = bar.get_melody('hi_track')
+            try:
+                all_notes = bar.get_all_notes(include_drum=False)
+            except Exception:
+                all_notes = []
+
+            # Ignore empty bars (prevent melody extraction errors on leading silence)
+            if len(bar) == 0 or not all_notes:
+                continue
+
+            # Safely get melody notes; fall back to empty if unavailable
+            try:
+                melody_notes = bar.get_melody('hi_track')
+            except Exception:
+                melody_notes = []
             # Extract notes for this bar
             
             for note in all_notes:
@@ -134,8 +146,10 @@ class MetricsEvaluator:
             
             sum_original=sum(original_bar_rhythm)
             sum_arranged=sum(arranged_bar_rhythm)
-            avg_original=sum_original/len([n for n in original_bar_rhythm if n > 0])
-            avg_arranged=sum_arranged/len([n for n in arranged_bar_rhythm if n > 0])
+            nonzero_o = [n for n in original_bar_rhythm if n > 0]
+            nonzero_a = [n for n in arranged_bar_rhythm if n > 0]
+            avg_original = sum_original/len(nonzero_o) if len(nonzero_o) > 0 else 0
+            avg_arranged = sum_arranged/len(nonzero_a) if len(nonzero_a) > 0 else 0
             for pos in range(len(original_bar_rhythm)):
                 if original_bar_rhythm[pos] > avg_original:
                     original_rp.append(2)
