@@ -186,12 +186,35 @@ class GAreproducing:
         Returns:
             float: Playability score.
         """
+        terms = self.calculate_playability_terms(tablature)
+        return terms['total']
+
+    def calculate_playability_terms(self, tablature):
+        """
+        Compute the playability terms for a tablature and return a breakdown.
+        Args:
+            tablature (list): List of chord fingerings.
+        Returns:
+            dict: {
+                'total': float,
+                'played_strings_penalty': float,
+                'fret_distance_penalty': float,
+                'span_difficulty': float
+            }
+        """
         active_positions = [pos for pos, chord in enumerate(tablature) if any(fret != -1 for fret in chord)]
         if not active_positions:
-            return 0
+            return {
+                'total': 0.0,
+                'played_strings_penalty': 0.0,
+                'fret_distance_penalty': 0.0,
+                'span_difficulty': 0.0
+            }
         active_chords = [tablature[pos] for pos in active_positions]
+
         played_strings_penalty = -sum(sum(1 for fret in chord if fret > -1) for chord in active_chords)
-        fret_distance_penalty = 0
+
+        fret_distance_penalty = 0.0
         for i in range(1, len(active_positions)):
             prev_chord = tablature[active_positions[i-1]]
             curr_chord = tablature[active_positions[i]]
@@ -200,8 +223,9 @@ class GAreproducing:
             if prev_frets and curr_frets:
                 prev_avg = sum(prev_frets) / len(prev_frets)
                 curr_avg = sum(curr_frets) / len(curr_frets)
-                fret_distance_penalty -= abs(curr_avg - prev_avg)
-        span_difficulty = 0
+                fret_distance_penalty += -abs(curr_avg - prev_avg)
+
+        span_difficulty = 0.0
         for chord in active_chords:
             pressed = [fret for fret in chord if fret > 0]
             if not pressed:
@@ -210,9 +234,15 @@ class GAreproducing:
             max_fret = max(pressed)
             span = max_fret - min_fret + 1
             if span > 4:
-                span_difficulty -= (span - 4) ** 2
-        playability = (played_strings_penalty + fret_distance_penalty + span_difficulty)
-        return playability
+                span_difficulty += -float((span - 4) ** 2)
+
+        total = float(played_strings_penalty + fret_distance_penalty + span_difficulty)
+        return {
+            'total': total,
+            'played_strings_penalty': float(played_strings_penalty),
+            'fret_distance_penalty': float(fret_distance_penalty),
+            'span_difficulty': float(span_difficulty)
+        }
 
     def calculate_NWC(self, tablature, original_midi_pitches):
         """

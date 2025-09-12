@@ -10,71 +10,8 @@ class GAreproPCExplainer(GAreproducing):
     It mirrors GAreproducing.calculate_playability but returns component terms as well.
     """
     def calculate_playability_terms(self, tablature):
-        """
-        Calculate PC and provide a breakdown of all contributing terms.
-        Args:
-            tablature (list[list[int]]): A bar represented as list of 6-int chords per position.
-        Returns:
-            dict: {
-                'total': float,
-                'played_strings_penalty': float,
-                'fret_distance_penalty': float,
-                'span_difficulty': float
-            }
-        """
-        active_positions = [pos for pos, chord in enumerate(tablature) if any(fret != -1 for fret in chord)]
-        if not active_positions:
-            return {
-                'total': 0.0,
-                'played_strings_penalty': 0.0,
-                'fret_distance_penalty': 0.0,
-                'span_difficulty': 0.0
-            }
-
-        active_chords = [tablature[pos] for pos in active_positions]
-
-        # played strings penalty (sum over positions)
-        played_strings_penalty = 0.0
-        for pos, chord in zip(active_positions, active_chords):
-            val = -sum(1 for fret in chord if fret > -1)
-            played_strings_penalty += val
-
-        # fret distance penalty (between consecutive active positions)
-        fret_distance_penalty = 0.0
-        for i in range(1, len(active_positions)):
-            prev_pos = active_positions[i-1]
-            curr_pos = active_positions[i]
-            prev_chord = tablature[prev_pos]
-            curr_chord = tablature[curr_pos]
-            prev_frets = [f for f in prev_chord if f > 0]
-            curr_frets = [f for f in curr_chord if f > 0]
-            if prev_frets and curr_frets:
-                prev_avg = sum(prev_frets) / len(prev_frets)
-                curr_avg = sum(curr_frets) / len(curr_frets)
-                val = -abs(curr_avg - prev_avg)
-                fret_distance_penalty += val
-
-        # span difficulty (sum over positions)
-        span_difficulty = 0.0
-        for pos, chord in zip(active_positions, active_chords):
-            pressed = [fret for fret in chord if fret > 0]
-            if not pressed:
-                continue
-            min_fret = min(pressed)
-            max_fret = max(pressed)
-            span = max_fret - min_fret + 1
-            if span > 4:
-                val = -float((span - 4) ** 2)
-                span_difficulty += val
-
-        total = float(played_strings_penalty + fret_distance_penalty + span_difficulty)
-
-        return {
-            'total': total,
-            'played_strings_penalty': float(played_strings_penalty),
-            'fret_distance_penalty': float(fret_distance_penalty),
-            'span_difficulty': float(span_difficulty)
-        }
+        # Delegate to the base implementation to keep logic identical
+        return super().calculate_playability_terms(tablature)
 
  
 
@@ -264,7 +201,7 @@ def cal_from_human():
 
 if __name__ == "__main__":
     cal_from_human()
-    base_dir='./arranged_songs_GA_r'
+    base_dir='./arranged_songs_GA_i'
     if os.path.isdir(base_dir):
         for song_name in sorted(os.listdir(base_dir)):
             song_dir = os.path.join(base_dir, song_name)
