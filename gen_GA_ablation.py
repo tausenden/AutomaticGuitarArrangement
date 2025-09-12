@@ -2,10 +2,7 @@ from core import (
     Guitar,
     set_random,
     export_ga_results,
-    GARepro_PCOnlyHooked,
-    GARepro_NCCOnlyHooked,
-    GARepro_RPOnlyHooked,
-    GARepro_InitOnlyHooked,
+    GACombined,
 )
 from remi_z import MultiTrack
 import os
@@ -14,10 +11,10 @@ import json
 
 
 ABLATIONS = [
-    ("GA_r_PCOnlyHooked", GARepro_PCOnlyHooked),
-    ("GA_r_NCCOnlyHooked", GARepro_NCCOnlyHooked),
-    ("GA_r_RPOnlyHooked", GARepro_RPOnlyHooked),
-    ("GA_r_InitOnlyHooked", GARepro_InitOnlyHooked),
+    ("GA_r_PCOnly", {"use_improved_pc": True}),
+    ("GA_r_NCCOnly", {"use_improved_ncc": True}),
+    ("GA_r_RPOnly", {"use_rp": True, "weight_RP": 1.0}),
+    ("GA_r_InitOnly", {"use_improved_init": True}),
 ]
 
 
@@ -25,14 +22,14 @@ def main():
     set_random(42)
 
     # Configuration shared across ablations
-    input_folder = 'song_midis'
-    output_base_root = 'arranged_songs_GA_ablation'
+    input_folder = './all_midis/debug_midis'
+    output_base_root = 'debug_ablation'
 
     ga_config = {
         'mutation_rate': 0.03,
         'crossover_rate': 0.6,
         'population_size': 500,
-        'generations': 100,
+        'generations': 200,
         'num_strings': 6,
         'max_fret': 15,
         'weight_PC': 1.0,
@@ -50,7 +47,7 @@ def main():
 
     midi_files = [f for f in os.listdir(input_folder) if f.lower().endswith(('.mid', '.midi'))]
 
-    for ablation_name, GAClass in ABLATIONS:
+    for ablation_name, flags in ABLATIONS:
         output_base_folder = os.path.join(output_base_root, ablation_name)
         os.makedirs(output_base_folder, exist_ok=True)
 
@@ -69,10 +66,11 @@ def main():
                 start_time = time.time()
 
                 guitar = Guitar()
-                ga = GAClass(
+                ga = GACombined(
                     guitar=guitar,
                     midi_file_path=midi_file_path,
-                    **ga_config
+                    **ga_config,
+                    **flags,
                 )
 
                 ga_tab_seq = ga.run()
@@ -101,6 +99,7 @@ def main():
 
                 print(f"[{ablation_name}] Generated arrangement for {song_name} in {processing_time:.2f} seconds")
             except Exception as e:
+                raise e
                 print(f"[{ablation_name}] Error processing {song_name}: {e}")
                 continue
 
