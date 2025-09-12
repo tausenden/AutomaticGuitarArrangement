@@ -1,0 +1,24 @@
+{
+  "processing_time_seconds": 1132.57,
+  "total_bars": 59,
+  "fitness_stats": {
+    "avg_PC": -13.7486,
+    "avg_NWC": -20.8814,
+    "avg_NCC": 2.0773,
+    "avg_fitness": -42.9934
+  },
+  "ga_config": {
+    "mutation_rate": 0.03,
+    "crossover_rate": 0.6,
+    "population_size": 500,
+    "generations": 100,
+    "num_strings": 6,
+    "max_fret": 15,
+    "weight_PC": 1.0,
+    "weight_NWC": 1.5,
+    "weight_NCC": 1.0,
+    "tournament_k": 5,
+    "resolution": 16
+  },
+  "song_name": "once_upon_a_time"
+}
