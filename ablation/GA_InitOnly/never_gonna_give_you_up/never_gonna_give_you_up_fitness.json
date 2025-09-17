@@ -1,0 +1,24 @@
+{
+  "processing_time_seconds": 6127.91,
+  "total_bars": 103,
+  "fitness_stats": {
+    "avg_PC": -20.1877,
+    "avg_NWC": -303.5922,
+    "avg_NCC": 2.9309,
+    "avg_fitness": -472.6452
+  },
+  "ga_config": {
+    "mutation_rate": 0.03,
+    "crossover_rate": 0.6,
+    "population_size": 500,
+    "generations": 200,
+    "num_strings": 6,
+    "max_fret": 15,
+    "weight_PC": 1.0,
+    "weight_NWC": 1.5,
+    "weight_NCC": 1.0,
+    "tournament_k": 5,
+    "resolution": 16
+  },
+  "song_name": "never_gonna_give_you_up"
+}
