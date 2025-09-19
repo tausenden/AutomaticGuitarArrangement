@@ -1,10 +1,70 @@
 from core import evaluate_arrangement
 import os
 import json
+import numpy as np
+
+def collect_and_summarize_metrics(arranged_root):
+    """
+    Collect all statistics.json files from song folders and create a summary JSON
+    with all song metrics and average metrics across all songs.
+    """
+    all_metrics = []
+    
+    song_dirs = [d for d in os.listdir(arranged_root) if os.path.isdir(os.path.join(arranged_root, d))]
+    
+    for song_name in sorted(song_dirs):
+        song_dir = os.path.join(arranged_root, song_name)
+        stats_file = os.path.join(song_dir, f"{song_name}_statistics.json")
+        
+        if os.path.exists(stats_file):
+            try:
+                with open(stats_file, 'r') as f:
+                    metrics = json.load(f)
+                    metrics['song_name'] = song_name
+                    all_metrics.append(metrics)
+                    print(f"Loaded metrics for {song_name}")
+            except Exception as e:
+                print(f"Error loading {stats_file}: {e}")
+        else:
+            print(f"Statistics file not found for {song_name}: {stats_file}")
+    
+    if not all_metrics:
+        print("No metrics found to summarize")
+        return
+    
+    # Calculate averages across all songs
+    metric_keys = ['note_precision', 'rhythm_accuracy', 'chord_accuracy', 
+                   'chord_name_accuracy', 'melody_accuracy', 'melody_correlation']
+    
+    averages = {}
+    for key in metric_keys:
+        values = [m[key] for m in all_metrics if key in m]
+        if values:
+            averages[f'avg_{key}'] = round(np.mean(values), 4)
+    # Create summary data
+    summary = {
+        'songs': all_metrics,
+        'averages': averages,
+        'total_songs': len(all_metrics)
+    }
+    
+    # Save summary to arranged_root folder
+    summary_file = os.path.join(arranged_root, "summary_metrics.json")
+    with open(summary_file, 'w') as f:
+        json.dump(summary, f, indent=2)
+    
+    print(f"Summary metrics saved to {summary_file}")
+    print(f"Average metrics across {len(all_metrics)} songs:")
+    for key, value in averages.items():
+        if key.startswith('avg_'):
+            print(f"  {key[4:]}: {value}")
+    
+    return summary
+
 
 def main():
     # Settings
-    arranged_root = './arranged_songs_GA_r'
+    arranged_root = './arranged_songs_hmm'
     original_roots = ['./song_midis']
     resolution = 16
 
@@ -57,7 +117,14 @@ def main():
             )
             print(f"Done evaluating {song_name}")
         except Exception as e:
+            raise e
             print(f"Error evaluating {song_name}: {e}")
+    
+    # After evaluating all songs, collect and summarize metrics
+    print("\n" + "="*50)
+    print("Collecting and summarizing all metrics...")
+    collect_and_summarize_metrics(arranged_root)
+
 
 if __name__ == "__main__":
     main()
