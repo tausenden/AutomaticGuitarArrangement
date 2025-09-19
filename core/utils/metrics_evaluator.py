@@ -189,16 +189,18 @@ class MetricsEvaluator:
         for bar_idx in range(min_bars):
             original_chords = self.original_data[bar_idx].get('chords', [])
             arranged_chords = self.arranged_data[bar_idx].get('chords', [])
-            o_chords_name = [c[0] for c in original_chords[0]]
-            a_chords_name = [c[0] for c in arranged_chords[0]]
+            o_chords_name = [c[0] for c in original_chords]
+            a_chords_name = [c[0] for c in arranged_chords]
             # Compare chords within each bar
             for pos in range(min(len(original_chords), len(arranged_chords))):
                 original_chord = original_chords[pos]
                 arranged_chord = arranged_chords[pos]
+                o_c_name = o_chords_name[pos]
+                a_c_name = a_chords_name[pos]
                 if original_chord == arranged_chord:
                     chord_matches += 1
                 c_comp += 1
-                if original_chord[0] == arranged_chord[0]:
+                if o_c_name == a_c_name:
                     cname_matches += 1
                 cname_comp += 1
             
