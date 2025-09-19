@@ -180,29 +180,38 @@ class MetricsEvaluator:
         with original chord progressions.
         """
         chord_matches = 0
-        total_comparisons = 0
+        c_comp = 0
+        cname_matches = 0
+        cname_comp = 0
         
         min_bars = min(len(self.original_data), len(self.arranged_data))
         
         for bar_idx in range(min_bars):
             original_chords = self.original_data[bar_idx].get('chords', [])
             arranged_chords = self.arranged_data[bar_idx].get('chords', [])
-            
+            o_chords_name = [c[0] for c in original_chords[0]]
+            a_chords_name = [c[0] for c in arranged_chords[0]]
             # Compare chords within each bar
             for pos in range(min(len(original_chords), len(arranged_chords))):
                 original_chord = original_chords[pos]
                 arranged_chord = arranged_chords[pos]
                 if original_chord == arranged_chord:
                     chord_matches += 1
-                total_comparisons += 1
+                c_comp += 1
+                if original_chord[0] == arranged_chord[0]:
+                    cname_matches += 1
+                cname_comp += 1
             
             # Count mismatches when one bar has more chords than the other
-            total_comparisons += abs(len(original_chords) - len(arranged_chords))
-        
-        if total_comparisons == 0:
-            return 0.0
-        result = chord_matches / total_comparisons
-        return result
+            c_comp += abs(len(original_chords) - len(arranged_chords))
+            cname_comp += abs(len(original_chords) - len(arranged_chords))
+        if c_comp == 0:
+            c_result = 0.0
+        if cname_comp == 0:
+            cname_result = 0.0
+        c_result = chord_matches / c_comp
+        cname_result = cname_matches / cname_comp
+        return c_result, cname_result
     
     def calculate_melody_accuracy(self):
         """
@@ -264,7 +273,8 @@ class MetricsEvaluator:
         metrics = {
             'note_precision': round(self.calculate_note_precision(), 4),
             'rhythm_accuracy': round(self.calculate_rhythm_accuracy(), 4),
-            'chord_accuracy': round(self.calculate_chord_accuracy(), 4),
+            'chord_accuracy': round(self.calculate_chord_accuracy()[0], 4),
+            'chord_name_accuracy': round(self.calculate_chord_accuracy()[1], 4),
             'melody_accuracy': round(self.calculate_melody_accuracy(), 4),
             'melody_correlation': round(self.calculate_melody_cor(), 4)
         }
