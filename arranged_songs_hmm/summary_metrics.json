@@ -1,0 +1,94 @@
+{
+  "songs": [
+    {
+      "note_precision": 0.7119,
+      "rhythm_accuracy": 0.7602,
+      "chord_accuracy": 0.2036,
+      "chord_name_accuracy": 0.3174,
+      "melody_accuracy": 0.4257,
+      "melody_correlation": 0.3842,
+      "song_name": "I_want_it_that_way"
+    },
+    {
+      "note_precision": 0.5898,
+      "rhythm_accuracy": 0.7438,
+      "chord_accuracy": 0.3113,
+      "chord_name_accuracy": 0.4308,
+      "melody_accuracy": 0.6756,
+      "melody_correlation": 0.8123,
+      "song_name": "alone"
+    },
+    {
+      "note_precision": 0.7902,
+      "rhythm_accuracy": 0.7469,
+      "chord_accuracy": 0.1375,
+      "chord_name_accuracy": 0.225,
+      "melody_accuracy": 0.695,
+      "melody_correlation": 0.8672,
+      "song_name": "caihong"
+    },
+    {
+      "note_precision": 0.5932,
+      "rhythm_accuracy": 0.6953,
+      "chord_accuracy": 0.125,
+      "chord_name_accuracy": 0.3125,
+      "melody_accuracy": 0.6481,
+      "melody_correlation": 0.6862,
+      "song_name": "family_guy_1"
+    },
+    {
+      "note_precision": 0.3467,
+      "rhythm_accuracy": 0.374,
+      "chord_accuracy": 0.1423,
+      "chord_name_accuracy": 0.318,
+      "melody_accuracy": 0.1805,
+      "melody_correlation": 0.5158,
+      "song_name": "hotel_california"
+    },
+    {
+      "note_precision": 0.7343,
+      "rhythm_accuracy": 0.7154,
+      "chord_accuracy": 0.2207,
+      "chord_name_accuracy": 0.4279,
+      "melody_accuracy": 0.7827,
+      "melody_correlation": 0.8878,
+      "song_name": "love_profusion"
+    },
+    {
+      "note_precision": 0.2086,
+      "rhythm_accuracy": 0.4884,
+      "chord_accuracy": 0.1859,
+      "chord_name_accuracy": 0.3467,
+      "melody_accuracy": 0.0977,
+      "melody_correlation": 0.1694,
+      "song_name": "never_gonna_give_you_up"
+    },
+    {
+      "note_precision": 0.6396,
+      "rhythm_accuracy": 0.7826,
+      "chord_accuracy": 0.2737,
+      "chord_name_accuracy": 0.3263,
+      "melody_accuracy": 0.8326,
+      "melody_correlation": 0.6364,
+      "song_name": "once_upon_a_time"
+    },
+    {
+      "note_precision": 0.1043,
+      "rhythm_accuracy": 0.495,
+      "chord_accuracy": 0.1566,
+      "chord_name_accuracy": 0.3535,
+      "melody_accuracy": 0.0599,
+      "melody_correlation": 0.2265,
+      "song_name": "tea_for_two"
+    }
+  ],
+  "averages": {
+    "avg_note_precision": 0.5243,
+    "avg_rhythm_accuracy": 0.6446,
+    "avg_chord_accuracy": 0.1952,
+    "avg_chord_name_accuracy": 0.3398,
+    "avg_melody_accuracy": 0.4886,
+    "avg_melody_correlation": 0.5762
+  },
+  "total_songs": 9
+}

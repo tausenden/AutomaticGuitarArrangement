@@ -2,6 +2,7 @@
   "note_precision": 0.3467,
   "rhythm_accuracy": 0.374,
   "chord_accuracy": 0.1423,
+  "chord_name_accuracy": 0.318,
   "melody_accuracy": 0.1805,
   "melody_correlation": 0.5158
 }
