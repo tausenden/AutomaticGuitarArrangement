@@ -1,6 +1,10 @@
+import os
+import sys
+# Ensure project root is first on sys.path so `core` resolves to the top-level package
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+
 from core import Guitar, set_random, GAreproducing, export_ga_results
 from remi_z import MultiTrack
-import os
 import time
 import json
 
@@ -8,8 +12,8 @@ def main():
     set_random(42)
     
     # Configuration
-    input_folder = 'song_midis'
-    output_base_folder = 'arranged_songs_GA_r'
+    input_folder = 'songs_subsampled'
+    output_base_folder = 'arranged_songs_subsampled_GA_r'
     
     # GA parameters
     ga_config = {
@@ -23,7 +27,9 @@ def main():
         'weight_NWC': 1.5,
         'weight_NCC': 1.0,
         'tournament_k': 5,
-        'resolution': 16
+        'resolution': 16,
+        'num_workers': 4,
+        'verbose': True
     }
     
     # Export settings
@@ -86,8 +92,15 @@ def main():
 
             print(f"Generated arrangement for {song_name} in {processing_time:.2f} seconds")
         except Exception as e:
+            raise e
             print(f"Error processing {song_name}: {e}")
             continue
 
 if __name__ == "__main__":
+    # Ensure safe start method on macOS and other spawn-based platforms
+    # try:
+    #     import multiprocessing as mp
+    #     mp.set_start_method('spawn')
+    # except Exception:
+    #     pass
     main()

@@ -4,7 +4,7 @@ import time
 import json
 import os
 from concurrent.futures import ProcessPoolExecutor, as_completed
-from ..utils import Guitar, pitch2name, visualize_guitar_tab, GATab, GATabSeq
+from ..utils import Guitar, pitch2name, visualize_guitar_tab, GATab, GATabSeq, set_random
 from remi_z import MultiTrack
 
 def _run_single_wrapper(args):
@@ -14,7 +14,9 @@ def _run_single_wrapper(args):
     the GA logic across processes while remaining picklable under spawn.
     Returns a tuple of (bar_idx, best_tablature).
     """
+    
     instance, bar_idx = args
+    set_random(42+bar_idx)
     return bar_idx, instance.run_single(bar_idx)
 
 class GAreproducing:
