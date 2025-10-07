@@ -1,7 +1,8 @@
 import numpy as np
 import random
 import time
-from .GA_reproduction import GAreproducing
+from concurrent.futures import ProcessPoolExecutor
+from .GA_reproduction import GAreproducing, _run_single_wrapper
 from ..utils import set_random, visualize_guitar_tab
 from remi_z import MultiTrack
 from ..utils import GATab, GATabSeq
@@ -12,13 +13,15 @@ class GAimproved(GAreproducing):
                  mutation_rate=0.03, crossover_rate=0.6,
                  population_size=300, generations=100, 
                  num_strings=6, max_fret=20,
-                 weight_PC=1.0, weight_NWC=1.0, weight_NCC=1.0,weight_RP=1.0,
-                 midi_file_path=None, tournament_k=5, resolution=16):  
+                 weight_PC=1.0, weight_NWC=1.0, weight_NCC=1.0, weight_RP=1.0,
+                 midi_file_path=None, tournament_k=5, resolution=16,
+                 num_workers=1, verbose=False):  
         self.weight_RP = weight_RP
         super().__init__(guitar, 
         mutation_rate, crossover_rate, 
         population_size, generations, num_strings, max_fret, 
-        weight_PC, weight_NWC, weight_NCC, midi_file_path, tournament_k, resolution)
+        weight_PC, weight_NWC, weight_NCC, midi_file_path, tournament_k, resolution,
+        num_workers=num_workers, verbose=verbose)
         
         # Add rhythm pattern functionality
         self.rhythm_pattern = None
@@ -636,52 +639,65 @@ class GAimproved(GAreproducing):
         total_ncc = 0.0
         total_rp = 0.0
 
-        
-        
-        for bar_idx in range(len(self.bars_data)):
-            best_candidate = self.run_single(bar_idx)
-            
+        num_bars = len(self.bars_data)
+        best_candidates_by_bar = [None] * num_bars
+
+        # Parallel execution per bar if requested
+        if self.num_workers and self.num_workers > 1:
+            with ProcessPoolExecutor(max_workers=self.num_workers) as executor:
+                tasks = [(self, bar_idx) for bar_idx in range(num_bars)]
+                for bar_idx, best_candidate in executor.map(_run_single_wrapper, tasks):
+                    best_candidates_by_bar[bar_idx] = best_candidate
+        else:
+            for bar_idx in range(num_bars):
+                best_candidates_by_bar[bar_idx] = self.run_single(bar_idx)
+
+        # Post-process results in-order to build tabs and compute stats
+        for bar_idx in range(num_bars):
+            best_candidate = best_candidates_by_bar[bar_idx]
+
             # 创建GATab对象，保存onset时间信息
             bar_data = self.bars_data[bar_idx]
-            best_form=best_candidate['tab_candi']
-            best_hand=best_candidate['hand_candi']
+            best_form = best_candidate['tab_candi']
+            best_hand = best_candidate['hand_candi']
             ga_tab = GATab(
                 bar_data=best_form,
                 original_onsets=bar_data.get('original_onsets', [])
             )
-            
+
             # 添加和弦信息
             chords = bar_data['chords']
             if len(chords) > 0:
                 ga_tab.add_chord_info(0, chords[0])
             if len(chords) > 1:
                 ga_tab.add_chord_info(self.resolution // 2, chords[1])
-            
+
             # 标记旋律位置 - 使用已计算的melody_positions（若存在）
             for pos in bar_data.get('melody_positions', set()):
                 ga_tab.add_melody_position(pos)
-            
+
             results.append(ga_tab)
-            
+
             # Use the structured GATab object for final fitness calculation
             pc = self.calculate_playability(best_candidate)
             nwc = self.calculate_NWC(best_candidate, self.bars_data[bar_idx]['original_midi_pitches'])
             ncc = self.calculate_NCC(best_candidate, self.bars_data[bar_idx]['original_midi_pitches'], self.bars_data[bar_idx]['chords'])
             rp = self.calculate_RP(best_candidate, bar_idx)
             print(f"[Bar {bar_idx+1}] PC: {pc:.4f}, NWC: {nwc:.4f}, NCC: {ncc:.4f}, RP: {rp:.4f}, Total: {pc + nwc + ncc + rp:.4f}")
+
             # Accumulate fitness statistics
             total_pc += pc
             total_nwc += nwc
             total_ncc += ncc
-            total_rp += rp        
+            total_rp += rp
+
         # End timing and calculate statistics
         end_time = time.time()
         processing_time = end_time - start_time
-        
-        num_bars = len(self.bars_data)
-        total_fitness = (total_pc * self.weight_PC + total_nwc * self.weight_NWC + 
-                        total_ncc * self.weight_NCC + total_rp * self.weight_RP)
-        
+
+        total_fitness = (total_pc * self.weight_PC + total_nwc * self.weight_NWC +
+                         total_ncc * self.weight_NCC + total_rp * self.weight_RP)
+
         # Update statistics (including RP component)
         self.statistics['processing_time_seconds'] = round(processing_time, 2)
         self.statistics['fitness_stats']['avg_PC'] = round(total_pc / num_bars, 4)
@@ -689,7 +705,7 @@ class GAimproved(GAreproducing):
         self.statistics['fitness_stats']['avg_NCC'] = round(total_ncc / num_bars, 4)
         self.statistics['fitness_stats']['avg_RP'] = round(total_rp / num_bars, 4)
         self.statistics['fitness_stats']['avg_fitness'] = round(total_fitness / num_bars, 4)
-        
+
         # Return GATabSeq object - the structured approach
         ga_tab_seq = GATabSeq(results)
         return ga_tab_seq

@@ -3,8 +3,19 @@ import random
 import time
 import json
 import os
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from ..utils import Guitar, pitch2name, visualize_guitar_tab, GATab, GATabSeq
 from remi_z import MultiTrack
+
+def _run_single_wrapper(args):
+    """
+    Top-level wrapper to run a single bar GA in a separate process.
+    We pass the whole instance (self) and the bar index; this avoids duplicating
+    the GA logic across processes while remaining picklable under spawn.
+    Returns a tuple of (bar_idx, best_tablature).
+    """
+    instance, bar_idx = args
+    return bar_idx, instance.run_single(bar_idx)
 
 class GAreproducing:
     """
@@ -16,7 +27,8 @@ class GAreproducing:
                  population_size=300, generations=100, 
                  num_strings=6, max_fret=20,
                  weight_PC=1.0, weight_NWC=1.0, weight_NCC=1.0,
-                 midi_file_path=None, tournament_k=5, resolution=16):
+                 midi_file_path=None, tournament_k=5, resolution=16,
+                 num_workers=1, verbose=False):
         self.tournament_k = tournament_k
         """
         Initialize the genetic algorithm for guitar arrangement.
@@ -49,6 +61,8 @@ class GAreproducing:
         self.category_weights = {'melody': 2.0, 'harmony': 1.0}
         self.tournament_k = tournament_k
         self.resolution = resolution
+        self.num_workers = num_workers
+        self.verbose = verbose
 
         if not midi_file_path:
             raise ValueError("MIDI file path is required")
@@ -261,8 +275,8 @@ class GAreproducing:
             target = max(targets)
             chord_dict = {j+1: fret for j, fret in enumerate(chord)}
             midi_notes = [note for note in self.guitar.get_chord_midi(chord_dict) if note != -1]
+            # Guard: no playable notes from this fingering; penalize and skip max()
             if not midi_notes:
-                total_score -= 100  # Large penalty for missing the entire position
                 continue
             category = self.note_categories.get(pos, 'harmony')
             weight = self.category_weights.get(category, 1.0)
@@ -371,15 +385,17 @@ class GAreproducing:
             if gen_best_fitness > best_fitness:
                 best_fitness = gen_best_fitness
                 best_tablature = [row[:] for row in gen_best_tablature]
-            if generation % max(1, self.generations // 10) == 0:
+            if self.verbose and generation % max(1, self.generations // 10) == 0:
                 pc = self.calculate_playability(gen_best_tablature)
                 nwc = self.calculate_NWC(gen_best_tablature, original_midi_pitches)
                 ncc = self.calculate_NCC(gen_best_tablature, original_midi_pitches)
                 print(f"[Bar {bar_idx} | Gen {generation}] PC: {pc:.4f}, NWC: {nwc:.4f}, NCC: {ncc:.4f}, Total: {pc + nwc + ncc:.4f}")
                 print("Current best tab:")
                 visualize_guitar_tab(gen_best_tablature)
+
             # Elitism: keep the best
             # new_population = [population[gen_best_idx]]
+            
             new_population = []
             # Fill the rest of the population using tournament selection
             while len(new_population) < self.population_size:
@@ -415,46 +431,60 @@ class GAreproducing:
         total_pc = 0.0
         total_nwc = 0.0
         total_ncc = 0.0
-        
-        for bar_idx in range(len(self.bars_data)):
-            best_tablature = self.run_single(bar_idx)
-            
+
+        num_bars = len(self.bars_data)
+        best_tabs_by_bar = [None] * num_bars
+
+        if self.num_workers and self.num_workers > 1:
+            # Run GA per bar in parallel processes
+            with ProcessPoolExecutor(max_workers=self.num_workers) as executor:
+                tasks = [(self, bar_idx) for bar_idx in range(num_bars)]
+                for bar_idx, best_tab in executor.map(_run_single_wrapper, tasks):
+                    best_tabs_by_bar[bar_idx] = best_tab
+        else:
+            # Sequential fallback
+            for bar_idx in range(num_bars):
+                best_tabs_by_bar[bar_idx] = self.run_single(bar_idx)
+
+        # Post-process results in-order to build tabs and compute stats
+        for bar_idx in range(num_bars):
+            best_tablature = best_tabs_by_bar[bar_idx]
+
             # 创建GATab对象，保存onset时间信息
             bar_data = self.bars_data[bar_idx]
             ga_tab = GATab(
                 bar_data=best_tablature,
                 original_onsets=bar_data.get('original_onsets', [])
             )
-            
+
             # 添加和弦信息
             chords = bar_data['chords']
             if len(chords) > 0:
                 ga_tab.add_chord_info(0, chords[0])
             if len(chords) > 1:
                 ga_tab.add_chord_info(self.resolution // 2, chords[1])
-            
+
             for pos in bar_data.get('melody_positions', set()):
                 ga_tab.add_melody_position(pos)
-            
+
             results.append(ga_tab)
-            
+
             # Use the structured GATab object for final fitness calculation
             pc = self.calculate_playability(ga_tab.bar_data)
             nwc = self.calculate_NWC(ga_tab.bar_data, self.bars_data[bar_idx]['original_midi_pitches'])
             ncc = self.calculate_NCC(ga_tab.bar_data, self.bars_data[bar_idx]['original_midi_pitches'])
-            
+
             # Accumulate fitness statistics
             total_pc += pc
             total_nwc += nwc
             total_ncc += ncc
-            
+
             print(f"[Bar {bar_idx+1}] PC: {pc:.4f}, NWC: {nwc:.4f}, NCC: {ncc:.4f}, Total: {pc + nwc + ncc:.4f}")
         
         # End timing and calculate statistics
         end_time = time.time()
         processing_time = end_time - start_time
         
-        num_bars = len(self.bars_data)
         total_fitness = total_pc * self.weight_PC + total_nwc * self.weight_NWC + total_ncc * self.weight_NCC
         
         # Update statistics
