@@ -275,22 +275,60 @@ class GAimproved(GAreproducing):
         played_strings_penalty = -sum(sum(1 for fret in chord if fret > -1) for chord in active_chords)
         fret_distance_penalty = 0
         hand_pc=0
+        # Compute minimal index-finger movement path across positions with pressed frets (>0)
+        press_positions = [pos for pos in active_positions if any(f > 0 for f in tab_candi[pos])]
+        if len(press_positions) >= 2:
+            # Build candidate index positions (unique positive fret values) for each pressed position
+            index_candidates_per_pos = []
+            for pos in press_positions:
+                pressed_frets = [f for f in tab_candi[pos] if f > 0]
+                if pressed_frets:
+                    min_pressed = min(pressed_frets)
+                    max_pressed = max(pressed_frets)
+                    # Allowed index positions i must satisfy: for each pressed fret f, 0 <= f - i <= 3
+                    # => i in [f-3, f] for each f; take intersection across all f
+                    i_low = max(0, max(f - 3 for f in pressed_frets))
+                    i_high = min_pressed
+                    if i_low <= i_high:
+                        candidates = list(range(i_low, i_high + 1))
+                    else:
+                        # No single hand position covers all frets within 4-fret span.
+                        # Provide two plausible anchors to keep DP feasible and implicitly penalize span:
+                        # - Anchor at lowest fret (barre at min)
+                        # - Anchor so highest fret is pinky (max-3)
+                        candidates = sorted({min_pressed, max(0, max_pressed - 3)})
+                else:
+                    candidates = [0]
+                index_candidates_per_pos.append(candidates)
+
+            # Dynamic programming to minimize total movement of index finger
+            prev_pos = press_positions[0]
+            prev_dp = {f: 0.0 for f in index_candidates_per_pos[0]}
+            for idx in range(1, len(press_positions)):
+                curr_pos = press_positions[idx]
+                interval = curr_pos - prev_pos
+                curr_candidates = index_candidates_per_pos[idx]
+                curr_dp = {}
+                for curr_fret in curr_candidates:
+                    # Transition from any previous index fret
+                    best_cost = float('inf')
+                    for prev_fret, prev_cost in prev_dp.items():
+                        move_cost = abs(curr_fret - prev_fret)
+                        if interval > 6:
+                            move_cost = move_cost / ((interval - 6) ** 0.5)
+                        best_cost = min(best_cost, prev_cost + move_cost)
+                    curr_dp[curr_fret] = best_cost
+                prev_dp = curr_dp
+                prev_pos = curr_pos
+
+            min_total_movement = min(prev_dp.values()) if prev_dp else 0.0
+            fret_distance_penalty -= min_total_movement
         for i in range(1, len(active_positions)):
-            bar_distance_penalty = 0
             prev_chord = tab_candi[active_positions[i-1]]
             curr_chord = tab_candi[active_positions[i]]
             interval = active_positions[i] - active_positions[i-1]
-            prev_frets = [f for f in prev_chord if f > 0]
-            curr_frets = [f for f in curr_chord if f > 0]
             prev_hand = hand_candi[active_positions[i-1]]
             curr_hand = hand_candi[active_positions[i]]
-            if prev_frets and curr_frets:
-                prev_avg = sum(prev_frets) / len(prev_frets)
-                curr_avg = sum(curr_frets) / len(curr_frets)
-                bar_distance_penalty = abs(curr_avg - prev_avg)
-            if interval >6:
-                bar_distance_penalty = bar_distance_penalty / (interval-6)**0.5
-            fret_distance_penalty -= bar_distance_penalty
             hand_pc += self.calculate_hand_pc(prev_hand=prev_hand, curr_hand=curr_hand, interval=interval, prev_chord=prev_chord, curr_chord=curr_chord)
         if active_positions:
             hand_pc += self.calculate_hand_pc(curr_hand=hand_candi[active_positions[0]],curr_chord=tab_candi[active_positions[0]])
