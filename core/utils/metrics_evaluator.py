@@ -34,10 +34,13 @@ class MetricsEvaluator:
         # Load MIDI files
         self.original_mt = MultiTrack.from_midi(original_midi_path)
         self.arranged_mt = MultiTrack.from_midi(arranged_midi_path)
-        
+        # Quantize to 16th notes for original midi only, arranged midi should be quantized in arranging
+        self.original_mt.quantize_to_16th()
+        self.arranged_mt.quantize_to_16th()
         # Extract data
         self.original_data = self._extract_midi_data(self.original_mt)
         self.arranged_data = self._extract_midi_data(self.arranged_mt)
+        pass
 
     def _extract_midi_data(self, mt):
         bars_data = []
@@ -53,8 +56,13 @@ class MetricsEvaluator:
             except Exception:
                 all_notes = []
 
-            # Ignore empty bars (prevent melody extraction errors on leading silence)
+            # Preserve empty bars: append placeholders to keep bar indices aligned
             if len(bar) == 0 or not all_notes:
+                bars_data.append({
+                    'midi_pitches': midi_pitches,
+                    'melody_pitches': melody_pitches,
+                    'chords': []
+                })
                 continue
 
             # Safely get melody notes; fall back to empty if unavailable
@@ -132,7 +140,7 @@ class MetricsEvaluator:
         rhythm_matches = 0
         total_rhythm_positions = 0
         
-        for bar_idx in range(len(self.original_data)):
+        for bar_idx in range(min(len(self.original_data), len(self.arranged_data))):
             original_bar = self.original_data[bar_idx]['midi_pitches']
             arranged_bar = self.arranged_data[bar_idx]['midi_pitches']
             original_bar_rhythm=[]
@@ -223,7 +231,7 @@ class MetricsEvaluator:
         total_melody_positions = 0
         melody_matches = 0
         
-        for bar_idx in range(len(self.original_data)):
+        for bar_idx in range(min(len(self.original_data), len(self.arranged_data))):
             original_bar = self.original_data[bar_idx]['melody_pitches']
             arranged_bar = self.arranged_data[bar_idx]['melody_pitches']
             
@@ -246,7 +254,7 @@ class MetricsEvaluator:
     def calculate_melody_cor(self):
         original_melody_whole=[]
         arranged_melody_whole=[]
-        for bar_idx in range(len(self.original_data)):
+        for bar_idx in range(min(len(self.original_data), len(self.arranged_data))):
             original_bar = self.original_data[bar_idx]['melody_pitches']
             arranged_bar = self.arranged_data[bar_idx]['melody_pitches']
             
