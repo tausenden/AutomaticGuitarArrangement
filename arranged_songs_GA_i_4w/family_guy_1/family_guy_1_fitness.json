@@ -1,0 +1,26 @@
+{
+  "processing_time_seconds": 37.2,
+  "total_bars": 8,
+  "fitness_stats": {
+    "avg_PC": -13.5,
+    "avg_NWC": 63.0,
+    "avg_NCC": -0.5,
+    "avg_fitness": 25.5,
+    "avg_RP": -55.0
+  },
+  "ga_config": {
+    "mutation_rate": 0.03,
+    "crossover_rate": 0.6,
+    "population_size": 500,
+    "generations": 100,
+    "num_strings": 6,
+    "max_fret": 15,
+    "weight_PC": 1.0,
+    "weight_NWC": 1.5,
+    "weight_NCC": 1.0,
+    "tournament_k": 5,
+    "resolution": 16,
+    "weight_RP": 1.0
+  },
+  "song_name": "family_guy_1"
+}

@@ -1,0 +1,24 @@
+{
+  "processing_time_seconds": 482.07,
+  "total_bars": 80,
+  "fitness_stats": {
+    "avg_PC": -18.0896,
+    "avg_NWC": 79.525,
+    "avg_NCC": 3.8734,
+    "avg_fitness": 105.0713
+  },
+  "ga_config": {
+    "mutation_rate": 0.03,
+    "crossover_rate": 0.6,
+    "population_size": 500,
+    "generations": 100,
+    "num_strings": 6,
+    "max_fret": 15,
+    "weight_PC": 1.0,
+    "weight_NWC": 1.5,
+    "weight_NCC": 1.0,
+    "tournament_k": 5,
+    "resolution": 16
+  },
+  "song_name": "caihong"
+}

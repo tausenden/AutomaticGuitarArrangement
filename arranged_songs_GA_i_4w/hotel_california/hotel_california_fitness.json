@@ -1,0 +1,26 @@
+{
+  "processing_time_seconds": 690.4,
+  "total_bars": 120,
+  "fitness_stats": {
+    "avg_PC": -30.5343,
+    "avg_NWC": 68.1333,
+    "avg_NCC": -1.4333,
+    "avg_fitness": -47.5177,
+    "avg_RP": -117.75
+  },
+  "ga_config": {
+    "mutation_rate": 0.03,
+    "crossover_rate": 0.6,
+    "population_size": 500,
+    "generations": 100,
+    "num_strings": 6,
+    "max_fret": 15,
+    "weight_PC": 1.0,
+    "weight_NWC": 1.5,
+    "weight_NCC": 1.0,
+    "tournament_k": 5,
+    "resolution": 16,
+    "weight_RP": 1.0
+  },
+  "song_name": "hotel_california"
+}
