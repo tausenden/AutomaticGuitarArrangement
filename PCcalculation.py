@@ -3,6 +3,7 @@ from core.utils import GATab, GATabSeq
 from core.utils.ga_export import export_ga_results
 import json
 import os
+import numpy as np
 
 class GAreproPCExplainer(GAreproducing):
     """
@@ -11,9 +12,128 @@ class GAreproPCExplainer(GAreproducing):
     """
     def calculate_playability_terms(self, tablature):
         # Delegate to the base implementation to keep logic identical
-        return super().calculate_playability_terms(tablature)
 
- 
+        terms = super().calculate_playability_terms(tablature)
+        index_penalty = 0
+        active_positions = [pos for pos, chord in enumerate(tablature) if any(fret != -1 for fret in chord)]
+        # Compute minimal index-finger movement path across positions with pressed frets (>0)
+        press_positions = [pos for pos in active_positions if any(f > 0 for f in tablature[pos])]
+        if len(press_positions) >= 2:
+            # Build candidate index positions (unique positive fret values) for each pressed position
+            index_candidates_per_pos = []
+            for pos in press_positions:
+                pressed_frets = [f for f in tablature[pos] if f > 0]
+                if pressed_frets:
+                    min_pressed = min(pressed_frets)
+                    max_pressed = max(pressed_frets)
+                    # Allowed index positions i must satisfy: for each pressed fret f, 0 <= f - i <= 3
+                    # => i in [f-3, f] for each f; take intersection across all f
+                    i_low = max(0, max(f - 3 for f in pressed_frets))
+                    i_high = min_pressed
+                    if i_low <= i_high:
+                        candidates = list(range(i_low, i_high + 1))
+                    else:
+                        # No single hand position covers all frets within 4-fret span.
+                        # Provide two plausible anchors to keep DP feasible and implicitly penalize span:
+                        # - Anchor at lowest fret (barre at min)
+                        # - Anchor so highest fret is pinky (max-3)
+                        candidates = sorted({min_pressed, max(0, max_pressed - 3)})
+                else:
+                    candidates = [0]
+                index_candidates_per_pos.append(candidates)
+
+            # Dynamic programming to minimize total movement of index finger
+            prev_pos = press_positions[0]
+            prev_dp = {f: 0.0 for f in index_candidates_per_pos[0]}
+            for idx in range(1, len(press_positions)):
+                curr_pos = press_positions[idx]
+                interval = curr_pos - prev_pos
+                curr_candidates = index_candidates_per_pos[idx]
+                curr_dp = {}
+                for curr_fret in curr_candidates:
+                    # Transition from any previous index fret
+                    best_cost = float('inf')
+                    for prev_fret, prev_cost in prev_dp.items():
+                        move_cost = abs(curr_fret - prev_fret)
+                        if interval > 6:
+                            move_cost = move_cost / ((interval - 6) ** 0.5)
+                        best_cost = min(best_cost, prev_cost + move_cost)
+                    curr_dp[curr_fret] = best_cost
+                prev_dp = curr_dp
+                prev_pos = curr_pos
+
+            min_total_movement = min(prev_dp.values()) if prev_dp else 0.0
+            index_penalty -= min_total_movement
+
+        terms['index_penalty'] = index_penalty
+
+        return terms
+
+
+def collect_and_summarize_pc_metrics(pc_root):
+    """
+    Collect all pc_from_tab.json files from song folders and create a summary JSON
+    with all song PC metrics and average metrics across all songs.
+    """
+    all_metrics = []
+    
+    song_dirs = [d for d in os.listdir(pc_root) if os.path.isdir(os.path.join(pc_root, d))]
+    
+    for song_name in sorted(song_dirs):
+        song_dir = os.path.join(pc_root, song_name)
+        pc_file = os.path.join(song_dir, f"{song_name}_pc_from_tab.json")
+        
+        if os.path.exists(pc_file):
+            try:
+                with open(pc_file, 'r') as f:
+                    metrics = json.load(f)
+                    metrics['song_name'] = song_name
+                    all_metrics.append(metrics)
+                    print(f"Loaded PC metrics for {song_name}")
+            except Exception as e:
+                print(f"Error loading {pc_file}: {e}")
+        else:
+            print(f"PC file not found for {song_name}: {pc_file}")
+    
+    if not all_metrics:
+        print("No PC metrics found to summarize")
+        return
+    
+    # Calculate averages across all songs
+    metric_keys = ['average_pc']
+    term_keys = ['played_strings_penalty', 'fret_distance_penalty', 'span_difficulty', 'index_penalty']
+    
+    averages = {}
+    for key in metric_keys:
+        values = [m[key] for m in all_metrics if key in m]
+        if values:
+            averages[f'avg_{key}'] = round(np.mean(values), 4)
+    
+    # Calculate averages for term metrics
+    for key in term_keys:
+        values = [m['average_terms'][key] for m in all_metrics if 'average_terms' in m and key in m['average_terms']]
+        if values:
+            averages[f'avg_{key}'] = round(np.mean(values), 4)
+    
+    # Create summary data
+    summary = {
+        'songs': all_metrics,
+        'averages': averages,
+        'total_songs': len(all_metrics)
+    }
+    
+    # Save summary to pc_root folder
+    summary_file = os.path.join(pc_root, "summary_pc_metrics.json")
+    with open(summary_file, 'w') as f:
+        json.dump(summary, f, indent=2)
+    
+    print(f"Summary PC metrics saved to {summary_file}")
+    print(f"Average PC metrics across {len(all_metrics)} songs:")
+    for key, value in averages.items():
+        print(f"  {key}: {value}")
+    
+    return summary
+
 
 def _split_row_segments(line):
     """Split a combined row into per-bar segments using the 3-space separator used by TabSeq.__str__."""
@@ -88,6 +208,7 @@ def cal_from_ga(tab_path, output_dir=None):
     comp_sum_played = 0.0
     comp_sum_fret = 0.0
     comp_sum_span = 0.0
+    comp_sum_index= 0.0
     totals = []
     for bar_idx, bar in enumerate(bars):
         terms = ga_r.calculate_playability_terms(bar)
@@ -95,8 +216,9 @@ def cal_from_ga(tab_path, output_dir=None):
         comp_sum_played += terms['played_strings_penalty']
         comp_sum_fret += terms['fret_distance_penalty']
         comp_sum_span += terms['span_difficulty']
+        comp_sum_index += terms['index_penalty']
         print(f"[TAB] Bar {bar_idx}: total={terms['total']:.4f}, played_strings_penalty={terms['played_strings_penalty']:.4f}, "
-              f"fret_distance_penalty={terms['fret_distance_penalty']:.4f}, span_difficulty={terms['span_difficulty']:.4f}")
+              f"fret_distance_penalty={terms['fret_distance_penalty']:.4f}, span_difficulty={terms['span_difficulty']:.4f}, index_penalty={terms['index_penalty']:.4f}")
 
     n_bars = len(bars) if bars else 1
     avg_pc = sum(totals) / n_bars if totals else 0.0
@@ -105,7 +227,8 @@ def cal_from_ga(tab_path, output_dir=None):
         'average_terms': {
             'played_strings_penalty': round(comp_sum_played / n_bars, 4),
             'fret_distance_penalty': round(comp_sum_fret / n_bars, 4),
-            'span_difficulty': round(comp_sum_span / n_bars, 4)
+            'span_difficulty': round(comp_sum_span / n_bars, 4),
+            'index_penalty': round(comp_sum_index / n_bars, 4)
         }
     }
 
@@ -154,14 +277,16 @@ def cal_from_human():
         comp_sum_played = 0.0
         comp_sum_fret = 0.0
         comp_sum_span = 0.0
+        comp_sum_index = 0.0
         for bar_idx, bar in enumerate(bars):
             terms = ga_r.calculate_playability_terms(bar)
             pc_values.append(terms['total'])
             comp_sum_played += terms['played_strings_penalty']
             comp_sum_fret += terms['fret_distance_penalty']
             comp_sum_span += terms['span_difficulty']
+            comp_sum_index += terms['index_penalty']
             print(f"Bar {bar_idx}: total={terms['total']:.4f}, played_strings_penalty={terms['played_strings_penalty']:.4f}, "
-                  f"fret_distance_penalty={terms['fret_distance_penalty']:.4f}, span_difficulty={terms['span_difficulty']:.4f}")
+                  f"fret_distance_penalty={terms['fret_distance_penalty']:.4f}, span_difficulty={terms['span_difficulty']:.4f}, index_penalty={terms['index_penalty']:.4f}")
         
         avg_pc = sum(pc_values) / len(pc_values) if pc_values else 0.0
         print(f"{tab_name}: average PC = {avg_pc:.4f}")
@@ -180,7 +305,8 @@ def cal_from_human():
             'average_terms': {
                 'played_strings_penalty': round(comp_sum_played / n_bars, 4),
                 'fret_distance_penalty': round(comp_sum_fret / n_bars, 4),
-                'span_difficulty': round(comp_sum_span / n_bars, 4)
+                'span_difficulty': round(comp_sum_span / n_bars, 4),
+                'index_penalty': round(comp_sum_index / n_bars, 4)
             }
         }
         with open(os.path.join(output_dir, f"{tab_name}_pc.json"), 'w') as f:
@@ -200,8 +326,8 @@ def cal_from_human():
         print()
 
 if __name__ == "__main__":
-    cal_from_human()
-    base_dir='./arranged_songs_hmm'
+    #cal_from_human()
+    base_dir='./arranged_songs_GA_i_4w'
     if os.path.isdir(base_dir):
         for song_name in sorted(os.listdir(base_dir)):
             song_dir = os.path.join(base_dir, song_name)
@@ -212,3 +338,8 @@ if __name__ == "__main__":
                 continue
             tab_path = os.path.join(song_dir, tab_files[0])
             cal_from_ga(tab_path)
+        
+        # After processing all songs, collect and summarize PC metrics
+        print("\n" + "="*50)
+        print("Collecting and summarizing all PC metrics...")
+        collect_and_summarize_pc_metrics(base_dir)
