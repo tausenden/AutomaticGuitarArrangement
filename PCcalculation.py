@@ -101,7 +101,7 @@ def collect_and_summarize_pc_metrics(pc_root):
     
     # Calculate averages across all songs
     metric_keys = ['average_pc']
-    term_keys = ['played_strings_penalty', 'fret_distance_penalty', 'span_difficulty', 'index_penalty']
+    term_keys = ['played_strings_penalty', 'fret_distance_penalty', 'index_penalty', 'span_difficulty']
     
     averages = {}
     for key in metric_keys:
@@ -202,7 +202,7 @@ def cal_from_ga(tab_path, output_dir=None):
     bars = bars_from_ga_tab(tab_path)
     # Use any valid MIDI to initialize GA context; fallback to a placeholder by reusing an existing small clip
     # Since we only need PC (tab-only), instantiate with a known clip; replace with your project default if needed
-    default_midi = 'caihong_clip/caihong_clip_4_12.mid'
+    default_midi = 'song_midis/caihong.mid'
     ga_r = GAreproPCExplainer(midi_file_path=default_midi)
 
     comp_sum_played = 0.0
@@ -212,12 +212,13 @@ def cal_from_ga(tab_path, output_dir=None):
     totals = []
     for bar_idx, bar in enumerate(bars):
         terms = ga_r.calculate_playability_terms(bar)
-        totals.append(terms['total'])
+        total = terms['played_strings_penalty'] + terms['span_difficulty'] + terms['index_penalty']
+        totals.append(total)
         comp_sum_played += terms['played_strings_penalty']
         comp_sum_fret += terms['fret_distance_penalty']
         comp_sum_span += terms['span_difficulty']
         comp_sum_index += terms['index_penalty']
-        print(f"[TAB] Bar {bar_idx}: total={terms['total']:.4f}, played_strings_penalty={terms['played_strings_penalty']:.4f}, "
+        print(f"[TAB] Bar {bar_idx}: total={total:.4f}, played_strings_penalty={terms['played_strings_penalty']:.4f}, "
               f"fret_distance_penalty={terms['fret_distance_penalty']:.4f}, span_difficulty={terms['span_difficulty']:.4f}, index_penalty={terms['index_penalty']:.4f}")
 
     n_bars = len(bars) if bars else 1
@@ -227,8 +228,8 @@ def cal_from_ga(tab_path, output_dir=None):
         'average_terms': {
             'played_strings_penalty': round(comp_sum_played / n_bars, 4),
             'fret_distance_penalty': round(comp_sum_fret / n_bars, 4),
-            'span_difficulty': round(comp_sum_span / n_bars, 4),
-            'index_penalty': round(comp_sum_index / n_bars, 4)
+            'index_penalty': round(comp_sum_index / n_bars, 4),
+            'span_difficulty': round(comp_sum_span / n_bars, 4)      
         }
     }
 
@@ -262,12 +263,13 @@ def cal_from_human():
     # Read guitar tab from JSON file
     with open('human_guitar_tab.json', 'r') as file:
         tabs_data = json.load(file)
-    not_important='caihong_clip/caihong_clip_4_12.mid'
+    not_important='song_midis/caihong.mid'
     # Use the PC-explainer subclass; all other GA parts are unchanged
     ga_r = GAreproPCExplainer(
         midi_file_path=not_important
     )
     song_idx=0
+    all_metrics = []
     # Process each tab
     for tab_name, tab_info in tabs_data.items():
         bars = tab_info['bars']
@@ -312,6 +314,11 @@ def cal_from_human():
         with open(os.path.join(output_dir, f"{tab_name}_pc.json"), 'w') as f:
             json.dump(pc_results, f, indent=2)
 
+        # Collect for summary
+        metrics_entry = dict(pc_results)
+        metrics_entry['song_name'] = tab_name
+        all_metrics.append(metrics_entry)
+
         # Export tab, midi, wav
         file_paths = export_ga_results(
             ga_tab_seq=ga_tab_seq,
@@ -325,9 +332,38 @@ def cal_from_human():
         song_idx+=1
         print()
 
+    # Write overall summary for human tabs
+    if all_metrics:
+        metric_keys = ['average_pc']
+        term_keys = ['played_strings_penalty', 'fret_distance_penalty',  'index_penalty', 'span_difficulty']
+
+        averages = {}
+        for key in metric_keys:
+            values = [m[key] for m in all_metrics if key in m]
+            if values:
+                averages[f'avg_{key}'] = round(np.mean(values), 4)
+
+        for key in term_keys:
+            values = [m['average_terms'][key] for m in all_metrics if 'average_terms' in m and key in m['average_terms']]
+            if values:
+                averages[f'avg_{key}'] = round(np.mean(values), 4)
+
+        summary = {
+            'songs': all_metrics,
+            'averages': averages,
+            'total_songs': len(all_metrics)
+        }
+
+        human_root = 'human_guitar'
+        os.makedirs(human_root, exist_ok=True)
+        summary_file = os.path.join(human_root, 'summary_pc_metrics.json')
+        with open(summary_file, 'w') as f:
+            json.dump(summary, f, indent=2)
+        print(f"Summary PC metrics for human tabs saved to {summary_file}")
+
 if __name__ == "__main__":
-    #cal_from_human()
-    base_dir='./arranged_songs_GA_i_4w'
+    # cal_from_human()
+    base_dir='./arranged_songs_GA_i'
     if os.path.isdir(base_dir):
         for song_name in sorted(os.listdir(base_dir)):
             song_dir = os.path.join(base_dir, song_name)
