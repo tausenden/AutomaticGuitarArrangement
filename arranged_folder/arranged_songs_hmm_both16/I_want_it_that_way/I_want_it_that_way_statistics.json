@@ -1,0 +1,8 @@
+{
+  "note_precision": 0.8717,
+  "rhythm_accuracy": 0.8249,
+  "chord_accuracy": 0.1867,
+  "chord_name_accuracy": 0.2651,
+  "melody_accuracy": 0.6082,
+  "melody_correlation": 0.4212
+}
